@@ -1,0 +1,50 @@
+.outstanding-project-section {
+  .list-outstanding-project {
+    .item {
+      width: 300px;
+      height: 450px;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      position: relative;
+      border-radius: 10px;
+      cursor: pointer;
+
+      .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        transition: background-color 0.3s ease;
+      }
+
+      .content {
+        padding: 20px 20px;
+        position: relative;
+        z-index: 1;
+        color: white;
+        height: 100%;
+
+        .status-buy {
+          font-size: 12px;
+        }
+
+        .bottom-content {
+          position: absolute;
+          bottom: 20px;
+
+          .address {
+            font-size: 15px;
+          }
+        }
+      }
+    }
+
+    .item:hover {
+      filter: brightness(1.2);
+    }
+  }
+}
