@@ -4,6 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
+import { auth, providerGoogle } from "../utils/configFirebase";
+import { signInWithPopup } from "firebase/auth";
+import { useDispatch } from "react-redux";
+import { checkEmailExisted } from "../redux/features/userSlice";
 
 export const AuthContext = createContext({});
 
@@ -11,6 +15,8 @@ const API_URL = `${process.env.REACT_APP_API_URL}`;
 
 export default function AuthContextProvider({ children }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [currentToken, setCurrentToken] = useState(Cookies.get("token"));
   const [isLoadingEvent, setIsLoadingEvent] = useState(false);
 
@@ -75,6 +81,67 @@ export default function AuthContextProvider({ children }) {
     }
   };
 
+  //function login with google by firebase
+  const loginWithGoogle = async (props) => {
+    try {
+      const data = await signInWithPopup(auth, providerGoogle);
+      setIsLoadingEvent(true);
+
+      console.log("data", data);
+
+      const userInfo = {
+        fullName: data?.user?.displayName,
+        email: data?.user?.email,
+        imgURL: data?.user?.photoURL,
+      };
+
+      dispatch(checkEmailExisted(data.user.email)).then((result) => {
+        if(result.payload) {
+          //tiếp tục login gg
+        }else {
+          //cho chọn role
+          navigate('/register', { state: { dataRegister: userInfo } });
+        }
+      });
+
+      
+
+      // const res = await axios.post(`${API_URL}/api/auth/loginGoogle`, userInfo);
+
+      // const token = res.data.accessToken;
+      // setCurrentToken(token);
+      // const user = jwtDecode(token);
+
+      // const config = {
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     Authorization: `Bearer ${token}`,
+      //   },
+      // };
+
+      // const resUser = await axios.get(
+      //   `${API_URL}` + `/api/users/${user.user.id}`,
+      //   config
+      // );
+
+      // setUserDecode(resUser?.data ?? {});
+      setIsLoadingEvent(false);
+
+      // const currentPath = window.location.pathname;
+
+      // if (["Admin"].includes(user.user.roleName)) {
+      //   navigate("/admin");
+      // } else {
+      //   navigate("/");
+      // }
+    } catch (error) {
+      toast.error("Có lỗi xảy ra khi login Google");
+      console.error("Error during Google login:", error);
+      // Xử lý lỗi ở đây nếu cần
+      setIsLoadingEvent(false);
+    }
+  };
+
   //function logout
   const logout = async () => {
     try {
@@ -95,6 +162,7 @@ export default function AuthContextProvider({ children }) {
         setUserDecode,
         currentToken,
         login,
+        loginWithGoogle,
         logout,
         isLoadingEvent,
       }}

@@ -5,6 +5,7 @@ import UserLayout from "../layouts/UserLayout"
 import Home from "../pages/Home";
 import UserProfile from "../pages/UserProfile"
 import Register from "../pages/Register";
+import ForgotPassword from "../components/auth/ForgotPassword";
 
 const UserRouter = () => {
   return (
@@ -13,6 +14,7 @@ const UserRouter = () => {
         <Route path="/" element={<Home />} />
         <Route path="/my_account" element={<UserProfile />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot_password" element={<ForgotPassword />} />
       </Route>
     </Routes>
   );

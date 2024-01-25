@@ -5,67 +5,98 @@ import toast from "react-hot-toast";
 import './style.scss';
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
+import { validateEmail } from '../../../utils/handleFunction';
+import { useDispatch, useSelector } from 'react-redux';
+import { checkEmailExisted } from '../../../redux/features/userSlice';
+import SpinnerLoading from "../../shared/SpinnerLoading"
 
-const RegisterModal = () => {
+const RegisterModal = (props) => {
+
+    const { actionSwapToLogin, closeModalAction } = props
+
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
         password: '',
         confirmPassword: '',
-        roleName: ''
     });
 
-    const errorRefs = {
-        fullName: useRef(),
-        email: useRef(),
-        password: useRef(),
-        confirmPassword: useRef(),
-    };
+    const [errors, setErrors] = useState({
+        fullName: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+    });
 
+    const formFieldNames = ['fullName', 'email', 'password', 'confirmPassword'];
+
+    const dispatch = useDispatch();
     const navigate = useNavigate();
-
-    const handleOnInput = (fieldName) => {
-        if (formData[fieldName] && errorRefs[fieldName].current) {
-            errorRefs[fieldName].current.innerText = "";
-        }
-    };
+    const { loadingUser } = useSelector((state) => state.user)
 
     const handleChange = (fieldName, value) => {
         setFormData({ ...formData, [fieldName]: value });
+        setErrors({ ...errors, [fieldName]: '' });
     };
 
     const handleRegister = (e) => {
         e.preventDefault();
-
-        // Basic form validation
         const { fullName, email, password, confirmPassword } = formData;
         let isValid = true;
 
+        const newErrors = {};
+
         if (!fullName.trim()) {
-            errorRefs.fullName.current.innerText = "Vui lòng nhập tên của bạn!";
+            newErrors.fullName = 'Vui lòng nhập tên của bạn.';
+            isValid = false;
+        }
+
+        if (!validateEmail(email)) {
+            newErrors.email = 'Địa chỉ email không hợp lệ.';
             isValid = false;
         }
 
         if (!email.trim()) {
-            errorRefs.email.current.innerText = "Vui lòng nhập địa chỉ email!";
+            newErrors.email = 'Vui lòng nhập địa chỉ email.';
             isValid = false;
         }
 
         if (!password.trim()) {
-            errorRefs.password.current.innerText = "Vui lòng nhập mật khẩu!";
+            newErrors.password = 'Vui lòng nhập mật khẩu.';
             isValid = false;
         }
 
-        if (password.trim() !== confirmPassword.trim()) {
-            errorRefs.confirmPassword.current.innerText = "Mật khẩu nhập lại không khớp!";
+        if (password !== confirmPassword) {
+            newErrors.confirmPassword = 'Mật khẩu xác nhận không khớp.';
             isValid = false;
         }
 
-        if (isValid) {
-            navigate("/register");
+        if (!isValid) {
+            setErrors(newErrors);
+            return;
         }
+
+        dispatch(checkEmailExisted(email)).then((result) => {
+            if (result.payload === true) {
+                newErrors.email = 'Địa chỉ email này đã tồn tại';
+                setErrors(newErrors);
+                return
+            } else {
+                setFormData({
+                    fullName: '',
+                    email: '',
+                    password: '',
+                    confirmPassword: '',
+                })
+                closeModalAction()
+                navigate('/register', { state: { dataRegister: formData } });
+            }
+        })
     };
 
+    const handleFacebookLogin = () => {
+        toast.error('Chưa hỗ trợ tính năng này')
+    }
 
     return (
         <>
@@ -74,29 +105,30 @@ const RegisterModal = () => {
                 <h2 className='from_heading text-center'>Đăng ký</h2>
 
                 <form className='form-register__content' onSubmit={handleRegister}>
-                    {Object.keys(errorRefs).map((fieldName) => (
+                    {formFieldNames.map((fieldName) => (
                         <div key={fieldName}>
                             <Form.Label className="mt-2" htmlFor="">{fieldName === 'fullName' ? 'Tên của bạn' : fieldName === 'email' ? 'Địa chỉ email' : fieldName === 'password' ? 'Mật khẩu' : 'Nhập lại mật khẩu'}</Form.Label>
                             <Form.Control
-                                type={fieldName.includes('password') ? 'password' : 'text'}
+                                type={fieldName.includes('assword') ? 'password' : 'text'}
                                 className='input'
                                 value={formData[fieldName]}
                                 onChange={(e) => handleChange(fieldName, e.target.value)}
-                                onInput={() => handleOnInput(fieldName)}
                                 placeholder=" "
                             />
-                            {errorRefs[fieldName].current
-                                ? <div style={{ height: '10px' }}></div>
-                                : <span ref={errorRefs[fieldName]} className='text-error'> </span>
+
+                            {errors[fieldName]
+                                ? <span className="text-error">{errors[fieldName]}</span>
+                                : <div style={{ height: '24px' }}></div>
                             }
+
                         </div>
                     ))}
 
-                    <div type="submit" className='btn-register'>Đăng ký</div>
+                    <button type="submit" className='btn-register'>Đăng ký</button>
                 </form>
 
                 <div className='another-register'>
-                    <div className='social-button'>
+                    <div className='social-button' onClick={handleFacebookLogin}>
                         <img style={{ width: '15px', height: '15px' }}
                             src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/480px-Facebook_Logo_%282019%29.png" alt="fb_logo"
                         />
@@ -108,6 +140,8 @@ const RegisterModal = () => {
                     </div>
                 </div>
             </div>
+
+            {loadingUser && <SpinnerLoading />}
         </>
     );
 };

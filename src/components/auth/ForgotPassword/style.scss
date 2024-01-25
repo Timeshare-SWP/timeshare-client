@@ -1,0 +1,41 @@
+.card_forgot_password {
+  background-color: white;
+  width: 500px;
+  padding: 20px;
+  padding: 30px;
+  border: 1px solid gray;
+  border-radius: 20px;
+}
+
+.form_forgot_password {
+  flex-direction: column;
+}
+
+.form_forgot_password input {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid gray;
+}
+
+.mr-5 {
+  margin-right: 10px;
+}
+
+.card_otp {
+  background-color: white;
+  width: 500px;
+  padding: 20px;
+  border: 1px solid gray;
+  border-radius: 20px;
+}
+
+.card_form {
+  flex-direction: column;
+}
+
+.card_form input {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid gray;
+
+}

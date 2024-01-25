@@ -1,9 +1,13 @@
 import React, { useRef, useState } from 'react'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { validateEmail } from "../../../utils/handleFunction";
 import { FcGoogle } from "react-icons/fc";
 import Modal from 'react-bootstrap/Modal';
 import toast from "react-hot-toast";
+import { useDispatch } from 'react-redux';
+import { checkEmailExisted } from '../../../redux/features/userSlice';
+import { auth, providerGoogle } from '../../../utils/configFirebase';
+import { signInWithPopup } from 'firebase/auth';
 
 const LoginModal = (props) => {
 
@@ -13,6 +17,9 @@ const LoginModal = (props) => {
 
     const errorEmail = useRef();
     const errorPassword = useRef();
+
+    const dispatch = useDispatch()
+    const navigate = useNavigate();
 
     const handleOnInput = () => {
         if (formData.email && errorEmail.current) {
@@ -47,13 +54,31 @@ const LoginModal = (props) => {
         closeModalAction()
     };
 
-    const handleLoginWithGoogle = () => {
-        toast.error('Chưa hỗ trợ')
+    const handleLoginWithGoogle = async () => {
+        loginGoogleAction()
         closeModalAction()
+
+        // const data = await signInWithPopup(auth, providerGoogle);
+
+        // dispatch(checkEmailExisted(data?.user?.email)).then((result) => {
+        //     if (result.payload) {
+        //         //login gg
+        //     } else {
+        //         const dataGoogle = {
+        //             fullName: data?.user?.displayName,
+        //             email: data?.user?.email,
+        //             imgURL: data?.user?.photoURL
+        //         }
+        //         closeModalAction()
+        //         navigate('/register', { state: { dataRegister: dataGoogle } });
+        //     }
+        // })
+        // console.log(data)
+
     }
 
     const handleForgotPassword = () => {
-
+        closeModalAction()
     }
 
     return (

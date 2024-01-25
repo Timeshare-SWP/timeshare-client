@@ -3,6 +3,7 @@
 
   &__content {
     .btn-register {
+      width: 100%;
       text-align: center;
       font-size: 18px;
       font-weight: 500;
@@ -23,19 +24,34 @@
       border: #c72528;
       transition: all 0.25s ease-in-out;
     }
+
+    .text-error {
+      color: #c72528;
+      font-size: 10px;
+    }
   }
 
   .another-register {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
-    margin-top: 20px;
 
     .social-button {
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
+      gap: 5px;
+      padding: 8px 25px;
+      border-radius: 12px;
+      border: 1px solid #c72528 !important;
+      background-color: white;
+      cursor: pointer;
+    }
+
+    .social-button:hover {
+      box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px,
+        rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
     }
   }
 }

@@ -5,6 +5,7 @@ import { AuthProvider } from "react-auth-kit";
 import createStore from "react-auth-kit/createStore";
 import AdminRouter from "./routers/AdminRouter";
 import AuthContextProvider from "./contexts/authContext";
+import { StoreProvider } from "../src/redux/StoreProvider";
 
 function App() {
   // const store = createStore({
@@ -16,13 +17,16 @@ function App() {
 
   return (
     // <AuthProvider store={store}>
-    <Router>
-      <AuthContextProvider>
-        <UserRouter />
-        <AdminRouter />
-        <Toaster position="top-right" />
-      </AuthContextProvider>
-    </Router>
+    <StoreProvider>
+      <Router>
+        <AuthContextProvider>
+          <UserRouter />
+          <AdminRouter />
+          <Toaster position="top-right" />
+        </AuthContextProvider>
+      </Router>
+    </StoreProvider>
+
     // </AuthProvider>
   );
 }

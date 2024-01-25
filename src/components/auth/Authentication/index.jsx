@@ -38,7 +38,7 @@ function Authentication(props) {
                     closeModalAction={onClose}
                     actionSwapToRegister={actionSwapToRegister}
                 />
-                : <RegisterModal actionSwapToLogin={actionSwapToLogin} />
+                : <RegisterModal actionSwapToLogin={actionSwapToLogin} closeModalAction={onClose} />
             }
         </Modal>
     );
