@@ -4,31 +4,31 @@ import './style.scss'
 import { Link } from "react-router-dom";
 import logo from "../../assets/images/logo_timeshare.png"
 import { IoIosArrowDown } from "react-icons/io";
-import Login from '../Login';
+import Login from '../auth/Authentication';
 import SpinnerLoading from '../../components/shared/SpinnerLoading'
 import { AuthContext } from '../../contexts/authContext';
-import { Dropdown } from 'react-bootstrap';
+import DropDownUser from '../UserHeader/_components/DropDownUser'
+import { USER_HEADER_LINK } from '../../constants/header';
+import Authentication from '../auth/Authentication';
 
 const UserHeader = () => {
   const { currentToken, logout, userDecode, isLoadingEvent } = useContext(AuthContext);
 
-  const navLinks = [
-    {
-      display: "Mua",
-    },
-    {
-      display: "Dự án",
-    },
-    {
-      display: "Chuyên viên",
-    },
-    {
-      display: "Trang tin",
-    },
-  ];
-
   const [modalLoginOpen, setModalLoginOpen] = useState(false);
-  const [modalSignupOpen, setModalSignupOpen] = useState(false);
+  const [swapToRegisterState, setSwapToRegisterState] = useState(false);
+
+  const handleCloseAuthentication = () => {
+    setModalLoginOpen(false)
+    setSwapToRegisterState(false)
+  }
+
+  const handleSwapToRegister = () => {
+    setSwapToRegisterState(true)
+  }
+
+  const handleSwapToLogin = () => {
+    setSwapToRegisterState(false)
+  }
 
   return (
     <header className="user-header">
@@ -41,7 +41,7 @@ const UserHeader = () => {
           </div>
 
           <div className="menu">
-            {navLinks.map((item, index) => (
+            {USER_HEADER_LINK.map((item, index) => (
               <p
                 className="nav__item"
                 key={index}
@@ -63,7 +63,13 @@ const UserHeader = () => {
               >
                 Đăng nhập
               </button>
-              <Login open={modalLoginOpen} onClose={() => setModalLoginOpen(false)} />
+              <Authentication
+                open={modalLoginOpen}
+                onClose={handleCloseAuthentication}
+                swapToRegisterState={swapToRegisterState}
+                actionSwapToRegister={handleSwapToRegister}
+                actionSwapToLogin={handleSwapToLogin}
+              />
 
               <button
                 className="btn btn-danger fw-semibold"
@@ -73,6 +79,7 @@ const UserHeader = () => {
             </div>
             }
 
+            {/*  */}
             {userDecode && Object.keys(userDecode).length === 0 && <div className="header-button">
               <button
                 className="btn fw-semibold"
@@ -91,22 +98,18 @@ const UserHeader = () => {
               </button>
             </div>}
 
-            {userDecode && Object.keys(userDecode).length !== 0 && <Dropdown className="dropdown-header" >
-              <Dropdown.Toggle variant="danger" id="dropdown-basic" className='d-flex gap-3 justify-content-center align-items-center '>
-                <div className="avatar-profile">
-                  <img src={userDecode?.imgURL || "https://cdn.popsww.com/blog/sites/2/2021/03/doraemon-tap-97.jpg"}
-                    alt={userDecode?.imgURL ? "UserAva" : "IncognitoAva"} />
-                </div>
-                <p >{userDecode?.fullName}</p>
-              </Dropdown.Toggle>
+            {userDecode && Object.keys(userDecode).length !== 0 && <>
+              <DropDownUser user={userDecode} actionLogout={logout} />
 
-              <Dropdown.Menu>
-                <Link className='item_link' to="/my_account">Trang cá nhân</Link>
-
-                <div className='item_link' onClick={logout}>Đăng xuất</div>
-              </Dropdown.Menu>
-            </Dropdown>}
-
+              {userDecode.role_id.roleName === "Investor"
+                &&
+                <button
+                  className="btn btn-danger fw-semibold"
+                >
+                  Ký gửi nhà đất
+                </button>
+              }
+            </>}
 
             {isLoadingEvent && <SpinnerLoading />}
           </div>

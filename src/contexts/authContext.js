@@ -65,7 +65,7 @@ export default function AuthContextProvider({ children }) {
       if (["Admin"].includes(user.user.roleName)) {
         navigate("/admin");
       } else {
-        navigate("/my_account");
+        navigate("/");
       }
     } catch (error) {
       toast.error("Gmail or password is not correct");

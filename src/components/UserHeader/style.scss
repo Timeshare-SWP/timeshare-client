@@ -18,7 +18,7 @@
     .menu {
       display: flex;
       align-items: center;
-      column-gap: 2.7rem;
+      column-gap: 1.5rem;
 
       .nav__item {
         color: black;
@@ -44,12 +44,7 @@
       }
 
       .dropdown-header {
-        .item_link {
-          cursor: pointer;
-          padding: 0px 15px;
-          text-decoration: none;
-          margin: 10px 0px !important;
-        }
+
       }
     }
   }
@@ -60,6 +55,32 @@
       height: 30px;
       border-radius: 50%;
       object-fit: cover;
+    }
+  }
+
+  .item_link {
+    text-decoration: none;
+    color: black;
+    font-size: 13px;
+  }
+
+  .label-name {
+    display: flex;
+    border-bottom: 1px solid #cbcbcd;
+    padding-bottom: 0.5rem;
+    padding-left: 10px ;
+    padding-right: 10px ;
+
+    img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    p {
+      margin-left: 7px;
+      font-weight: bold;
     }
   }
 }

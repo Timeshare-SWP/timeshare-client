@@ -1,0 +1,41 @@
+.form-register {
+  padding: 0px 20px 20px 20px;
+
+  &__content {
+    .btn-register {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 500;
+      padding: 8px 25px;
+      color: #c72528;
+      border-radius: 12px;
+      margin: 10px 0 10px 0;
+      outline: none;
+      border: 2px solid #c72528 !important;
+      background-color: white;
+      cursor: pointer;
+      transition: all 0.25s ease-in-out;
+    }
+
+    .btn-register:hover {
+      background-color: #c72528 !important;
+      color: white !important;
+      border: #c72528;
+      transition: all 0.25s ease-in-out;
+    }
+  }
+
+  .another-register {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+
+    .social-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+  }
+}
