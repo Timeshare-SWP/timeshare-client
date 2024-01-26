@@ -55,26 +55,29 @@ const LoginModal = (props) => {
     };
 
     const handleLoginWithGoogle = async () => {
-        loginGoogleAction()
-        closeModalAction()
+        try {
+            closeModalAction()
 
-        // const data = await signInWithPopup(auth, providerGoogle);
+            const data = await signInWithPopup(auth, providerGoogle);
 
-        // dispatch(checkEmailExisted(data?.user?.email)).then((result) => {
-        //     if (result.payload) {
-        //         //login gg
-        //     } else {
-        //         const dataGoogle = {
-        //             fullName: data?.user?.displayName,
-        //             email: data?.user?.email,
-        //             imgURL: data?.user?.photoURL
-        //         }
-        //         closeModalAction()
-        //         navigate('/register', { state: { dataRegister: dataGoogle } });
-        //     }
-        // })
-        // console.log(data)
+            const dataGoogle = {
+                fullName: data?.user?.displayName,
+                email: data?.user?.email,
+                avatar_url: data?.user?.photoURL
+            }
 
+            dispatch(checkEmailExisted(data?.user?.email)).then((result) => {
+                if (result.payload) {
+                    loginGoogleAction(dataGoogle)
+                } else {
+                    closeModalAction()
+                    navigate('/register', { state: { dataRegister: dataGoogle, isLoginGoogle: true } });
+                }
+            })
+            console.log(data)
+        } catch (error) {
+            console.error("An error occurred during Google login:", error);
+        }
     }
 
     const handleForgotPassword = () => {

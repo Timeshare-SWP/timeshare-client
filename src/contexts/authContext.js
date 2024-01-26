@@ -84,56 +84,35 @@ export default function AuthContextProvider({ children }) {
   //function login with google by firebase
   const loginWithGoogle = async (props) => {
     try {
-      const data = await signInWithPopup(auth, providerGoogle);
       setIsLoadingEvent(true);
+      const res = await axios.post(`${API_URL}/api/auth/loginGoogle`, {...props});
 
-      console.log("data", data);
+      const token = res.data.accessToken;
+      setCurrentToken(token);
+      const user = jwtDecode(token);
 
-      const userInfo = {
-        fullName: data?.user?.displayName,
-        email: data?.user?.email,
-        imgURL: data?.user?.photoURL,
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       };
 
-      dispatch(checkEmailExisted(data.user.email)).then((result) => {
-        if(result.payload) {
-          //tiếp tục login gg
-        }else {
-          //cho chọn role
-          navigate('/register', { state: { dataRegister: userInfo } });
-        }
-      });
+      const resUser = await axios.get(
+        `${API_URL}` + `/api/users/${user.user.id}`,
+        config
+      );
 
-      
-
-      // const res = await axios.post(`${API_URL}/api/auth/loginGoogle`, userInfo);
-
-      // const token = res.data.accessToken;
-      // setCurrentToken(token);
-      // const user = jwtDecode(token);
-
-      // const config = {
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     Authorization: `Bearer ${token}`,
-      //   },
-      // };
-
-      // const resUser = await axios.get(
-      //   `${API_URL}` + `/api/users/${user.user.id}`,
-      //   config
-      // );
-
-      // setUserDecode(resUser?.data ?? {});
+      setUserDecode(resUser?.data ?? {});
       setIsLoadingEvent(false);
 
-      // const currentPath = window.location.pathname;
+      const currentPath = window.location.pathname;
 
-      // if (["Admin"].includes(user.user.roleName)) {
-      //   navigate("/admin");
-      // } else {
-      //   navigate("/");
-      // }
+      if (["Admin"].includes(user.user.roleName)) {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
     } catch (error) {
       toast.error("Có lỗi xảy ra khi login Google");
       console.error("Error during Google login:", error);

@@ -9,10 +9,12 @@ import { validateEmail } from '../../../utils/handleFunction';
 import { useDispatch, useSelector } from 'react-redux';
 import { checkEmailExisted } from '../../../redux/features/userSlice';
 import SpinnerLoading from "../../shared/SpinnerLoading"
+import { auth, providerGoogle } from '../../../utils/configFirebase';
+import { signInWithPopup } from 'firebase/auth';
 
 const RegisterModal = (props) => {
 
-    const { actionSwapToLogin, closeModalAction } = props
+    const { actionSwapToLogin, loginGoogleAction, closeModalAction } = props
 
     const [formData, setFormData] = useState({
         fullName: '',
@@ -89,7 +91,7 @@ const RegisterModal = (props) => {
                     confirmPassword: '',
                 })
                 closeModalAction()
-                navigate('/register', { state: { dataRegister: formData } });
+                navigate('/register', { state: { dataRegister: formData, isLoginGoogle: false } });
             }
         })
     };
@@ -97,6 +99,31 @@ const RegisterModal = (props) => {
     const handleFacebookLogin = () => {
         toast.error('Chưa hỗ trợ tính năng này')
     }
+
+    const handleGoogleLogin = async () => {
+        try {
+            const data = await signInWithPopup(auth, providerGoogle);
+            const dataGoogle = {
+                fullName: data?.user?.displayName,
+                email: data?.user?.email,
+                avatar_url: data?.user?.photoURL
+            }
+
+            dispatch(checkEmailExisted(data?.user?.email)).then((result) => {
+                if (result.payload) {
+                    loginGoogleAction(dataGoogle)
+                } else {
+                    closeModalAction()
+                    navigate('/register', { state: { dataRegister: dataGoogle, isLoginGoogle: true } });
+                }
+            })
+
+            console.log(data);
+        } catch (error) {
+            console.error("An error occurred during Google login:", error);
+        }
+    }
+
 
     return (
         <>
@@ -134,7 +161,7 @@ const RegisterModal = (props) => {
                         />
                         <p>Facebook</p>
                     </div>
-                    <div className='social-button'>
+                    <div className='social-button' onClick={handleGoogleLogin}>
                         <FcGoogle />
                         <p>Google</p>
                     </div>

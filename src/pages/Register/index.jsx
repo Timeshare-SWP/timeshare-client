@@ -13,13 +13,15 @@ import { AuthContext } from '../../contexts/authContext';
 
 const Register = () => {
 
-  const { login, isLoadingEvent } = useContext(AuthContext)
+  const { login, isLoadingEvent, loginWithGoogle } = useContext(AuthContext)
 
   const location = useLocation();
   const dispatch = useDispatch()
   const navigate = useNavigate();
   const { loadingAuth } = useSelector((state) => state.auth)
   const [dataRegister, setDataRegister] = useState(location?.state?.dataRegister)
+  const isLoginGoogle = location?.state?.isLoginGoogle
+  console.log('isLoginGoogle', isLoginGoogle)
   console.log('dataRegister', dataRegister)
   const [openOtpForm, setOpenOtpForm] = useState(false);
 
@@ -28,18 +30,28 @@ const Register = () => {
 
   //Trên UI sau khi chọn role xong sẽ gửi OTP và cần confirm OTP
   const handleSelectedRole = (value) => {
-    setDataRegister((prev) => ({ ...prev, roleName: value, gender: "", dob: "", address: "", phone_number: "" }));
-    dispatch(sendOtpWhenRegister(dataRegister?.email)).then((result) => {
-      if (sendOtpWhenRegister.fulfilled.match(result)) {
-        setOpenOtpForm(true)
-      } else {
-        if (!result?.payload) {
-          toast.error('Đã có lỗi xảy ra vui lòng thử lại sau!')
+    if (!isLoginGoogle) {
+      setDataRegister((prev) => ({ ...prev, roleName: value, gender: "", dob: "", address: "", phone_number: "" }));
+      dispatch(sendOtpWhenRegister(dataRegister?.email)).then((result) => {
+        if (sendOtpWhenRegister.fulfilled.match(result)) {
+          setOpenOtpForm(true)
         } else {
-          toast.error(result.payload)
+          if (!result?.payload) {
+            toast.error('Đã có lỗi xảy ra vui lòng thử lại sau!')
+          } else {
+            toast.error(result.payload)
+          }
         }
-      }
-    })
+      })
+    } else {
+      const dataLoginGoogle =
+        { ...dataRegister, roleName: value }
+
+      loginWithGoogle(dataLoginGoogle)
+      toast.success('Tạo tài khoản thành công!')
+    }
+
+
   };
 
   //Xác nhận otp nhập đúng hay sai
@@ -58,14 +70,13 @@ const Register = () => {
       otpStored: otpReceivedFromApi?.otp?.toString(),
       fullName: dataRegister.fullName,
       email: dataRegister.email,
-      imgURL: ""
+      avatar_url: ""
     }
 
     dispatch(verifyOtpWhenRegister(dataVerifyOtp)).then((result) => {
       if (verifyOtpWhenRegister.fulfilled.match(result)) {
         removeOtpFromSessionStorage()
         dispatch(registerUser(dataRegister)).then((response) => {
-          console.log(response)
           if (registerUser.fulfilled.match(response)) {
             toast.success('Tạo tài khoản thành công!')
             login({ email: dataRegister.email, password: dataRegister.password })
