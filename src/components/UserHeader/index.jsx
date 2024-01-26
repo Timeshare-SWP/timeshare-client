@@ -30,6 +30,16 @@ const UserHeader = () => {
     setSwapToRegisterState(false)
   }
 
+  const [hoveredItem, setHoveredItem] = useState(null);
+
+  const handleMouseEnter = (index) => {
+    setHoveredItem(index);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredItem(null);
+  };
+
   return (
     <header className="user-header">
       <div className="main__navbar">
@@ -42,13 +52,36 @@ const UserHeader = () => {
 
           <div className="menu">
             {USER_HEADER_LINK.map((item, index) => (
-              <p
+              <div
                 className="nav__item"
                 key={index}
+                onMouseEnter={() => handleMouseEnter(index)}
+                onMouseLeave={handleMouseLeave}
               >
                 {item.display}
-                <IoIosArrowDown style={{ color: "rgb(199, 37, 40)", marginLeft: "3px" }} />
-              </p>
+                <IoIosArrowDown style={{ color: 'rgb(199, 37, 40)', marginLeft: '3px' }} />
+
+                {hoveredItem === index && (
+                  <div className={`dropdown-menu ${index === 0 && 'flex-column'}`} >
+                    {item?.menuTitles?.map((menuTitle, titleIndex) => (
+                      <div key={titleIndex} className="menu-title">
+                        <p className="menu-title-text">{menuTitle.title}</p>
+                        {menuTitle.items.map((menuItem, menuIndex) => (
+                          <Link key={menuIndex} to={menuItem.link}>
+                            {menuItem.label}
+                          </Link>
+                        ))}
+                      </div>
+                    ))}
+
+                    {item?.menu?.map((menuItem, menuIndex) => (
+                      <Link key={menuIndex} to={menuItem.link} className='list-dropdown-menu-item'>
+                        {menuItem.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
             ))}
 
             <div className='separation-line'>
