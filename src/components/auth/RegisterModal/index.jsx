@@ -106,7 +106,8 @@ const RegisterModal = (props) => {
             const dataGoogle = {
                 fullName: data?.user?.displayName,
                 email: data?.user?.email,
-                avatar_url: data?.user?.photoURL
+                avatar_url: data?.user?.photoURL,
+                roleName: " "
             }
 
             dispatch(checkEmailExisted(data?.user?.email)).then((result) => {
