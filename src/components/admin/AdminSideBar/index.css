@@ -1,3 +1,10 @@
-li:hover{
-    background-color: red;
+li {
+    transition: 0.5s;
+    padding: 7px 0;
+}
+
+li:hover {
+    background-color: #cde1f3;
+    transition: 0.7s;
+    border-radius: 10px;
 }
