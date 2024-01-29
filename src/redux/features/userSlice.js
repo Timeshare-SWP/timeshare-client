@@ -20,8 +20,7 @@ export const checkEmailExisted = createAsyncThunk(
 
       return response.data;
     } catch (error) {
-      console.log(error);
-      return thunkAPI.rejectWithValue(error?.response?.data?.message);
+      return thunkAPI.rejectWithValue(error?.response?.data);
     }
   }
 );
@@ -40,8 +39,7 @@ export const forgotPassword = createAsyncThunk(
 
       return response.data;
     } catch (error) {
-      console.log(error);
-      return thunkAPI.rejectWithValue(error?.response?.data?.message);
+      return thunkAPI.rejectWithValue(error?.response?.data);
     }
   }
 );
@@ -61,8 +59,7 @@ export const resetPassword = createAsyncThunk(
 
       return response.data;
     } catch (error) {
-      console.log(error);
-      return thunkAPI.rejectWithValue(error?.response?.data?.message);
+      return thunkAPI.rejectWithValue(error?.response?.data);
     }
   }
 );

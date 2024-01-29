@@ -48,3 +48,26 @@
     }
   }
 }
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.inner-card{
+  height:20px;
+  width: 100px;
+  background-color:#eee;
+}
+
+.inner-text {
+  width: 200px;
+  height: 20px;
+  background-color:#eee;
+  margin-top: 10px;
+}
