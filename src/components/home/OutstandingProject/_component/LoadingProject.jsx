@@ -11,14 +11,14 @@ const LoadingProject = () => {
                         className="item border"
                     >
                         <div className='content animate-pulse'>
-                            <div class="inner-card animate-pulse">
+                            <div className="inner-card animate-pulse">
                             </div>
                             <div className='bottom-content'>
-                                <div class="inner-text animate-pulse">
+                                <div className="inner-text animate-pulse">
                                 </div>
-                                <div class="inner-text animate-pulse">
+                                <div className="inner-text animate-pulse">
                                 </div>
-                                <div class="inner-text animate-pulse">
+                                <div className="inner-text animate-pulse">
                                 </div>
                             </div>
                         </div>
@@ -27,14 +27,14 @@ const LoadingProject = () => {
                         className="item border"
                     >
                         <div className='content animate-pulse'>
-                            <div class="inner-card animate-pulse">
+                            <div className="inner-card animate-pulse">
                             </div>
                             <div className='bottom-content'>
-                                <div class="inner-text animate-pulse">
+                                <div className="inner-text animate-pulse">
                                 </div>
-                                <div class="inner-text animate-pulse">
+                                <div className="inner-text animate-pulse">
                                 </div>
-                                <div class="inner-text animate-pulse">
+                                <div className="inner-text animate-pulse">
                                 </div>
                             </div>
                         </div>
@@ -43,14 +43,14 @@ const LoadingProject = () => {
                         className="item border"
                     >
                         <div className='content animate-pulse'>
-                            <div class="inner-card animate-pulse">
+                            <div className="inner-card animate-pulse">
                             </div>
                             <div className='bottom-content'>
-                                <div class="inner-text animate-pulse">
+                                <div className="inner-text animate-pulse">
                                 </div>
-                                <div class="inner-text animate-pulse">
+                                <div className="inner-text animate-pulse">
                                 </div>
-                                <div class="inner-text animate-pulse">
+                                <div className="inner-text animate-pulse">
                                 </div>
                             </div>
                         </div>
@@ -59,14 +59,14 @@ const LoadingProject = () => {
                         className="item border"
                     >
                         <div className='content animate-pulse'>
-                            <div class="inner-card animate-pulse">
+                            <div className="inner-card animate-pulse">
                             </div>
                             <div className='bottom-content'>
-                                <div class="inner-text animate-pulse">
+                                <div className="inner-text animate-pulse">
                                 </div>
-                                <div class="inner-text animate-pulse">
+                                <div className="inner-text animate-pulse">
                                 </div>
-                                <div class="inner-text animate-pulse">
+                                <div className="inner-text animate-pulse">
                                 </div>
                             </div>
                         </div>
@@ -83,14 +83,14 @@ const LoadingProject = () => {
                         className="item border"
                     >
                         <div className='content animate-pulse'>
-                            <div class="inner-card animate-pulse">
+                            <div className="inner-card animate-pulse">
                             </div>
                             <div className='bottom-content'>
-                                <div class="inner-text animate-pulse">
+                                <div className="inner-text animate-pulse">
                                 </div>
-                                <div class="inner-text animate-pulse">
+                                <div className="inner-text animate-pulse">
                                 </div>
-                                <div class="inner-text animate-pulse">
+                                <div className="inner-text animate-pulse">
                                 </div>
                             </div>
                         </div>

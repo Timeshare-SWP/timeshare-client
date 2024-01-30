@@ -3,6 +3,7 @@ import { getInstanceWithToken } from "../utils/https";
 
 const initialState = {
   loadingTimeshare: false,
+  loadingUpdate: false,
   error: "",
   dataTimeshareList: "",
 };
@@ -42,6 +43,36 @@ export const createTimeshare = createAsyncThunk(
       const instance = getInstanceWithToken();
 
       const response = await instance.post(`/api/timeshares`, { ...data });
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+export const changeTimeshareStatus = createAsyncThunk(
+  "timeshare/changeTimeshareStatus",
+  async (data, thunkAPI) => {
+    try {
+      const instance = getInstanceWithToken();
+
+      const response = await instance.patch(`/api/timeshares/changeStatus`, { ...data });
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+export const changeSellTimeshareStatus = createAsyncThunk(
+  "timeshare/changeSellTimeshareStatus",
+  async (data, thunkAPI) => {
+    try {
+      const instance = getInstanceWithToken();
+
+      const response = await instance.patch(`/api/timeshares/changeSellTimeshareStatus`, { ...data });
 
       return response.data;
     } catch (error) {
@@ -97,6 +128,36 @@ export const timeshareSlice = createSlice({
     });
     builder.addCase(getTimeshareForInvestor.rejected, (state, action) => {
       state.loadingTimeshare = false;
+      state.error = action.payload;
+    });
+
+    //changeTimeshareStatus
+    builder.addCase(changeTimeshareStatus.pending, (state) => {
+      state.loadingUpdate = true;
+      state.error = "";
+    });
+    builder.addCase(changeTimeshareStatus.fulfilled, (state, action) => {
+      state.loadingUpdate = false;
+      // state.dataTimeshareList = action.payload;
+      state.error = "";
+    });
+    builder.addCase(changeTimeshareStatus.rejected, (state, action) => {
+      state.loadingUpdate = false;
+      state.error = action.payload;
+    });
+
+    //changeSellTimeshareStatus
+    builder.addCase(changeSellTimeshareStatus.pending, (state) => {
+      state.loadingUpdate = true;
+      state.error = "";
+    });
+    builder.addCase(changeSellTimeshareStatus.fulfilled, (state, action) => {
+      state.loadingUpdate = false;
+      // state.dataTimeshareList = action.payload;
+      state.error = "";
+    });
+    builder.addCase(changeSellTimeshareStatus.rejected, (state, action) => {
+      state.loadingUpdate = false;
       state.error = action.payload;
     });
   },
