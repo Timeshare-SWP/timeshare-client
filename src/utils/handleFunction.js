@@ -18,3 +18,17 @@ export const truncateString = (input, maxLength) => {
   }
   return input;
 };
+
+export const convertToVnTime = (date) => {
+  const utcDateTime = new Date(date);
+
+  const localTime = new Date(utcDateTime.getTime() + 7 * 60 * 60 * 1000);
+
+  const day = localTime.getDate();
+  const month = localTime.getMonth() + 1;
+  const year = localTime.getFullYear();
+
+  const localDateString = `${day}/${month}/${year}`;
+
+  return localDateString;
+};

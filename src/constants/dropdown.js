@@ -9,7 +9,7 @@ export const DROPDOWN_HEADER_CUSTOMER = [
 export const DROPDOWN_HEADER_INVESTOR = [
   { label: "Trang cá nhân", link: "/my_account" },
   { label: "Thống kê", link: "/statistics" },
-  { label: "Dự án cá nhân", link: "/personal_projects" },
+  { label: "Dự án cá nhân", link: "/personal-projects" },
 ];
 
 export const DROPDOWN_HEADER_STAFF = [

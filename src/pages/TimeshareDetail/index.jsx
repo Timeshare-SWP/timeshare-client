@@ -4,6 +4,7 @@ import { Container } from 'react-bootstrap'
 import { useLocation } from 'react-router';
 import { truncateString } from '../../utils/handleFunction';
 import { UTILITIES_LIST } from '../../constants/utilities';
+import { Link } from 'react-router-dom';
 
 const TimeshareDetail = () => {
   const locationState = useLocation();
@@ -22,6 +23,17 @@ const TimeshareDetail = () => {
     return <div className={`btn ${classNames}`}>{status}</div>;
   }
 
+  const scrollToId = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleLinkClick = (id) => {
+    scrollToId(id);
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -33,44 +45,44 @@ const TimeshareDetail = () => {
         <div className='col-8 container-left'>
           <div className='container-left__content'>
             <div className='title'>
-              <h3>{item.timeshare_name}</h3>
-              {renderStatus(item.sell_timeshare_status, ["Chưa được bán", "Đang mở bán", "Đã bán"])}
-              {renderStatus(item.timeshare_status, ["Sắp triển khai", "Đang triển khai", "Đã triển khai"])}
+              <h3>{item?.timeshare_name}</h3>
+              {renderStatus(item?.sell_timeshare_status, ["Chưa được bán", "Đang mở bán", "Đã bán"])}
+              {renderStatus(item?.timeshare_status, ["Sắp triển khai", "Đang triển khai", "Đã triển khai"])}
             </div>
             <div className='location'>
-              <p >{item.timeshare_address}</p>
+              <p >{item?.timeshare_address}</p>
             </div>
             <div className='timeshare-img'>
               <img src={`${item?.timeshare_image
-                && item.timeshare_image.length > 0
-                ? item.timeshare_image[0]?.timeshare_img_url
+                && item?.timeshare_image.length > 0
+                ? item?.timeshare_image[0]?.timeshare_img_url
                 : img_tmp}`} alt=" " />
             </div>
 
-            <div class="menu">
-              <a href="#" class="menu-item active">Giới thiệu</a>
-              <a href="#" class="menu-item">Chính sách bán hàng</a>
-              <a href="#" class="menu-item">Mặt bằng</a>
-              <a href="#" class="menu-item">Tiện ích</a>
-              <a href="#" class="menu-item">Chủ đầu tư</a>
+            <div className="menu">
+              <Link to="#intro" className="menu-item" onClick={() => handleLinkClick('intro')}>Giới thiệu</Link>
+              <Link to="#selling-policy" className="menu-item" onClick={() => handleLinkClick('selling-policy')}>Chính sách bán hàng</Link>
+              <Link to="#premises" className="menu-item" onClick={() => handleLinkClick('premises')}>Mặt bằng</Link>
+              <Link to="#utilities" className="menu-item" onClick={() => handleLinkClick('utilities')}>Tiện ích</Link>
+              <Link to="#investor" className="menu-item" onClick={() => handleLinkClick('investor')}>Chủ đầu tư</Link>
             </div>
 
             <hr></hr>
 
-            <div className='section-intro'>
-              <h3 className='mb-3'>Giới thiệu {item.timeshare_name}</h3>
-              <p>{item.timeshare_description}</p>
+            <div className='section-intro' id="intro">
+              <h3 className='mb-3'>Giới thiệu {item?.timeshare_name}</h3>
+              <p>{item?.timeshare_description}</p>
 
               <div className='row'>
                 <div className='col-6'>
                   <div className="info-container">
                     <div className="info-item">
                       <div className="info-label">Tên dự án:</div>
-                      <div className="info-value">{truncateString(item.timeshare_name, 15)}</div>
+                      <div className="info-value">{truncateString(item?.timeshare_name, 15)}</div>
                     </div>
                     <div className="info-item">
                       <div className="info-label">Chủ đầu tư:</div>
-                      <div className="info-value">{item.investor_id.fullName}</div>
+                      <div className="info-value">{item?.investor_id.fullName}</div>
                     </div>
 
                     <div className="info-item">
@@ -86,7 +98,7 @@ const TimeshareDetail = () => {
 
                     <div className="info-item">
                       <div className="info-label">Loại hình:</div>
-                      <div className="info-value">{item?.timeshare_type ? item.timeshare_type : 'Đang cập nhập'}</div>
+                      <div className="info-value">{item?.timeshare_type ? item?.timeshare_type : 'Đang cập nhập'}</div>
                     </div>
 
                   </div>
@@ -129,36 +141,43 @@ const TimeshareDetail = () => {
 
             <hr></hr>
 
-            <div className='section-premises'>
+            <div className='section-premises' id="premises">
               <h3 className='mb-3'>Mặt bằng dự án</h3>
               <img src={`${item?.timeshare_image
-                && item.timeshare_image.length > 0
-                ? item.timeshare_image[0]?.timeshare_img_url
+                && item?.timeshare_image.length > 0
+                ? item?.timeshare_image[0]?.timeshare_img_url
                 : img_tmp}`} alt=" " />
             </div>
 
             <hr></hr>
 
-            <div className='section-utilities'>
+            <div className='section-utilities' id="utilities">
               <h3 className=''>Tiện ích</h3>
 
               <div className='utilities-list'>
-                {item?.timeshare_utilities.map((utilityId) => {
-                  const utility = UTILITIES_LIST.find((item) => item.id === utilityId);
-                  if (!utility) return null;
-                  return (
-                    <div key={utility.id} className="utility-item">
-                      <div className="utility-icon">{utility.icon}</div>
-                      <div className="utility-name">{utility.name}</div>
-                    </div>
-                  );
-                })}
+                {item?.timeshare_utilities && item.timeshare_utilities.length > 0 ? (
+                  item.timeshare_utilities.map((utilityId) => {
+                    const utility = UTILITIES_LIST.find((item) => item.id === utilityId);
+                    if (!utility) return null;
+                    return (
+                      <div key={utility.id} className="utility-item">
+                        <div className="utility-icon">{utility.icon}</div>
+                        <div className="utility-name">{utility.name}</div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="utility-item">
+                    <div className="utility-name fw-bold">Đang cập nhập</div>
+                  </div>
+                )}
               </div>
+
             </div>
 
             <hr></hr>
 
-            <div className='section-investor'>
+            <div className='section-investor' id="investor">
               <h3 className='mb-3'>Chủ đầu tư</h3>
 
               <div className='mb-5'>

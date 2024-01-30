@@ -8,6 +8,7 @@ import Register from "../pages/Register";
 import ForgotPassword from "../components/auth/ForgotPassword";
 import TimeshareList from "../pages/TimeshareList";
 import TimeshareDetail from "../pages/TimeshareDetail";
+import PersonalProjectManagement from "../pages/Investor/PersonalProjectManagement";
 
 const UserRouter = () => {
   return (
@@ -18,6 +19,7 @@ const UserRouter = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot_password" element={<ForgotPassword />} />
 
+        <Route path="/personal-projects" element={<PersonalProjectManagement />} />
         <Route path="/timeshare-list" element={<TimeshareList />} />
         <Route path="/timeshare-list/:slug" element={<TimeshareDetail />} />
       </Route>
