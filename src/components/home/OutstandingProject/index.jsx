@@ -41,8 +41,8 @@ const OutstandingProject = () => {
                             style={{
                                 backgroundImage:
                                     `url(${item?.timeshare_image
-                                        && item.timeshare_image.length > 0
-                                        ? item.timeshare_image[0]?.timeshare_img_url
+                                        && item?.timeshare_image.length > 0
+                                        ? item?.timeshare_image[0]?.timeshare_img_url
                                         : img_tmp}
                                         )`
                             }}
@@ -83,8 +83,8 @@ const OutstandingProject = () => {
                             style={{
                                 backgroundImage:
                                     `url(${item?.timeshare_image
-                                        && item.timeshare_image.length > 0
-                                        ? item.timeshare_image[0]?.timeshare_img_url
+                                        && item?.timeshare_image.length > 0
+                                        ? item?.timeshare_image[0]?.timeshare_img_url
                                         : img_tmp}
                                         )`
                             }}

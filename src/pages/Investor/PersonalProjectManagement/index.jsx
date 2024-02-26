@@ -8,6 +8,7 @@ import { Container, Form } from 'react-bootstrap';
 import TableHeader from './_components/TableHeader';
 import TableBody from './_components/TableBody';
 import { BsPlusLg, BsSearch } from "react-icons/bs";
+import { Link } from 'react-router-dom';
 
 
 const PersonalProjectManagement = () => {
@@ -66,7 +67,7 @@ const PersonalProjectManagement = () => {
                         </div>
                     </div>
                     <div>
-                        <div className="mx-2 btn btn-primary"><BsPlusLg /> Đăng Timeshare</div>
+                        <Link to="/up-timeshare" className="mx-2 btn btn-primary"><BsPlusLg /> Đăng Timeshare</Link>
                     </div>
                 </div>
 

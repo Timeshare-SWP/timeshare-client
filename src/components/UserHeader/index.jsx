@@ -104,11 +104,12 @@ const UserHeader = () => {
                 actionSwapToLogin={handleSwapToLogin}
               />
 
-              <button
+              <Link
                 className="btn btn-danger fw-semibold"
+                to="/up-timeshare"
               >
-                Ký gửi nhà đất
-              </button>
+                Đăng bán nhà đất
+              </Link>
             </div>
             }
 
@@ -124,11 +125,12 @@ const UserHeader = () => {
               </button>
               <Login open={modalLoginOpen} onClose={() => setModalLoginOpen(false)} />
 
-              <button
+              <Link
                 className="btn btn-danger fw-semibold"
+                to="/up-timeshare"
               >
-                Ký gửi nhà đất
-              </button>
+                Đăng bán nhà đất
+              </Link>
             </div>}
 
             {userDecode && Object.keys(userDecode).length !== 0 && <>
@@ -136,11 +138,12 @@ const UserHeader = () => {
 
               {userDecode.role_id.roleName === "Investor"
                 &&
-                <button
+                <Link
                   className="btn btn-danger fw-semibold"
+                  to="/up-timeshare"
                 >
-                  Ký gửi nhà đất
-                </button>
+                  Đăng bán nhà đất
+                </Link>
               }
             </>}
 

@@ -68,12 +68,9 @@ const LoginModal = (props) => {
             }
 
             dispatch(checkEmailExisted(data?.user?.email)).then((result) => {
-                console.log('hmmm')
                 if (result.payload === true) {
-                    console.log('true ne')
                     loginGoogleAction(dataGoogle)
                 } else {
-                    console.log('false ne')
                     closeModalAction()
                     navigate('/register', { state: { dataRegister: dataGoogle, isLoginGoogle: true } });
                 }

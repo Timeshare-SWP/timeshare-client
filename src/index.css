@@ -13,3 +13,9 @@ h5,
 p {
   margin-bottom: 0rem !important;
 }
+
+.webkit-scrollbar {
+  overflow-y: scroll;
+  scrollbar-color: #ccc #f3f4f7;
+  scrollbar-width: thin;
+}

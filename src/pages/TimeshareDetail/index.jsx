@@ -60,11 +60,11 @@ const TimeshareDetail = () => {
             </div>
 
             <div className="menu">
-              <Link to="#intro" className="menu-item" onClick={() => handleLinkClick('intro')}>Giới thiệu</Link>
-              <Link to="#selling-policy" className="menu-item" onClick={() => handleLinkClick('selling-policy')}>Chính sách bán hàng</Link>
-              <Link to="#premises" className="menu-item" onClick={() => handleLinkClick('premises')}>Mặt bằng</Link>
-              <Link to="#utilities" className="menu-item" onClick={() => handleLinkClick('utilities')}>Tiện ích</Link>
-              <Link to="#investor" className="menu-item" onClick={() => handleLinkClick('investor')}>Chủ đầu tư</Link>
+              <p to="#intro" className="menu-item" onClick={() => handleLinkClick('intro')}>Giới thiệu</p>
+              <p to="#selling-policy" className="menu-item" onClick={() => handleLinkClick('selling-policy')}>Chính sách bán hàng</p>
+              <p to="#premises" className="menu-item" onClick={() => handleLinkClick('premises')}>Mặt bằng</p>
+              <p to="#utilities" className="menu-item" onClick={() => handleLinkClick('utilities')}>Tiện ích</p>
+              <p to="#investor" className="menu-item" onClick={() => handleLinkClick('investor')}>Chủ đầu tư</p>
             </div>
 
             <hr></hr>
@@ -117,7 +117,7 @@ const TimeshareDetail = () => {
                     </div>
 
                     <div className="info-item">
-                      <div className="info-label">Qui mô:</div>
+                      <div className="info-label">Quy mô:</div>
                       <div className="info-value">{item?.timeshare_scale ? item?.timeshare_scale : 'Đang cập nhập'}</div>
                     </div>
                     <div className="info-item">

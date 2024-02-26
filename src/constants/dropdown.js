@@ -8,7 +8,7 @@ export const DROPDOWN_HEADER_CUSTOMER = [
 
 export const DROPDOWN_HEADER_INVESTOR = [
   { label: "Trang cá nhân", link: "/my_account" },
-  { label: "Thống kê", link: "/statistics" },
+  { label: "Thống kê", link: "/investor-statistics" },
   { label: "Dự án cá nhân", link: "/personal-projects" },
 ];
 

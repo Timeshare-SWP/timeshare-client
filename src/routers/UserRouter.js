@@ -9,6 +9,8 @@ import ForgotPassword from "../components/auth/ForgotPassword";
 import TimeshareList from "../pages/TimeshareList";
 import TimeshareDetail from "../pages/TimeshareDetail";
 import PersonalProjectManagement from "../pages/Investor/PersonalProjectManagement";
+import PostTimeshare from "../pages/Investor/PostTimeshare";
+import InvestorStatistics from "../pages/Investor/InvestorStatistics";
 
 const UserRouter = () => {
   return (
@@ -22,6 +24,9 @@ const UserRouter = () => {
         <Route path="/personal-projects" element={<PersonalProjectManagement />} />
         <Route path="/timeshare-list" element={<TimeshareList />} />
         <Route path="/timeshare-list/:slug" element={<TimeshareDetail />} />
+
+        <Route path="/up-timeshare" element={<PostTimeshare />}/>
+        <Route path="/investor-statistics" element={<InvestorStatistics />}/>
       </Route>
     </Routes>
   );
