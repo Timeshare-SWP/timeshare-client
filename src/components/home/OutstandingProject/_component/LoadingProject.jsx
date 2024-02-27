@@ -23,6 +23,25 @@ const LoadingProject = () => {
                             </div>
                         </div>
                     </div>
+                    
+                    <div
+                        className="item border"
+                    >
+                        <div className='content animate-pulse'>
+                            <div className="inner-card animate-pulse">
+                            </div>
+                            <div className='bottom-content'>
+                                <div className="inner-text animate-pulse">
+                                </div>
+                                <div className="inner-text animate-pulse">
+                                </div>
+                                <div className="inner-text animate-pulse">
+                                </div>
+                            </div>
+                        </div>
+                    
+                    </div>
+                    
                     <div
                         className="item border"
                     >
@@ -39,22 +58,7 @@ const LoadingProject = () => {
                             </div>
                         </div>
                     </div>
-                    <div
-                        className="item border"
-                    >
-                        <div className='content animate-pulse'>
-                            <div className="inner-card animate-pulse">
-                            </div>
-                            <div className='bottom-content'>
-                                <div className="inner-text animate-pulse">
-                                </div>
-                                <div className="inner-text animate-pulse">
-                                </div>
-                                <div className="inner-text animate-pulse">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    
                     <div
                         className="item border"
                     >

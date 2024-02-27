@@ -57,7 +57,7 @@ const PostForm = () => {
                     </div>
                     <ul>
                         <li><p>Timeshare xin phép chỉ tiếp nhận nhà đất ký gửi từ khu vực <strong>TP. Hồ Chí Minh.</strong></p></li>
-                        <li><p>Đây là dịch vụ ký gửi, Timeshare chỉ thu phí hoa hồng theo quy định khi giao dịch thành công.</p></li>
+                        <li><p>Đây là dịch vụ đăng bán, Timeshare chỉ thu phí hoa hồng theo quy định khi giao dịch thành công.</p></li>
                     </ul>
 
                     <div className='divider'></div>
@@ -107,16 +107,24 @@ const PostForm = () => {
                             <label htmlFor="city_Tp.Hồ Chí Minh">Tp.Hồ Chí Minh</label>
                         </div>
                         </div>
-                    </div> <div className="form-group-material mb-0 is-invalid">
-                        <input type="text" required="required" className="form-control" /> <label>Địa chỉ <span className="text-danger">*</span></label>
+                    </div>
+                    <div className="form-group-material mb-0 is-invalid">
+                        <input type="text" required="required" className="form-control" />
+                        <label>Địa chỉ <span className="text-danger">*</span></label>
                     </div>
                 </div>
 
                 <div className="section-form">
-                    <h2 className="form-title">Thông tin nhà đất</h2>
-                    <div className="form-group-material is-invalid">
+                    <h2 className="form-title">Thông tin Timeshare</h2>
+
+                    <div className="form-group-material mb-4">
+                        <input type="text" required="required" className="form-control" />
+                        <label>Tên Timeshare<span className="text-danger">*</span></label>
+                    </div>
+
+                    <div className="form-group-material">
                         <textarea rows="3" required="required" className="form-control" spellCheck="false"></textarea>
-                        <label>Mô tả nhà đất <span className="text-danger">*</span></label>
+                        <label>Mô tả Timeshare <span className="text-danger">*</span></label>
                     </div>
                     <div className="form-group">
                         <div className="d-flex justify-content-between mb-1">

@@ -67,13 +67,15 @@ const TimeshareList = () => {
           </div>
         </div>
 
-        {filteredTimeshareList.length === 0 ? (
-          <div className="text-center">Không tìm thấy timeshare phù hợp</div>
-        ) : (
-          filteredTimeshareList.map((item, index) => (
-            <TimeshareCard item={item} key={index} />
-          ))
-        )}
+        <div className='timeshare-list-container__list-card'>
+          {filteredTimeshareList.length === 0 ? (
+            <div className="text-center">Không tìm thấy timeshare phù hợp</div>
+          ) : (
+            filteredTimeshareList.map((item, index) => (
+              <TimeshareCard item={item} key={index} />
+            ))
+          )}
+        </div>
       </Container>
 
     </div>

@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react'
 import './style.scss'
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/images/logo_timeshare.png"
 import { IoIosArrowDown } from "react-icons/io";
 import Login from '../auth/Authentication';
@@ -10,12 +10,15 @@ import { AuthContext } from '../../contexts/authContext';
 import DropDownUser from '../UserHeader/_components/DropDownUser'
 import { USER_HEADER_LINK } from '../../constants/header';
 import Authentication from '../auth/Authentication';
+import ModalConfirm from '../shared/ModalConfirm';
 
 const UserHeader = () => {
   const { currentToken, logout, userDecode, isLoadingEvent } = useContext(AuthContext);
 
   const [modalLoginOpen, setModalLoginOpen] = useState(false);
   const [swapToRegisterState, setSwapToRegisterState] = useState(false);
+  const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
 
   const handleCloseAuthentication = () => {
     setModalLoginOpen(false)
@@ -39,6 +42,14 @@ const UserHeader = () => {
   const handleMouseLeave = () => {
     setHoveredItem(null);
   };
+
+  const handleUpTimeshare = () => {
+    if (!userDecode) {
+      setShowModal(true)
+    } else {
+      navigate("/up-timeshare")
+    }
+  }
 
   return (
     <header className="user-header">
@@ -104,12 +115,12 @@ const UserHeader = () => {
                 actionSwapToLogin={handleSwapToLogin}
               />
 
-              <Link
+              <div
                 className="btn btn-danger fw-semibold"
-                to="/up-timeshare"
+                onClick={handleUpTimeshare}
               >
                 Đăng bán nhà đất
-              </Link>
+              </div>
             </div>
             }
 
@@ -146,6 +157,12 @@ const UserHeader = () => {
                 </Link>
               }
             </>}
+
+            {showModal && <ModalConfirm show={showModal}
+              handleClose={() => setShowModal(false)}
+              handleAccept={() => { setModalLoginOpen(true); setShowModal(false) }}
+              body={'Vui lòng đăng nhập trước khi đăng bán nhà đất!'} />
+            }
 
             {isLoadingEvent && <SpinnerLoading />}
           </div>
