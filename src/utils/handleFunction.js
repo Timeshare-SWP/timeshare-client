@@ -32,3 +32,39 @@ export const convertToVnTime = (date) => {
 
   return localDateString;
 };
+
+export const convertToVNDFormat = (number) => {
+  if (typeof number !== "number") {
+    return number;
+  }
+
+  if (number >= 1000000000) {
+    const billion = (number / 1000000000).toLocaleString("vi-VN", {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    });
+    return `${billion} tỷ`;
+  } else if (number >= 1000000) {
+    const million = (number / 1000000).toLocaleString("vi-VN", {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    });
+    return `${million} triệu`;
+  } else if (number >= 1000) {
+    const thousand = (number / 1000).toLocaleString("vi-VN", {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    });
+    return `${thousand} nghìn`;
+  } else {
+    return number.toLocaleString();
+  }
+};
+
+export const convertToNumberFormat = (number) => {
+  if (typeof number !== "number") {
+    return number;
+  }
+
+  return number.toLocaleString();
+};

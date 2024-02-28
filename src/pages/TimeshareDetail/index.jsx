@@ -2,9 +2,8 @@ import React, { useEffect } from 'react'
 import './style.scss'
 import { Container } from 'react-bootstrap'
 import { useLocation } from 'react-router';
-import { truncateString } from '../../utils/handleFunction';
+import { convertToNumberFormat, truncateString } from '../../utils/handleFunction';
 import { UTILITIES_LIST } from '../../constants/utilities';
-import { Link } from 'react-router-dom';
 import Location from './_components/Location';
 
 
@@ -58,7 +57,7 @@ const TimeshareDetail = () => {
               <img src={`${item?.timeshare_image
                 && item?.timeshare_image.length > 0
                 ? item?.timeshare_image[0]?.timeshare_img_url
-                : img_tmp}`} alt=" " />
+                : img_tmp}`} alt="timeshare" />
             </div>
 
             <div className="menu">
@@ -94,7 +93,7 @@ const TimeshareDetail = () => {
 
                     <div className="info-item">
                       <div className="info-label">Tổng diện tích:</div>
-                      <div className="info-value">{item?.land_area}</div>
+                      <div className="info-value">{item?.land_area} m&#178;</div>
                     </div>
 
 
@@ -115,7 +114,7 @@ const TimeshareDetail = () => {
 
                     <div className="info-item">
                       <div className="info-label">Khoảng giá:</div>
-                      <div className="info-value">{item?.price} triệu/m2</div>
+                      <div className="info-value">{convertToNumberFormat(item?.price)} VNĐ/m2</div>
                     </div>
 
                     <div className="info-item">
@@ -148,7 +147,8 @@ const TimeshareDetail = () => {
               <img src={`${item?.timeshare_image
                 && item?.timeshare_image.length > 0
                 ? item?.timeshare_image[0]?.timeshare_img_url
-                : img_tmp}`} alt=" " />
+                : img_tmp}`}
+                alt="timeshare" />
             </div>
 
             <hr></hr>
@@ -193,7 +193,8 @@ const TimeshareDetail = () => {
                   <div className='col-4 d-flex justify-content-center align-items-center'>
                     <img src={`${item?.investor_id?.avatar_url
                       ? item?.investor_id?.avatar_url
-                      : avatar_tmp}`} className='img-fluid rounded-start' />
+                      : avatar_tmp}`} className='img-fluid rounded-start'
+                      alt="timeshare" />
                   </div>
 
                   <div className='col-8'>
@@ -213,7 +214,7 @@ const TimeshareDetail = () => {
         </div>
 
         <div className='col-4 container-right'>
-          <div className='text-price'>Khoảng giá: <span className='detail'>{item?.price} triệu/m2</span></div>
+          <div className='text-price'>Khoảng giá: <span className='detail'>{convertToNumberFormat(item?.price)} VNĐ/m&#178;</span></div>
           <div className='text-price'>Chủ đầu tư: <span className='fw-bold'>{item?.investor_id?.fullName}</span></div>
           <hr></hr>
           <div className='btn btn-danger'>ĐẶT GIỮ CHỖ NGAY</div>

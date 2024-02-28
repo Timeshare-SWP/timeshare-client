@@ -35,7 +35,8 @@ const TimeshareCard = (props) => {
                     <img src={`${item?.timeshare_image
                         && item.timeshare_image.length > 0
                         ? item.timeshare_image[0]?.timeshare_img_url
-                        : img_tmp}`} className='img-fluid' />
+                        : img_tmp}`} className='img-fluid' 
+                        alt="timeshare" />
 
                     <div className="sub-img">
                         {item.timeshare_image && item.timeshare_image.length > 1 && (
@@ -45,6 +46,7 @@ const TimeshareCard = (props) => {
                                     <div class="item">
                                         <img
                                             src={item.timeshare_image[1]?.timeshare_img_url}
+                                            alt="timeshare"
                                         />
                                     </div>
                                 }
@@ -53,6 +55,7 @@ const TimeshareCard = (props) => {
                                     <div class="item">
                                         <img
                                             src={item.timeshare_image[2]?.timeshare_img_url}
+                                            alt="timeshare"
                                         />
                                     </div>
                                 }
@@ -63,6 +66,7 @@ const TimeshareCard = (props) => {
                                         </div>
                                         <img
                                             src={item.timeshare_image[3]?.timeshare_img_url}
+                                            alt="timeshare"
                                         />
                                     </div>
                                 )}
@@ -88,7 +92,7 @@ const TimeshareCard = (props) => {
                         <div style={{ fontSize: '15px' }}><LuClipboardType />  {item.timeshare_type}</div>
                     </div>
 
-                    <p>Giá: <span className='text-price'>{item.price} triệu/m2</span></p>
+                    <p>Giá: <span className='text-price'>{item.price} /m2</span></p>
 
                     <p className='description'>{truncateString(item.timeshare_description, 45)}</p>
 

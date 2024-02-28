@@ -11,6 +11,7 @@ import TimeshareDetail from "../pages/TimeshareDetail";
 import PersonalProjectManagement from "../pages/Investor/PersonalProjectManagement";
 import PostTimeshare from "../pages/Investor/PostTimeshare";
 import InvestorStatistics from "../pages/Investor/InvestorStatistics";
+import ManagementTransaction from "../pages/Investor/ManagementTransaction";
 
 const UserRouter = () => {
   return (
@@ -25,8 +26,10 @@ const UserRouter = () => {
         <Route path="/timeshare-list" element={<TimeshareList />} />
         <Route path="/timeshare-list/:slug" element={<TimeshareDetail />} />
 
+        {/* investor */}
         <Route path="/up-timeshare" element={<PostTimeshare />}/>
         <Route path="/investor-statistics" element={<InvestorStatistics />}/>
+        <Route path="/management-transaction" element={<ManagementTransaction />}/>
       </Route>
     </Routes>
   );
