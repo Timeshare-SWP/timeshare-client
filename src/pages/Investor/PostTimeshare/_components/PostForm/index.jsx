@@ -1,13 +1,25 @@
 import React, { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { MdDeleteOutline } from "react-icons/md";
+import ModalContinuePostTimeshare from '../ModalContinuePostTimeshare';
+import { createTimeshare } from "../../../../../redux/features/timeshareSlice"
+import ModalConfirm from "../../../../../components/shared/ModalConfirm"
+import { useDispatch } from 'react-redux';
 
 const PostForm = () => {
 
-    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [imageSelectedTimeshare, setImageSelectedTimeshare] = useState([]);
+    const [openModalContinuePostState, setOpenModalContinuePostState] = useState(false);
 
+    //quản lý lưu trữ giữa các stage
+    const [selectedTimeshareStatus, setSelectedTimeshareStatus] = useState(null); //stage 1
+    const [selectedJuridicalFiles, setSelectedJuridicalFiles] = useState([]); //stage 2
+    const [anotherInfo, setAnotherInfo] = useState([]); //stage 3
+    const [priorityLevel, setPriorityLevel] = useState("Time") //stage 4
+
+    //xử lý drop image
     const handleOnDrop = (acceptedFiles) => {
-        setSelectedFiles([...selectedFiles, ...acceptedFiles]);
+        setImageSelectedTimeshare([...imageSelectedTimeshare, ...acceptedFiles]);
 
         acceptedFiles.forEach((file) => {
             previewImage(file);
@@ -35,7 +47,7 @@ const PostForm = () => {
         reader.onload = (e) => {
             const imageUrl = e.target.result;
 
-            setSelectedFiles((prevFiles) =>
+            setImageSelectedTimeshare((prevFiles) =>
                 prevFiles.map((prevFile) =>
                     prevFile.name === file.name ? { ...prevFile, previewUrl: imageUrl } : prevFile
                 )
@@ -44,8 +56,41 @@ const PostForm = () => {
     };
 
     const removeImage = (path) => {
-        setSelectedFiles((prevFiles) => prevFiles.filter((file) => file.path !== path));
+        setImageSelectedTimeshare((prevFiles) => prevFiles.filter((file) => file.path !== path));
     };
+
+    //luồng trong modal continue post
+    const handleOpenModalContinuePost = () => {
+        setOpenModalContinuePostState(true)
+    }
+
+    const [currentStage, setCurrentStage] = useState(1);
+
+    const [stageEnabled, setStageEnabled] = useState({
+        1: true,
+        2: false,
+        3: false,
+        4: false
+    });
+
+    // xử lý luồng post timeshare
+    const [openModalConfirmState, setOpenModalConfirmState] = useState(false)
+
+    const dispatch = useDispatch();
+
+    const handleOpenConfirmModal = () => {
+        setOpenModalContinuePostState(false)
+        setOpenModalConfirmState(true)
+    }
+
+    const handleCancelModalConfirm = () => {
+        setOpenModalContinuePostState(true)
+        setOpenModalConfirmState(false)
+    }
+
+    const handleConfirmPostTimeshare = () => {
+
+    }
 
     return (
         <div className='post-timeshare-container__right webkit-scrollbar'>
@@ -71,14 +116,14 @@ const PostForm = () => {
                         <p className="mb-2">Nhu cầu của bạn là gì? <span className="text-danger">*</span></p>
                         <div className="row flex">
                             <div className="form-check">
-                                <input id="service_type_sale" type="radio" name="service_type" className="radio" value="sale" />
+                                <input id="service_type_sale" checked type="radio" name="service_type" className="radio" value="sale" />
                                 <label htmlFor="service_type_sale">Cần bán</label>
                             </div>
-                            <div className="form-check">
+                            <div className="form-check disabled" >
                                 <input id="service_type_rent" type="radio" name="service_type" className="radio" value="rent" />
                                 <label htmlFor="service_type_rent">Cần cho thuê</label>
                             </div>
-                            <div className="form-check">
+                            <div className="form-check disabled">
                                 <input id="service_type_sale_and_rent" type="radio" name="service_type" className="radio" value="sale_and_rent" />
                                 <label htmlFor="service_type_sale_and_rent">Cần bán và cho thuê</label>
                             </div>
@@ -108,7 +153,7 @@ const PostForm = () => {
                         </div>
                         </div>
                     </div>
-                    <div className="form-group-material mb-0 is-invalid">
+                    <div className="form-group-material mb-0">
                         <input type="text" required="required" className="form-control" />
                         <label>Địa chỉ <span className="text-danger">*</span></label>
                     </div>
@@ -117,9 +162,17 @@ const PostForm = () => {
                 <div className="section-form">
                     <h2 className="form-title">Thông tin Timeshare</h2>
 
-                    <div className="form-group-material mb-4">
-                        <input type="text" required="required" className="form-control" />
-                        <label>Tên Timeshare<span className="text-danger">*</span></label>
+                    <div className='d-flex flex-row gap-2'>
+                        <div className="form-group-material mb-4" style={{ width: '70%' }}>
+                            <input type="text" required="required" className="form-control" />
+                            <label>Tên Timeshare<span className="text-danger">*</span></label>
+                        </div>
+
+                        <div className="form-group-material mb-4" style={{ width: '30%' }}>
+                            <input type="text" required="required" className="form-control" />
+                            <label>Tổng diện tích<span className="text-danger">*</span></label>
+                            <p className='unit-area'>m&#178;</p>
+                        </div>
                     </div>
 
                     <div className="form-group-material">
@@ -149,13 +202,13 @@ const PostForm = () => {
                         </label>
 
                     </div>
-                    {selectedFiles.length > 0 && (
+                    {imageSelectedTimeshare.length > 0 && (
                         <div className="form-group mb-0" >
                             <div className="photo-uploaded">
                                 <h4>Ảnh đã tải</h4>
 
                                 <ul className="list-photo">
-                                    {selectedFiles.map((file) => (
+                                    {imageSelectedTimeshare.map((file) => (
                                         <li key={file.path}>
                                             <div className='photo-item'>
                                                 {file.previewUrl ? (
@@ -197,8 +250,40 @@ const PostForm = () => {
                     <p>
                         Đăng kê với Timeshare để bán nhanh gấp 2 lần thị trường và tiết kiệm nhiều hơn với những dịch vụ đi kèm chất lượng cao. Đăng thông tin ngay, chúng tôi sẽ liên hệ tư vấn và hẹn gặp sau ít phút!
                     </p>
-                    <button className='btn btn-danger'>Tiếp tục</button>
+                    <button className='btn btn-danger' onClick={handleOpenModalContinuePost}>Tiếp tục</button>
                 </div>
+
+                {openModalContinuePostState
+                    &&
+                    <ModalContinuePostTimeshare
+                        show={openModalContinuePostState}
+                        handleCloseModalContinuePost={() => setOpenModalContinuePostState(false)}
+                        handleOpenModalContinuePost={() => setOpenModalContinuePostState(true)}
+                        currentStage={currentStage}
+                        setCurrentStage={setCurrentStage}
+                        stageEnabled={stageEnabled}
+                        setStageEnabled={setStageEnabled}
+                        selectedTimeshareStatus={selectedTimeshareStatus}
+                        setSelectedTimeshareStatus={setSelectedTimeshareStatus}
+                        selectedJuridicalFiles={selectedJuridicalFiles}
+                        setSelectedJuridicalFiles={setSelectedJuridicalFiles}
+                        anotherInfo={anotherInfo}
+                        setAnotherInfo={setAnotherInfo}
+                        priorityLevel={priorityLevel}
+                        setPriorityLevel={setPriorityLevel}
+                        openModalConfirm={openModalConfirmState}
+                        handleCancelModalConfirm={handleCancelModalConfirm}
+                        handleConfirmPostTimeshare={handleConfirmPostTimeshare}
+                        handleOpenConfirmModal={handleOpenConfirmModal}
+                    />
+                }
+
+                {openModalConfirmState && <ModalConfirm show={openModalConfirmState}
+                    handleClose={handleCancelModalConfirm}
+                    handleAccept={handleConfirmPostTimeshare}
+                    title={"Xác nhận hành động"}
+                    body={"Bạn có chắc chắn muốn đăng Timeshare này lên?"} />
+                }
             </div>
         </div>
     )

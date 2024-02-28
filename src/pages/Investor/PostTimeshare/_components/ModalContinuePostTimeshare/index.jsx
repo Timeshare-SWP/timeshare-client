@@ -1,20 +1,120 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { Container, Modal } from 'react-bootstrap'
+import "./style.scss"
+import Stage_1 from "../StagePostTimeshare/stage_1"
+import Stage_2 from "../StagePostTimeshare/stage_2"
+import Stage_3 from "../StagePostTimeshare/stage_3"
+import Stage_4 from "../StagePostTimeshare/stage_4"
+import toast from 'react-hot-toast'
 
 const ModalContinuePostTimeshare = (props) => {
-    const { show, handleClose, handleAccept, title, body } = props
+    const { show, handleCloseModalContinuePost,
+        handleOpenModalContinuePost, currentStage, setCurrentStage,
+        stageEnabled, setStageEnabled,
+        selectedTimeshareStatus,
+        setSelectedTimeshareStatus, selectedJuridicalFiles,
+        setSelectedJuridicalFiles, anotherInfo, setAnotherInfo,
+        priorityLevel, setPriorityLevel, openModalConfirmState,
+        handleCancelModalConfirm, handleConfirmPostTimeshare, handleOpenConfirmModal } = props
+
+    const handleStageClick = (stage) => {
+        setCurrentStage(stage);
+
+    };
+
+    const handleBackStage = () => {
+        setCurrentStage(currentStage - 1);
+    };
+
+    const handleContinueStage = () => {
+        if (currentStage === 1 && (!selectedTimeshareStatus || selectedTimeshareStatus === null)) {
+            toast.error("Vui lòng chọn một trước khi qua giai đoạn tiếp theo!");
+            return;
+        }
+
+        setStageEnabled(prevState => ({
+            ...prevState,
+            [currentStage + 1]: true
+        }));
+
+        setCurrentStage(currentStage + 1);
+    };
+
+    const getStageName = (stage) => {
+        switch (stage) {
+            case 1:
+                return "Chọn giai đoạn pháp lý";
+            case 2:
+                return "Cập nhập hồ sơ pháp lý";
+            case 3:
+                return "Cập nhập các thông tin khác";
+            case 4:
+                return "Mức độ ưu tiên";
+            default:
+                return "";
+        }
+    };
+
+    const getStageContent = (stage) => {
+        switch (stage) {
+            case 1:
+                return <Stage_1 selectedTimeshareStatus={selectedTimeshareStatus} setSelectedTimeshareStatus={setSelectedTimeshareStatus} />;
+            case 2:
+                return <Stage_2 selectedJuridicalFiles={selectedJuridicalFiles} setSelectedJuridicalFiles={setSelectedJuridicalFiles} />;
+            case 3:
+                return <Stage_3 anotherInfo={anotherInfo} setAnotherInfo={setAnotherInfo} />;
+            case 4:
+                return <Stage_4 priorityLevel={priorityLevel} setPriorityLevel={setPriorityLevel} />;
+            default:
+                return null;
+        }
+    };
+
     return (
-        <Modal show={show} onHide={handleClose}>
+        <Modal show={show} fullscreen onHide={handleCloseModalContinuePost} className='modal-continue-post-timeshare'>
             <Modal.Header closeButton>
-                <Modal.Title>{title}</Modal.Title>
+                {/* <Modal.Title></Modal.Title> */}
             </Modal.Header>
-            <Modal.Body>{body}</Modal.Body>
+
+            <Modal.Body>
+                <div className="stage-header">
+                    {[1, 2, 3, 4].map(stageNum => (
+                        <button
+                            key={stageNum}
+                            className={`stage btn ${stageEnabled[stageNum] ? '' : 'disabled'} ${currentStage === stageNum ? 'active' : ''}`}
+                            onClick={() => handleStageClick(stageNum)}
+                        >
+                            {stageNum}. {getStageName(stageNum)}
+                        </button>
+                    ))}
+                </div>
+
+                <Container className='py-4'>
+                    {getStageContent(currentStage)}
+                </Container>
+            </Modal.Body>
+
             <Modal.Footer>
-                <button className="btn btn-secondary" onClick={handleClose}>
-                    Hủy
-                </button>
-                <button className="btn btn-primary" onClick={handleAccept}>
-                    Xác nhận
-                </button>
+                <div style={{ marginRight: "50px" }}>
+                    {currentStage > 1 && (
+                        <button className="btn fw-bold btn-cancel" onClick={handleBackStage}>
+                            Quay lại
+                        </button>
+                    )}
+
+                    {currentStage < 4 && (
+                        <button className="btn fw-bold btn-continue mx-2" onClick={handleContinueStage}>
+                            Tiếp tục
+                        </button>
+                    )}
+
+                    {currentStage === 4 && (
+                        <button className="btn fw-bold btn-continue mx-2" onClick={handleOpenConfirmModal}>
+                            Xác nhận đăng bán
+                        </button>
+                    )}
+
+                </div>
             </Modal.Footer>
         </Modal>
     )

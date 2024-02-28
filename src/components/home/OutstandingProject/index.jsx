@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import Slider from "react-slick";
 import "./style.scss"
 import { useDispatch, useSelector } from 'react-redux'
-import { createTimeshare, getTimeshareForGuest } from '../../../redux/features/timeshareSlice'
+import { getTimeshareForGuest } from '../../../redux/features/timeshareSlice'
 import LoadingProject from './_component/LoadingProject'
 import { Link, useNavigate } from 'react-router-dom'
 import { convertToSlug } from '../../../utils/handleFunction'

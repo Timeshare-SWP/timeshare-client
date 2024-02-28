@@ -83,6 +83,55 @@ const LoadingProject = () => {
                 <h4>Dự án dành cho bạn</h4>
 
                 <div className='list-outstanding-project d-flex mt-4 gap-4'>
+                     
+                    <div
+                        className="item border"
+                    >
+                        <div className='content animate-pulse'>
+                            <div className="inner-card animate-pulse">
+                            </div>
+                            <div className='bottom-content'>
+                                <div className="inner-text animate-pulse">
+                                </div>
+                                <div className="inner-text animate-pulse">
+                                </div>
+                                <div className="inner-text animate-pulse">
+                                </div>
+                            </div>
+                        </div>
+                    </div>          
+                    <div
+                        className="item border"
+                    >
+                        <div className='content animate-pulse'>
+                            <div className="inner-card animate-pulse">
+                            </div>
+                            <div className='bottom-content'>
+                                <div className="inner-text animate-pulse">
+                                </div>
+                                <div className="inner-text animate-pulse">
+                                </div>
+                                <div className="inner-text animate-pulse">
+                                </div>
+                            </div>
+                        </div>
+                    </div>          
+                    <div
+                        className="item border"
+                    >
+                        <div className='content animate-pulse'>
+                            <div className="inner-card animate-pulse">
+                            </div>
+                            <div className='bottom-content'>
+                                <div className="inner-text animate-pulse">
+                                </div>
+                                <div className="inner-text animate-pulse">
+                                </div>
+                                <div className="inner-text animate-pulse">
+                                </div>
+                            </div>
+                        </div>
+                    </div>          
                     <div
                         className="item border"
                     >

@@ -118,6 +118,20 @@
             align-items: center;
             justify-content: center;
             width: fit-content !important;
+            cursor: pointer;
+
+            input{
+              cursor: pointer;
+            }
+
+            label {
+              cursor: pointer;
+            }
+          }
+
+          .form-check.disabled {
+            opacity: 0.5;
+            pointer-events: none;
           }
 
           .photo-upload {
@@ -125,6 +139,7 @@
             border-radius: 8px;
             padding: 24px 46px;
             border: 1px dashed #9fa4aa;
+            cursor: pointer;
 
             img {
               display: block;
@@ -233,6 +248,13 @@
             position: absolute;
             pointer-events: none;
             z-index: 2;
+          }
+
+          .unit-area {
+            position: absolute;
+            z-index: 2;
+            right: 15px; 
+            bottom: 5px;
           }
 
           .form-select {

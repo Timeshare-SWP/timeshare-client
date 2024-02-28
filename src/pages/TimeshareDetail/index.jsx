@@ -5,6 +5,8 @@ import { useLocation } from 'react-router';
 import { truncateString } from '../../utils/handleFunction';
 import { UTILITIES_LIST } from '../../constants/utilities';
 import { Link } from 'react-router-dom';
+import Location from './_components/Location';
+
 
 const TimeshareDetail = () => {
   const locationState = useLocation();
@@ -61,9 +63,9 @@ const TimeshareDetail = () => {
 
             <div className="menu">
               <p to="#intro" className="menu-item" onClick={() => handleLinkClick('intro')}>Giới thiệu</p>
-              <p to="#selling-policy" className="menu-item" onClick={() => handleLinkClick('selling-policy')}>Chính sách bán hàng</p>
               <p to="#premises" className="menu-item" onClick={() => handleLinkClick('premises')}>Mặt bằng</p>
               <p to="#utilities" className="menu-item" onClick={() => handleLinkClick('utilities')}>Tiện ích</p>
+              <p to="#selling-policy" className="menu-item" onClick={() => handleLinkClick('location')}>Vị trí</p>
               <p to="#investor" className="menu-item" onClick={() => handleLinkClick('investor')}>Chủ đầu tư</p>
             </div>
 
@@ -174,6 +176,10 @@ const TimeshareDetail = () => {
               </div>
 
             </div>
+
+            <hr></hr>
+
+            <Location timeshare_location={item?.timeshare_address} />
 
             <hr></hr>
 
