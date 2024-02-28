@@ -51,7 +51,7 @@ const Stage_2 = (props) => {
       <h4 className='title'>Đăng thông tin về trọn bộ hồ sơ pháp lý của timeshare</h4>
       <p className='sub-title mt-2'>Bổ sung các thông tin cần thiết về dự án của bạn để có thể hoàn thành
         các bước đăng tin thành công </p>
-      <p className='note-title'>(Bấm tiếp tục nếu không có)</p>
+      <p className='note-title'>(Bấm tiếp tục nếu không có và bỏ qua giai đoạn này)</p>
 
       <div className='stage-2'>
         <label style={{ cursor: 'pointer' }}

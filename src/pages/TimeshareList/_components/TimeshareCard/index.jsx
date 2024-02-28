@@ -3,7 +3,7 @@ import { GiPositionMarker } from "react-icons/gi";
 import { BsTextareaResize } from "react-icons/bs";
 import { LuClipboardType } from "react-icons/lu";
 import { useNavigate } from 'react-router';
-import { convertToSlug, truncateString } from '../../../../utils/handleFunction';
+import { convertToNumberFormat, convertToSlug, convertToVNDFormat, truncateString } from '../../../../utils/handleFunction';
 
 const TimeshareCard = (props) => {
 
@@ -35,7 +35,7 @@ const TimeshareCard = (props) => {
                     <img src={`${item?.timeshare_image
                         && item.timeshare_image.length > 0
                         ? item.timeshare_image[0]?.timeshare_img_url
-                        : img_tmp}`} className='img-fluid' 
+                        : img_tmp}`} className='img-fluid'
                         alt="timeshare" />
 
                     <div className="sub-img">
@@ -43,7 +43,7 @@ const TimeshareCard = (props) => {
                             <>
                                 {item.timeshare_image.length > 1
                                     &&
-                                    <div class="item">
+                                    <div className="item">
                                         <img
                                             src={item.timeshare_image[1]?.timeshare_img_url}
                                             alt="timeshare"
@@ -52,7 +52,7 @@ const TimeshareCard = (props) => {
                                 }
                                 {item.timeshare_image.length > 2
                                     &&
-                                    <div class="item">
+                                    <div className="item">
                                         <img
                                             src={item.timeshare_image[2]?.timeshare_img_url}
                                             alt="timeshare"
@@ -60,7 +60,7 @@ const TimeshareCard = (props) => {
                                     </div>
                                 }
                                 {item.timeshare_image.length > 3 && (
-                                    <div class="item">
+                                    <div className="item">
                                         <div className="overlay">
                                             +{item?.timeshare_image.length - 3}
                                         </div>
@@ -87,12 +87,12 @@ const TimeshareCard = (props) => {
                     <div className='other-option d-flex gap-3 align-items-center'>
                         <div style={{ fontSize: '15px' }}><GiPositionMarker /> {item.timeshare_address}</div>
 
-                        <div style={{ fontSize: '15px' }}><BsTextareaResize /> {item.land_area}</div>
+                        <div style={{ fontSize: '15px' }}><BsTextareaResize /> {convertToNumberFormat(item.land_area)} m&#178;</div>
 
                         <div style={{ fontSize: '15px' }}><LuClipboardType />  {item.timeshare_type}</div>
                     </div>
 
-                    <p>Giá: <span className='text-price'>{item.price} /m2</span></p>
+                    <p>Giá: <span className='text-price'>{convertToVNDFormat(item.price)}/m&#178;</span></p>
 
                     <p className='description'>{truncateString(item.timeshare_description, 45)}</p>
 

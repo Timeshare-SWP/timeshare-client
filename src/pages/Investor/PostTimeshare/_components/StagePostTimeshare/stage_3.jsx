@@ -5,11 +5,34 @@ import { UTILITIES_LIST } from '../../../../../constants/utilities'
 
 const Stage_3 = (props) => {
   const { anotherInfo, setAnotherInfo } = props
-  const [selectedYear, setSelectedYear] = useState(new Date());
+  const [selectedUtilities, setSelectedUtilities] = useState(anotherInfo.timeshare_utilities);
 
-  const handleYearChange = (year) => {
-    setSelectedYear(year);
+  const handleInputChange = (e, field) => {
+    let value = e.target.value;
+
+    setAnotherInfo({
+      ...anotherInfo,
+      [field]: value
+    });
+
   };
+
+  const handleYearChange = (date, field) => {
+    setAnotherInfo({
+      ...anotherInfo,
+      [field]: date
+    });
+  };
+
+  const handleUtilitiesChange = (selectedOptions) => {
+    setSelectedUtilities(selectedOptions);
+    setAnotherInfo({
+      ...anotherInfo,
+      timeshare_utilities: selectedOptions.map(option => option),
+    });
+  };
+
+  console.log('selectedUtilities', selectedUtilities)
 
   const convert_utilities_list = UTILITIES_LIST.map(item => ({
     value: item.id,
@@ -24,51 +47,69 @@ const Stage_3 = (props) => {
       <p className='note-title'>(Bấm tiếp tục để bỏ qua giai đoạn này)</p>
 
       <div className='stage-3'>
-        <div className="form-group-material mb-0">
-          <input type="text" required="required" className="form-control" />
-          <label>Mã số bất động sản</label>
-        </div>
-
-        <div className="form-group-material mb-0">
-          <input type="text" required="required" className="form-control" />
-          <label>Hình thức sở hữu</label>
-        </div>
-
-        <div className="form-group-material mb-0">
-          <input type="text" required="required" className="form-control" />
-          <label>Quy mô dự án</label>
-        </div>
-        <div className="form-group-material mb-0">
-          <input type="text" required="required" className="form-control" />
-          <label>Năm khởi công</label>
-          <div className='form-select'>
-            <DatePicker
-              showIcon
-              selected={selectedYear}
-              onChange={handleYearChange}
-              dateFormat="yyyy"
-              showYearPicker
+        <div className='container-input'>
+          <div className="form-group-material mb-0">
+            <input type="text" required="required" className="form-control"
+              value={anotherInfo.real_estate_code}
+              onChange={(e) => handleInputChange(e, 'real_estate_code')}
             />
-          </div>
-        </div>
-
-        <div className="form-group-material mb-0">
-          <input type="text" required="required" className="form-control" />
-          <label>Năm bàn giao</label>
-          <div className='form-select'>
-            <DatePicker
-              showIcon
-              selected={selectedYear}
-              onChange={handleYearChange}
-              dateFormat="yyyy"
-              showYearPicker
-            />
+            <label>Mã số bất động sản</label>
           </div>
 
+          <div className="form-group-material mb-0">
+            <input type="text" required="required" className="form-control"
+              value={anotherInfo.ownership}
+              onChange={(e) => handleInputChange(e, 'ownership')}
+            />
+            <label>Hình thức sở hữu</label>
+          </div>
+
+          <div className="form-group-material mb-0">
+            <input type="text" required="required" className="form-control"
+              value={anotherInfo.timeshare_scale}
+              onChange={(e) => handleInputChange(e, 'timeshare_scale')}
+            />
+            <label>Quy mô dự án</label>
+          </div>
+
+          <div className="form-group-material mb-0">
+            <input type="text" required="required" className="form-control"
+              value={anotherInfo.apartment_direction}
+              onChange={(e) => handleInputChange(e, 'apartment_direction')}
+            />
+            <label>Hướng nhà</label>
+          </div>
+
+          <div className="form-group-material mb-0 year-select">
+            <input type="text" required="required" className="form-control" />
+            <label>Năm khởi công</label>
+            <DatePicker
+              showIcon
+              selected={anotherInfo.year_of_commencement}
+              onChange={(e) => handleYearChange(e, 'year_of_commencement')}
+              dateFormat="yyyy"
+              showYearPicker
+              minDate={new Date()} 
+            />
+
+          </div>
+
+          <div className="form-group-material mb-0 year-select">
+            <input type="text" required="required" className="form-control" />
+            <label>Năm bàn giao</label>
+              <DatePicker
+                showIcon
+                selected={anotherInfo.year_of_handover}
+                onChange={(e) => handleYearChange(e, 'year_of_handover')}
+                dateFormat="yyyy"
+                showYearPicker
+                minDate={anotherInfo.year_of_commencement ? anotherInfo.year_of_commencement : new Date()}
+              />
+          </div>
         </div>
 
         <div className="form-group-material dropdown select-type select-type">
-          <input readOnly="readonly" type="text" required="required" className="form-control" style={{ backgroundColor: 'white' }} />
+          <input readOnly="readonly" type="text" required="required" className="form-control input-blank" style={{ backgroundColor: 'white' }} />
           <label>Tiện ích nội khu <span className="text-danger"></span></label>
 
           <Select
@@ -76,6 +117,8 @@ const Stage_3 = (props) => {
             options={convert_utilities_list}
             className="basic-multi-select"
             classNamePrefix="select"
+            value={selectedUtilities}
+            onChange={handleUtilitiesChange}
           />
 
         </div>

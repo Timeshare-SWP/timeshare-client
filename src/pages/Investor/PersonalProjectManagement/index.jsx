@@ -25,7 +25,7 @@ const PersonalProjectManagement = () => {
 
     const filteredTimeshareList = timeshareList.filter((timeshare) =>
         timeshare.timeshare_name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    ).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     useEffect(() => {
         dispatch(getTimeshareForInvestor()).then((result) => {

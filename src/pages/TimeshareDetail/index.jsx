@@ -6,7 +6,6 @@ import { convertToNumberFormat, truncateString } from '../../utils/handleFunctio
 import { UTILITIES_LIST } from '../../constants/utilities';
 import Location from './_components/Location';
 
-
 const TimeshareDetail = () => {
   const locationState = useLocation();
   const item = locationState?.state?.item
@@ -53,14 +52,26 @@ const TimeshareDetail = () => {
             <div className='location'>
               <p >{item?.timeshare_address}</p>
             </div>
+
             <div className='timeshare-img'>
-              <img src={`${item?.timeshare_image
-                && item?.timeshare_image.length > 0
-                ? item?.timeshare_image[0]?.timeshare_img_url
-                : img_tmp}`} alt="timeshare" />
+              {item.timeshare_image && item.timeshare_image.length > 0 && (
+                item.timeshare_image.map((image, index) => {
+                  if (image.timeshare_img_type === "Ảnh timeshare") {
+                    return (
+                      <img
+                        key={index}
+                        src={image.timeshare_img_url}
+                        alt="timeshare"
+                        className={index === 0 ? "main-image" : "sub-image"}
+                      />
+                    );
+                  }
+                  return null;
+                })
+              )}
             </div>
 
-            <div className="menu">
+            <div className="menu mt-4">
               <p to="#intro" className="menu-item" onClick={() => handleLinkClick('intro')}>Giới thiệu</p>
               <p to="#premises" className="menu-item" onClick={() => handleLinkClick('premises')}>Mặt bằng</p>
               <p to="#utilities" className="menu-item" onClick={() => handleLinkClick('utilities')}>Tiện ích</p>
@@ -93,7 +104,7 @@ const TimeshareDetail = () => {
 
                     <div className="info-item">
                       <div className="info-label">Tổng diện tích:</div>
-                      <div className="info-value">{item?.land_area} m&#178;</div>
+                      <div className="info-value">{convertToNumberFormat(item?.land_area)} m&#178;</div>
                     </div>
 
 
@@ -144,12 +155,27 @@ const TimeshareDetail = () => {
 
             <div className='section-premises' id="premises">
               <h3 className='mb-3'>Mặt bằng dự án</h3>
-              <img src={`${item?.timeshare_image
-                && item?.timeshare_image.length > 0
-                ? item?.timeshare_image[0]?.timeshare_img_url
-                : img_tmp}`}
-                alt="timeshare" />
+              {item.timeshare_image && item.timeshare_image.length > 0 ? (
+                item.timeshare_image.map((image, index) => {
+                  if (image.timeshare_img_type === "Ảnh mặt bằng") {
+                    return (
+                      <img
+                        key={index}
+                        src={image.timeshare_img_url}
+                        alt="timeshare"
+                        className='mb-2'
+                      />
+                    );
+                  }
+                  return null;
+                })
+              ) : (
+                <div className="utility-item">
+                  <div className="utility-name fw-bold">Đang cập nhập</div>
+                </div>
+              )}
             </div>
+
 
             <hr></hr>
 

@@ -53,7 +53,6 @@
     }
 
     .note-title {
-      font-weight: bold;
       font-style: italic;
     }
 
@@ -214,7 +213,6 @@
               box-shadow: 0 8px 16px rgba(28, 30, 34, 0.04);
               font-size: 16px;
               color: #5f666d;
-
             }
           }
         }
@@ -223,6 +221,7 @@
 
     .stage-3 {
       margin: 20px 0px;
+      width: 50%;
 
       .form-group-material {
         position: relative;
@@ -269,6 +268,61 @@
         .form-select:focus {
           outline: none;
           box-shadow: none;
+        }
+      }
+
+      .form-group-material.dropdown {
+        margin-top: 10px;
+        display: flex;
+        justify-content: center;
+
+        .input-blank {
+          padding-top: 90px;
+        }
+
+        .basic-multi-select {
+          position: absolute;
+          top: 20px;
+          width: 98%;
+          font-size: 15px;
+
+          .select__control {
+            border-width: 0px !important;
+            box-shadow: none !important;
+            cursor: pointer;
+          }
+        }
+      }
+
+      .container-input {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+
+        .year-select {
+          cursor: pointer;
+
+          .react-datepicker-wrapper {
+            position: absolute;
+            top: 20px;
+            left: 15px;
+
+            .react-datepicker__input-container {
+              display: flex;
+              align-items: center;
+            }
+
+            svg {
+              padding: 0px !important;
+            }
+
+            input {
+              cursor: pointer;
+              padding: 0px 10px 0px 25px;
+              outline: none;
+              width: 300px;
+            }
+          }
         }
       }
     }
@@ -343,5 +397,11 @@
         }
       }
     }
+  }
+
+  .webkit-scrollbar-modal {
+    overflow-y: scroll;
+    scrollbar-color: #ccc #f3f4f7;
+    scrollbar-width: none;
   }
 }

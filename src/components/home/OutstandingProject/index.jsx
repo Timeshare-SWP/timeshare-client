@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Slider from "react-slick";
 import "./style.scss"
 import { useDispatch, useSelector } from 'react-redux'
@@ -34,6 +34,12 @@ const OutstandingProject = () => {
         dispatch(getTimeshareForGuest())
     }, [])
 
+    const [sortedData, setSortedData] = useState([]);
+    useEffect(() => {
+        const sortedList = [...dataTimeshareList].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setSortedData(sortedList);
+    }, [dataTimeshareList]);
+
     if (loadingTimeshare) {
         return (<LoadingProject />)
     }
@@ -44,7 +50,7 @@ const OutstandingProject = () => {
                 <h4>Dự án mới nổi bật</h4>
                 <div className='list-outstanding-project mt-4'>
                     <Slider {...settings}>
-                        {Array.isArray(dataTimeshareList) && dataTimeshareList.map((item, index) => (
+                        {Array.isArray(sortedData) && sortedData.map((item, index) => (
                             <div
                                 key={index}
                                 onClick={() => handleNavigateToTimeShareDetail(item)}
@@ -69,7 +75,7 @@ const OutstandingProject = () => {
                                         <div className='bottom-content'>
                                             <h5 className='fw-semibold'>{item.timeshare_name}</h5>
                                             <p className='address'>{item.timeshare_address}</p>
-                                            <p className='fw-semibold'>Giá: {convertToVNDFormat(item.price)} /m&#178;</p>
+                                            <p className='fw-semibold'>Giá: {convertToVNDFormat(item.price)}/m&#178;</p>
                                         </div>
                                     </div>
                                 </div>
@@ -89,7 +95,7 @@ const OutstandingProject = () => {
 
                 <div className='list-outstanding-project mt-4'>
                     <Slider {...settings}>
-                        {Array.isArray(dataTimeshareList) && dataTimeshareList.map((item, index) => (
+                        {Array.isArray(sortedData) && sortedData.map((item, index) => (
                             <div
                                 key={index}
                                 onClick={() => handleNavigateToTimeShareDetail(item)}
@@ -116,7 +122,7 @@ const OutstandingProject = () => {
                                         <div className='bottom-content'>
                                             <h5 className='fw-semibold'>{item.timeshare_name}</h5>
                                             <p className='address'>{item.timeshare_address}</p>
-                                            <p className='fw-semibold'>Giá: {convertToVNDFormat(item.price)} /m&#178;</p>
+                                            <p className='fw-semibold'>Giá: {convertToVNDFormat(item.price)}/m&#178;</p>
                                         </div>
                                     </div>
                                 </div>

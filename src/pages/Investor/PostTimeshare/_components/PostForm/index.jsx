@@ -2,15 +2,20 @@ import React, { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { MdDeleteOutline } from "react-icons/md";
 import ModalContinuePostTimeshare from '../ModalContinuePostTimeshare';
-import { createTimeshare } from "../../../../../redux/features/timeshareSlice"
+import { createTimeshare, createTimeshareImage } from "../../../../../redux/features/timeshareSlice"
 import ModalConfirm from "../../../../../components/shared/ModalConfirm"
 import { useDispatch } from 'react-redux';
 import toast from 'react-hot-toast';
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from '../../../../../utils/configFirebase';
+import { generateRandomString, removeCommas } from '../../../../../utils/handleFunction';
+import SpinnerLoading from "../../../../../components/shared/SpinnerLoading"
+import { useNavigate } from 'react-router-dom';
 
 const PostForm = () => {
 
     const [openModalContinuePostState, setOpenModalContinuePostState] = useState(false);
-
+    const navigate = useNavigate();
     //xử lý dữ liệu trong post form
     const [formData, setFormData] = useState({
         timeshare_type: "Căn hộ",
@@ -97,14 +102,24 @@ const PostForm = () => {
 
     //quản lý lưu trữ giữa các stage
     const [selectedTimeshareStatus, setSelectedTimeshareStatus] = useState(null); //stage 1
-    const [selectedJuridicalFiles, setSelectedJuridicalFiles] = useState([]); //stage 2
-    const [anotherInfo, setAnotherInfo] = useState([]); //stage 3
+    const [selectedJuridicalFiles, setSelectedJuridicalFiles] = useState([]); //stage 2, timeshare_related_link
+    const [anotherInfo, setAnotherInfo] = useState({
+        real_estate_code: "",
+        ownership: "",
+        timeshare_scale: "",
+        timeshare_utilities: [],
+        apartment_direction: "",
+        year_of_commencement: null,
+        year_of_handover: null,
+    }); //stage 3
     const [priorityLevel, setPriorityLevel] = useState("Time") //stage 4
 
     //xử lý ảnh timeshare
-    const [imageSelectedTimeshare, setImageSelectedTimeshare] = useState([]);
+    const [imageSelectedTimeshare, setImageSelectedTimeshare] = useState([]); //list ảnh này là để preview trên UI
+    const [imageSelectedTimeshareOrigin, setImageSelectedTimeshareOrigin] = useState([]) //list ảnh này là file gốc khi vừa mới drop lên
 
     const handleOnDrop = (acceptedFiles) => {
+        setImageSelectedTimeshareOrigin([...imageSelectedTimeshareOrigin, ...acceptedFiles])
         setImageSelectedTimeshare([...imageSelectedTimeshare, ...acceptedFiles]);
 
         acceptedFiles.forEach((file) => {
@@ -155,9 +170,11 @@ const PostForm = () => {
     };
 
     //xử lý ảnh mặt bằng
-    const [floorPlanImages, setFloorPlanImages] = useState([]);
+    const [floorPlanImages, setFloorPlanImages] = useState([]); //list ảnh này là để preview trên UI
+    const [floorPlanImagesOrigin, setFloorPlanImagesOrigin] = useState([]) //list ảnh này là file gốc khi vừa mới drop lên
 
     const handleOnDropFloorPlan = (acceptedFiles) => {
+        setFloorPlanImagesOrigin([...floorPlanImages, ...acceptedFiles]);
         setFloorPlanImages([...floorPlanImages, ...acceptedFiles]);
 
         acceptedFiles.forEach((file) => {
@@ -182,7 +199,7 @@ const PostForm = () => {
 
             setFloorPlanImages((prevFiles) =>
                 prevFiles.map((prevFile) =>
-                    prevFile.name === file.name ? { ...prevFile, previewUrl: imageUrl } : prevFile
+                    prevFile.name === file.name ? { ...prevFile, previewUrl: imageUrl, type: file.type } : prevFile
                 )
             );
         };
@@ -212,6 +229,7 @@ const PostForm = () => {
         const isValidForm = validateForm();
         const isValidGeneralImage = imageSelectedTimeshare.length >= 5;
         const isValidFloorImage = floorPlanImages.length >= 1
+
         if (isValidForm && isValidGeneralImage && isValidFloorImage) {
             setOpenModalContinuePostState(true);
         } else {
@@ -251,8 +269,94 @@ const PostForm = () => {
         setOpenModalConfirmState(false)
     }
 
-    const handleConfirmPostTimeshare = () => {
 
+    // gọi api xử lý
+
+    const [isLoading, setIsLoading] = useState(false)
+    const handleConfirmPostTimeshare = async () => {
+
+        //xử lý ảnh up lên firebase
+        setIsLoading(true);
+        toast.error('Quá trình diễn ra sẽ hơi lâu, vui lòng chờ trong giây lát!')
+
+        const uploadPromises = [];
+        const uploadedFiles = [];
+
+        // Tải lên ảnh từ imageSelectedTimeshareOrigin
+        const imageSelectedTimeshareDownload = imageSelectedTimeshareOrigin.map((file) => {
+            const randomFileName = generateRandomString();
+            const storageRef = ref(storage, `timeshare-images/${randomFileName}`);
+            const uploadTask = uploadBytes(storageRef, file);
+            uploadPromises.push(uploadTask);
+            uploadedFiles.push({ path: `timeshare-images/${randomFileName}`, file });
+            return uploadTask.then(() => getDownloadURL(storageRef));
+        });
+
+        // Tải lên ảnh từ floorPlanImagesOrigin
+        const floorPlanImagesDownload = floorPlanImagesOrigin.map((file) => {
+            const randomFileName = generateRandomString();
+            const storageRef = ref(storage, `timeshare-images/${randomFileName}`);
+            const uploadTask = uploadBytes(storageRef, file);
+            uploadPromises.push(uploadTask);
+            uploadedFiles.push({ path: `timeshare-images/${randomFileName}`, file });
+            return uploadTask.then(() => getDownloadURL(storageRef));
+        });
+
+        await Promise.all(uploadPromises);
+
+        const imageSelectedTimeshareURLs = await Promise.all(imageSelectedTimeshareDownload);
+        const floorPlanImagesURLs = await Promise.all(floorPlanImagesDownload);
+
+        // Tạo mảng compileAllImages
+        const compileAllImages = [
+            ...imageSelectedTimeshareURLs.map((url) => ({ timeshare_img_type: 'Ảnh timeshare', timeshare_img_url: url })),
+            ...floorPlanImagesURLs.map((url) => ({ timeshare_img_type: 'Ảnh mặt bằng', timeshare_img_url: url })),
+        ];
+
+        let timeshare_image = [];
+
+        const dispatchPromises = compileAllImages.map((data) => {
+            return dispatch(createTimeshareImage(data)).then((result) => {
+                if (createTimeshareImage.fulfilled.match(result)) {
+                    timeshare_image.push(result.payload._id);
+                }
+            });
+        });
+
+        Promise.all(dispatchPromises).then(() => {
+            const data = {
+                ...formData, ...anotherInfo,
+                price: removeCommas(formData.price),
+                land_area: removeCommas(formData.land_area),
+                timeshare_utilities: anotherInfo.timeshare_utilities.map(item => item.value),
+                year_of_commencement: anotherInfo?.year_of_commencement ? anotherInfo?.year_of_commencement.getFullYear() : null,
+                year_of_handover: anotherInfo?.year_of_handover ? anotherInfo?.year_of_handover.getFullYear() : null,
+                timeshare_image,
+                priority_level: priorityLevel,
+                timeshare_status: selectedTimeshareStatus.name_status,
+            }
+
+            dispatch(createTimeshare(data)).then((result) => {
+                if (createTimeshare.fulfilled.match(result)) {
+                    toast.success('Đăng timeshare thành công!')
+                    navigate('/personal-projects')
+                    setFormData("");
+                    setAnotherInfo("");
+                    setSelectedTimeshareStatus("");
+                    setSelectedJuridicalFiles("");
+                    setPriorityLevel("");
+                    setImageSelectedTimeshare("");
+                    setImageSelectedTimeshareOrigin("");
+                    setFloorPlanImages("");
+                    setFloorPlanImagesOrigin("");
+                } else {
+                    toast.error(`${result.payload}`)
+                }
+            })
+
+            setIsLoading(false);
+
+        });
     }
 
     return (
@@ -279,7 +383,7 @@ const PostForm = () => {
                         <p className="mb-2">Nhu cầu của bạn là gì? <span className="text-danger">*</span></p>
                         <div className="row flex">
                             <div className="form-check">
-                                <input id="service_type_sale" checked type="radio" name="service_type" className="radio" value="sale" />
+                                <input id="service_type_sale" defaultChecked type="radio" name="service_type" className="radio" value="sale" />
                                 <label htmlFor="service_type_sale">Cần bán</label>
                             </div>
                             <div className="form-check disabled" >
@@ -325,7 +429,7 @@ const PostForm = () => {
                     </div> <div className="form-group">
                         <p className="mb-2 mt-3">Tỉnh/Thành phố <span className="text-danger">*</span></p> <div className="row flex-column">
                             <div className="form-check">
-                                <input id="city_Tp.Hồ Chí Minh" type="radio" className="radio" value="Tp.Hồ Chí Minh" checked/>
+                                <input id="city_Tp.Hồ Chí Minh" type="radio" className="radio" value="Tp.Hồ Chí Minh" defaultChecked />
                                 <label htmlFor="city_Tp.Hồ Chí Minh">Tp.Hồ Chí Minh</label>
                             </div>
                         </div>
@@ -556,6 +660,8 @@ const PostForm = () => {
                     body={"Bạn có chắc chắn muốn đăng Timeshare này lên?"} />
                 }
             </div>
+
+            {isLoading && <SpinnerLoading />}
         </div>
     )
 }

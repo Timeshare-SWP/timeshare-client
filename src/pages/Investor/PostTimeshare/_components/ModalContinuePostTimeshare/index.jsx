@@ -76,7 +76,7 @@ const ModalContinuePostTimeshare = (props) => {
                 {/* <Modal.Title></Modal.Title> */}
             </Modal.Header>
 
-            <Modal.Body>
+            <Modal.Body className='webkit-scrollbar-modal'>
                 <div className="stage-header">
                     {[1, 2, 3, 4].map(stageNum => (
                         <button

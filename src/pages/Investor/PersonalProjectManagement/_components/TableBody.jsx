@@ -5,7 +5,7 @@ import { CgArrowsExchange } from "react-icons/cg";
 import { MdOutlineDelete } from "react-icons/md";
 import { MdOutlinePublishedWithChanges } from "react-icons/md";
 
-import { convertToVnTime } from '../../../../utils/handleFunction';
+import { convertToNumberFormat, convertToVnTime } from '../../../../utils/handleFunction';
 import { Dropdown } from 'react-bootstrap';
 import ModalConfirm from '../../../../components/shared/ModalConfirm';
 import { useDispatch, useSelector } from 'react-redux';
@@ -182,7 +182,7 @@ const TableBody = (props) => {
                         <tr key={index} className='table-body'>
                             <th scope="row">{index + 1}</th>
                             <td>{item?.timeshare_name}</td>
-                            <td>{item?.land_area}</td>
+                            <td>{convertToNumberFormat(item?.land_area)}</td>
                             <td>{item?.timeshare_type}</td>
                             <td>
                                 {renderStatus(item.timeshare_status, ["Sắp triển khai", "Đang triển khai", "Đã triển khai"])}

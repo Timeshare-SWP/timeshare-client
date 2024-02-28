@@ -21,7 +21,7 @@ const Stage_4 = (props) => {
                 id={`priority_${index}`}
                 name='priority'
                 value={obj.name}
-                checked={priorityLevel === obj.name}
+                defaultChecked={priorityLevel === obj.name}
               // onChange={() => handleRadioChange(obj.name)}
               />
             </div>

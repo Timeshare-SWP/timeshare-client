@@ -51,6 +51,21 @@ export const createTimeshare = createAsyncThunk(
   }
 );
 
+export const createTimeshareImage = createAsyncThunk(
+  "timeshare/createTimeshareImage",
+  async (data, thunkAPI) => {
+    try {
+      const instance = getInstanceWithToken();
+
+      const response = await instance.post(`/api/timeshares/timeshare_image`, { ...data });
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 export const changeTimeshareStatus = createAsyncThunk(
   "timeshare/changeTimeshareStatus",
   async (data, thunkAPI) => {
@@ -112,6 +127,21 @@ export const timeshareSlice = createSlice({
       state.error = "";
     });
     builder.addCase(createTimeshare.rejected, (state, action) => {
+      state.loadingTimeshare = false;
+      state.error = action.payload;
+    });
+
+    //createTimeshareImage
+    builder.addCase(createTimeshareImage.pending, (state) => {
+      state.loadingTimeshare = true;
+      state.error = "";
+    });
+    builder.addCase(createTimeshareImage.fulfilled, (state, action) => {
+      state.loadingTimeshare = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(createTimeshareImage.rejected, (state, action) => {
       state.loadingTimeshare = false;
       state.error = action.payload;
     });

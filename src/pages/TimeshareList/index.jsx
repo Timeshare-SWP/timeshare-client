@@ -22,8 +22,11 @@ const TimeshareList = () => {
 
   const filteredTimeshareList = timeshareList.filter((timeshare) =>
     timeshare.timeshare_name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
+  ).sort((a, b) => {
+    const dateA = new Date(b.createdAt);
+    const dateB = new Date(a.createdAt);
+    return dateA - dateB;
+  });
 
   useEffect(() => {
     dispatch(getTimeshareForGuest()).then((result) => {

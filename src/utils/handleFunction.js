@@ -61,10 +61,35 @@ export const convertToVNDFormat = (number) => {
   }
 };
 
-export const convertToNumberFormat = (number) => {
-  if (typeof number !== "number") {
-    return number;
+export const convertToNumberFormat = (input) => {
+  if (typeof input === "string" && /^\d+$/.test(input)) {
+    const number = parseInt(input, 10);
+    return number.toLocaleString();
+  } else if (typeof input === "number") {
+    return input.toLocaleString();
+  } else {
+    return input;
+  }
+};
+
+export const generateRandomString = () => {
+  const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+  const randomLetters = Array(7).fill("");
+
+  for (let i = 0; i < randomLetters.length; i++) {
+    const randomIndex = Math.floor(Math.random() * letters.length);
+
+    const randomLetter = letters[randomIndex];
+
+    randomLetters[i] = randomLetter;
   }
 
-  return number.toLocaleString();
-};
+  const randomString = randomLetters.join("");
+
+  return randomString;
+}
+
+export const removeCommas = (str) => {
+  return str.replace(/,/g, '');
+}

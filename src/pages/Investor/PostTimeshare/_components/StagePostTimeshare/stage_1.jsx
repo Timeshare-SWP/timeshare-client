@@ -5,8 +5,6 @@ const Stage_1 = (props) => {
 
   const { selectedTimeshareStatus, setSelectedTimeshareStatus } = props
 
-
-  
   const handleItemClick = (obj) => {
     setSelectedTimeshareStatus(obj);
   };
