@@ -5,9 +5,10 @@ import { MdDeleteOutline } from "react-icons/md";
 import { truncateString } from "../../../../../utils/handleFunction"
 
 const Stage_2 = (props) => {
-  const { selectedJuridicalFiles, setSelectedJuridicalFiles } = props
+  const { selectedJuridicalFiles, setSelectedJuridicalFiles, juridicalFilesOrigin, setJuridicalFilesOrigin } = props
 
   const handleOnDrop = (acceptedFiles) => {
+    setJuridicalFilesOrigin([...juridicalFilesOrigin, ...acceptedFiles])
     setSelectedJuridicalFiles([...selectedJuridicalFiles, ...acceptedFiles]);
 
     acceptedFiles.forEach((file) => {

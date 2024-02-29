@@ -9,7 +9,7 @@ import TableHeader from './_components/TableHeader';
 import TableBody from './_components/TableBody';
 import { BsPlusLg, BsSearch } from "react-icons/bs";
 import { Link } from 'react-router-dom';
-
+import Pagination from '../../../components/shared/Pagination';
 
 const PersonalProjectManagement = () => {
     const dispatch = useDispatch();
@@ -19,13 +19,23 @@ const PersonalProjectManagement = () => {
     const [timeshareList, setTimeShareList] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+
+
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);
     };
 
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
     const filteredTimeshareList = timeshareList.filter((timeshare) =>
         timeshare.timeshare_name.toLowerCase().includes(searchTerm.toLowerCase())
-    ).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    ).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(indexOfFirstItem, indexOfLastItem);
+
+    const paginate = pageNumber => setCurrentPage(pageNumber);
 
     useEffect(() => {
         dispatch(getTimeshareForInvestor()).then((result) => {
@@ -35,11 +45,14 @@ const PersonalProjectManagement = () => {
         })
     }, [])
 
-    console.log("data", dataTimeshareList)
-
 
     if (loadingTimeshare) {
-        return (<SimpleLoading />)
+        return (<>
+            <CommonSection title="Dự án cá nhân" />
+            <div style={{ height: '50vh' }} className='d-flex justify-content-center align-items-center'>
+                <SimpleLoading />
+            </div>
+        </>)
     }
 
     return (
@@ -75,6 +88,13 @@ const PersonalProjectManagement = () => {
                     <TableHeader />
                     <TableBody timeshareList={filteredTimeshareList} setTimeShareList={setTimeShareList} />
                 </table>
+
+                <Pagination
+                    currentPage={currentPage}
+                    itemsPerPage={itemsPerPage}
+                    totalItems={timeshareList.length}
+                    paginate={paginate}
+                />
             </Container>
         </>
 

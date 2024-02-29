@@ -13,7 +13,7 @@ const ModalContinuePostTimeshare = (props) => {
         stageEnabled, setStageEnabled,
         selectedTimeshareStatus,
         setSelectedTimeshareStatus, selectedJuridicalFiles,
-        setSelectedJuridicalFiles, anotherInfo, setAnotherInfo,
+        setSelectedJuridicalFiles, juridicalFilesOrigin, setJuridicalFilesOrigin, anotherInfo, setAnotherInfo,
         priorityLevel, setPriorityLevel, openModalConfirmState,
         handleCancelModalConfirm, handleConfirmPostTimeshare, handleOpenConfirmModal } = props
 
@@ -60,7 +60,7 @@ const ModalContinuePostTimeshare = (props) => {
             case 1:
                 return <Stage_1 selectedTimeshareStatus={selectedTimeshareStatus} setSelectedTimeshareStatus={setSelectedTimeshareStatus} />;
             case 2:
-                return <Stage_2 selectedJuridicalFiles={selectedJuridicalFiles} setSelectedJuridicalFiles={setSelectedJuridicalFiles} />;
+                return <Stage_2 selectedJuridicalFiles={selectedJuridicalFiles} setSelectedJuridicalFiles={setSelectedJuridicalFiles} juridicalFilesOrigin={juridicalFilesOrigin} setJuridicalFilesOrigin={setJuridicalFilesOrigin}/>;
             case 3:
                 return <Stage_3 anotherInfo={anotherInfo} setAnotherInfo={setAnotherInfo} />;
             case 4:

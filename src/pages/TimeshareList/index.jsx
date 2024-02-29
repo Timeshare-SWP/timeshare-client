@@ -5,6 +5,7 @@ import CommonSection from "../../components/CommonSection"
 import { Container } from 'react-bootstrap'
 import TimeshareListLoading from './_components/TimeshareListLoading'
 import './style.scss'
+import Pagination from '../../components/shared/Pagination';
 
 import TimeshareCard from './_components/TimeshareCard'
 
@@ -15,18 +16,30 @@ const TimeshareList = () => {
 
   const [timeshareList, setTimeShareList] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(8);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
 
-  const filteredTimeshareList = timeshareList.filter((timeshare) =>
-    timeshare.timeshare_name.toLowerCase().includes(searchTerm.toLowerCase())
-  ).sort((a, b) => {
-    const dateA = new Date(b.createdAt);
-    const dateB = new Date(a.createdAt);
-    return dateA - dateB;
-  });
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = timeshareList
+    .filter(timeshare =>
+      timeshare.timeshare_name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      const dateA = new Date(b.createdAt);
+      const dateB = new Date(a.createdAt);
+      return dateA - dateB;
+    })
+    .slice(indexOfFirstItem, indexOfLastItem);
+
+    const paginate = pageNumber => {
+      setCurrentPage(pageNumber);
+      window.scrollTo(0, 0); 
+    };
 
   useEffect(() => {
     dispatch(getTimeshareForGuest()).then((result) => {
@@ -70,15 +83,22 @@ const TimeshareList = () => {
           </div>
         </div>
 
-        <div className='timeshare-list-container__list-card'>
-          {filteredTimeshareList.length === 0 ? (
+        <div className="timeshare-list-container__list-card">
+          {currentItems.length === 0 ? (
             <div className="text-center">Không tìm thấy timeshare phù hợp</div>
           ) : (
-            filteredTimeshareList.map((item, index) => (
+            currentItems.map((item, index) => (
               <TimeshareCard item={item} key={index} />
             ))
           )}
         </div>
+
+        <Pagination
+          currentPage={currentPage}
+          itemsPerPage={itemsPerPage}
+          totalItems={timeshareList.length}
+          paginate={paginate}
+        />
       </Container>
 
     </div>

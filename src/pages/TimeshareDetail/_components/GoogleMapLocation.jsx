@@ -1,7 +1,7 @@
 import React from 'react'
 import GoogleMapReact from 'google-map-react';
 
-const Location = (props) => {
+const GoogleMapLocation = (props) => {
 
     const { timeshare_location } = props
 
@@ -25,4 +25,4 @@ const Location = (props) => {
     )
 }
 
-export default Location
+export default GoogleMapLocation

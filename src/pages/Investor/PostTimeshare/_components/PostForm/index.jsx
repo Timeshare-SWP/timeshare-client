@@ -102,7 +102,8 @@ const PostForm = () => {
 
     //quản lý lưu trữ giữa các stage
     const [selectedTimeshareStatus, setSelectedTimeshareStatus] = useState(null); //stage 1
-    const [selectedJuridicalFiles, setSelectedJuridicalFiles] = useState([]); //stage 2, timeshare_related_link
+    const [selectedJuridicalFiles, setSelectedJuridicalFiles] = useState([]); //stage 2
+    const [juridicalFilesOrigin, setJuridicalFilesOrigin] = useState([]) //stage 2, timeshare_related_link
     const [anotherInfo, setAnotherInfo] = useState({
         real_estate_code: "",
         ownership: "",
@@ -113,6 +114,8 @@ const PostForm = () => {
         year_of_handover: null,
     }); //stage 3
     const [priorityLevel, setPriorityLevel] = useState("Time") //stage 4
+
+    console.log('juridicalFilesOrigin', juridicalFilesOrigin)
 
     //xử lý ảnh timeshare
     const [imageSelectedTimeshare, setImageSelectedTimeshare] = useState([]); //list ảnh này là để preview trên UI
@@ -302,10 +305,22 @@ const PostForm = () => {
             return uploadTask.then(() => getDownloadURL(storageRef));
         });
 
+        //Tải file từ juridicalFilesOrigin
+        const juridicalFilesDownload = juridicalFilesOrigin.map((file) => {
+            const randomFileName = generateRandomString();
+            const storageRef = ref(storage, `timeshare-images/${randomFileName}`);
+            const uploadTask = uploadBytes(storageRef, file);
+            uploadPromises.push(uploadTask);
+            uploadedFiles.push({ path: `timeshare-images/${randomFileName}`, file });
+            return uploadTask.then(() => getDownloadURL(storageRef));
+        });
+
+
         await Promise.all(uploadPromises);
 
         const imageSelectedTimeshareURLs = await Promise.all(imageSelectedTimeshareDownload);
         const floorPlanImagesURLs = await Promise.all(floorPlanImagesDownload);
+        const juridicalFilesURLs = await Promise.all(juridicalFilesDownload);
 
         // Tạo mảng compileAllImages
         const compileAllImages = [
@@ -324,6 +339,8 @@ const PostForm = () => {
         });
 
         Promise.all(dispatchPromises).then(() => {
+            console.log("juridicalFilesURLs", juridicalFilesURLs)
+            
             const data = {
                 ...formData, ...anotherInfo,
                 price: removeCommas(formData.price),
@@ -334,6 +351,7 @@ const PostForm = () => {
                 timeshare_image,
                 priority_level: priorityLevel,
                 timeshare_status: selectedTimeshareStatus.name_status,
+                timeshare_related_link: juridicalFilesURLs
             }
 
             dispatch(createTimeshare(data)).then((result) => {
@@ -642,6 +660,8 @@ const PostForm = () => {
                         setSelectedTimeshareStatus={setSelectedTimeshareStatus}
                         selectedJuridicalFiles={selectedJuridicalFiles}
                         setSelectedJuridicalFiles={setSelectedJuridicalFiles}
+                        juridicalFilesOrigin={juridicalFilesOrigin}
+                        setJuridicalFilesOrigin={setJuridicalFilesOrigin}
                         anotherInfo={anotherInfo}
                         setAnotherInfo={setAnotherInfo}
                         priorityLevel={priorityLevel}
