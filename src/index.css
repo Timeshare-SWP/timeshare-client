@@ -19,3 +19,7 @@ p {
   scrollbar-color: #ccc #f3f4f7;
   scrollbar-width: thin;
 }
+
+.dropdown-menu {
+  --bs-dropdown-link-active-bg: transparent !important;
+}

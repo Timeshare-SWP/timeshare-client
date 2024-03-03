@@ -115,7 +115,7 @@ const PostForm = () => {
     }); //stage 3
     const [priorityLevel, setPriorityLevel] = useState("Time") //stage 4
 
-    console.log('juridicalFilesOrigin', juridicalFilesOrigin)
+    // console.log('juridicalFilesOrigin', juridicalFilesOrigin)
 
     //xử lý ảnh timeshare
     const [imageSelectedTimeshare, setImageSelectedTimeshare] = useState([]); //list ảnh này là để preview trên UI

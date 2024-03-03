@@ -1,6 +1,14 @@
 .user-header {
   border-bottom: 1px solid #cbcbcd;
 
+  .btn-check:checked + .btn,
+  .btn.active,
+  .btn.show,
+  .btn:first-child:active,
+  :not(.btn-check) + .btn:active {
+    border-color: transparent;
+  }
+
   .main__navbar {
     padding: 15px 0px;
     background: white;
@@ -66,7 +74,6 @@
           display: flex;
           gap: 0.8rem;
           width: fit-content !important;
-          
 
           .list-dropdown-menu-item:hover {
             background-color: #cbcbcd;
@@ -113,6 +120,155 @@
       }
 
       .dropdown-header {
+        .dropdown-toggle {
+          padding: 0px !important;
+        }
+      }
+
+      .notification-container {
+        position: relative;
+
+        .notification-quantity {
+          position: absolute;
+          width: 15px;
+          height: 15px;
+          border-radius: 50%;
+          top: -5px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-color: #dc3545;
+          color: white;
+          font-size: 12px;
+        }
+
+        .header-notification {
+          padding: 0px 16px;
+
+          h2 {
+            font-size: 20px;
+          }
+        }
+
+        .notification-list-container {
+          overflow-y: scroll;
+          max-height: 480px;
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+
+          .dropdown-item {
+            position: relative;
+
+            .new-noti-dot {
+              width: 10px;
+              height: 10px;
+              border-radius: 50%;
+              background-color: #dc3545;
+              position: absolute;
+              top: 2px;
+              left: 12px;
+              z-index: 999;
+            }
+
+            .card {
+              cursor: pointer;
+              width: 100%;
+              height: fit-content;
+              flex-direction: row;
+              justify-content: space-between;
+
+              &:hover {
+                background-color: #f0f0f0;
+                border-radius: 1rem;
+              }
+
+              img {
+                border-radius: 9999px;
+                border: 2px solid #dee2e6;
+                width: 48px;
+                height: 48px;
+              }
+
+              &.d-flex {
+                display: flex;
+              }
+
+              &.align-items-center {
+                align-items: center;
+              }
+              .w-80 {
+                width: 82%;
+                height: fit-content;
+              }
+
+              p {
+                &.text-sm {
+                  font-size: 0.875rem;
+                  color: #6b7280;
+                  word-wrap: break-word;
+                }
+                &.text-xs {
+                  font-size: 0.75rem;
+                  color: #6b7280;
+                  word-wrap: break-word;
+                }
+              }
+            }
+          }
+        }
+
+        .notification-content {
+          width: 400px;
+
+          .option-noti-btn {
+            padding: 0px 16px;
+
+            .btn {
+              border-radius: 25px;
+
+              &.active {
+                background-color: #c65959;
+                color: white;
+              }
+
+              &:first-child {
+                margin-right: 10px;
+              }
+
+              &:hover {
+                background-color: #c55858a4;
+                border-radius: 25px;
+              }
+            }
+          }
+        }
+
+        .dropdown-toggle {
+          padding: 0px !important;
+
+          &:after {
+            display: none !important;
+          }
+        }
+
+        .bell-container {
+          width: 30px;
+          height: 30px;
+          border: 1px solid #cbcbcd;
+          border-radius: 50%;
+          outline: none;
+          transition: border-color 0.3s ease;
+
+          svg {
+            width: 20px;
+            height: 20px;
+          }
+
+          &:hover {
+            border: 1px solid black;
+          }
+        }
       }
     }
   }

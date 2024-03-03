@@ -24,7 +24,7 @@ const OutstandingProject = () => {
     const navigate = useNavigate();
     const { dataTimeshareList, loadingTimeshare } = useSelector((state) => state.timeshare)
 
-    console.log("dataTimeshareList", dataTimeshareList)
+    // console.log("dataTimeshareList", dataTimeshareList)
 
     const handleNavigateToTimeShareDetail = (item) => {
         navigate(`/timeshare-list/${convertToSlug(item.timeshare_name)}`, { state: { item } })

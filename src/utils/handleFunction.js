@@ -1,3 +1,5 @@
+import * as moment from "moment-timezone";
+
 export const validateEmail = (email) => {
   return String(email)
     .toLowerCase()
@@ -93,3 +95,29 @@ export const generateRandomString = () => {
 export const removeCommas = (str) => {
   return str.replace(/,/g, '');
 }
+
+export const getDateTimeDifference = (utcTimeString) => {
+  const currentUtcTime = moment.utc();
+
+  const targetUtcTime = moment.utc(utcTimeString);
+
+  const duration = moment.duration(targetUtcTime.diff(currentUtcTime));
+
+  const absoluteDuration = Math.abs(duration.asSeconds());
+
+  if (absoluteDuration < 60) {
+    return `${Math.round(absoluteDuration)} giây`;
+  } else if (absoluteDuration < 3600) {
+    return `${Math.round(absoluteDuration / 60)} phút`;
+  } else if (absoluteDuration < 86400) {
+    return `${Math.round(absoluteDuration / 3600)} giờ`;
+  } else if (absoluteDuration < 604800) {
+    return `${Math.round(absoluteDuration / 86400)} ngày`;
+  } else if (absoluteDuration < 2419200) {
+    return `${Math.round(absoluteDuration / 604800)} tuần`;
+  } else if (absoluteDuration < 29030400) {
+    return `${Math.round(absoluteDuration / 2419200)} tháng`;
+  } else {
+    return `${Math.round(absoluteDuration / 29030400)} năm`;
+  }
+};

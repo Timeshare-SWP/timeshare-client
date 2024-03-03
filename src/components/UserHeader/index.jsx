@@ -11,6 +11,7 @@ import DropDownUser from '../UserHeader/_components/DropDownUser'
 import { USER_HEADER_LINK } from '../../constants/header';
 import Authentication from '../auth/Authentication';
 import ModalConfirm from '../shared/ModalConfirm';
+import Notification from './_components/Notification';
 
 const UserHeader = () => {
   const { currentToken, logout, userDecode, isLoadingEvent } = useContext(AuthContext);
@@ -44,7 +45,8 @@ const UserHeader = () => {
   };
 
   const handleUpTimeshare = () => {
-    if (!userDecode) {
+    console.log('hmmm', userDecode)
+    if (!userDecode || !Object.keys(userDecode).length) {
       setShowModal(true)
     } else {
       navigate("/up-timeshare")
@@ -119,7 +121,7 @@ const UserHeader = () => {
                 className="btn btn-danger fw-semibold"
                 onClick={handleUpTimeshare}
               >
-                Đăng bán nhà đất
+                Đăng bán timeshare
               </div>
             </div>
             }
@@ -136,32 +138,34 @@ const UserHeader = () => {
               </button>
               <Login open={modalLoginOpen} onClose={() => setModalLoginOpen(false)} />
 
-              <Link
+              <div
                 className="btn btn-danger fw-semibold"
-                to="/up-timeshare"
+                onClick={handleUpTimeshare}
               >
-                Đăng bán nhà đất
-              </Link>
+                Đăng bán timeshare
+              </div>
             </div>}
 
             {userDecode && Object.keys(userDecode).length !== 0 && <>
+
+              <Notification />
               <DropDownUser user={userDecode} actionLogout={logout} />
 
               {userDecode.role_id.roleName === "Investor"
                 &&
-                <Link
+                <div
                   className="btn btn-danger fw-semibold"
-                  to="/up-timeshare"
+                  onClick={handleUpTimeshare}
                 >
-                  Đăng bán nhà đất
-                </Link>
+                  Đăng bán timeshare
+                </div>
               }
             </>}
 
             {showModal && <ModalConfirm show={showModal}
               handleClose={() => setShowModal(false)}
               handleAccept={() => { setModalLoginOpen(true); setShowModal(false) }}
-              body={'Vui lòng đăng nhập trước khi đăng bán nhà đất!'} />
+              body={'Vui lòng đăng nhập trước khi đăng bán timeshare!'} />
             }
 
             {isLoadingEvent && <SpinnerLoading />}
