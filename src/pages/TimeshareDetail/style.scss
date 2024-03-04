@@ -51,22 +51,21 @@
       grid-gap: 10px;
       justify-content: center;
     }
-    
+
     .timeshare-img img {
       max-width: 100%;
       display: block;
     }
-    
+
     .main-image {
       grid-column: 1 / -1;
     }
-    
+
     .sub-image {
-      width: 200px; 
-      height: 150px; 
-      object-fit: cover; 
+      width: 200px;
+      height: 150px;
+      object-fit: cover;
     }
-    
 
     .menu {
       display: flex;
@@ -171,8 +170,12 @@
     }
 
     .other-text {
+      width: fit-content;
       position: relative;
-      z-index: 1;
+      background-color: white;
+      z-index: 99;
+      padding: 0 5px;
+      left: 44%;
     }
 
     .btn {
@@ -183,4 +186,5 @@
       padding-bottom: 7px;
     }
   }
+
 }

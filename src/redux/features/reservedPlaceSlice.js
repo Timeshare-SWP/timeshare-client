@@ -23,12 +23,27 @@ export const viewAllReservedPlace = createAsyncThunk(
   }
 );
 
+export const createReservedPlace = createAsyncThunk(
+  "reservedPlace/createReservedPlace",
+  async (_, thunkAPI) => {
+    try {
+      const instance = getInstanceWithToken();
+
+      const response = await instance.get(`/api/reservePlaces`);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 export const reservedPlaceSlice = createSlice({
   name: "reservedPlace",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    //sendOtpWhenRegister
+    //viewAllReservedPlace
     builder.addCase(viewAllReservedPlace.pending, (state) => {
       state.loadingReservedPlace = true;
       state.error = "";
@@ -39,6 +54,21 @@ export const reservedPlaceSlice = createSlice({
       state.error = "";
     });
     builder.addCase(viewAllReservedPlace.rejected, (state, action) => {
+      state.loadingReservedPlace = false;
+      state.error = action.payload;
+    });
+
+    //createReservedPlace
+    builder.addCase(createReservedPlace.pending, (state) => {
+      state.loadingReservedPlace = true;
+      state.error = "";
+    });
+    builder.addCase(createReservedPlace.fulfilled, (state, action) => {
+      state.loadingReservedPlace = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(createReservedPlace.rejected, (state, action) => {
       state.loadingReservedPlace = false;
       state.error = action.payload;
     });

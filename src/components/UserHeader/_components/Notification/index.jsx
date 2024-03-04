@@ -77,7 +77,7 @@ const Notification = () => {
             if (replyToJoinTimeshare.rejected.match(result)) {
                 toast.error(`${result.payload}`)
             } else {
-                toast.success(`Chấp thuận thành công!`)
+                toast.success(`Phản hồi thành công!`)
 
                 navigate("/reserved-place-list");
 
