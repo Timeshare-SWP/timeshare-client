@@ -15,9 +15,13 @@ const ReservedPlaceManagement = () => {
 
   useEffect(() => {
     dispatch(viewAllReservedPlace()).then((result) => {
-      setReservedPlaceList(result.payload)
-    })
-  }, [])
+      const sortedReservedPlaceList = result.payload.sort((a, b) => {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
+
+      setReservedPlaceList(sortedReservedPlaceList);
+    });
+  }, []);
 
   if (loadingReservedPlace) {
     return (
@@ -34,7 +38,10 @@ const ReservedPlaceManagement = () => {
   return (
     <GeneralManagementLayout>
       <div className='reserved-place-container'>
-        <TableLayout tableHeaderName={RESERVED_PLACE_TABLE_HEADER_NAME} reservedPlaceList={reservedPlaceList} />
+        <TableLayout
+          tableHeaderName={RESERVED_PLACE_TABLE_HEADER_NAME}
+          reservedPlaceList={reservedPlaceList}
+        />
       </div>
     </GeneralManagementLayout>
 

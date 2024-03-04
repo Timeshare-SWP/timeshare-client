@@ -7,7 +7,7 @@ const DropDownUser = (props) => {
 
     const { user, actionLogout } = props
 
-    console.log(user)
+    // console.log(user)
     
     const getMenuItems = () => {
         switch (user?.role_id?.roleName) {

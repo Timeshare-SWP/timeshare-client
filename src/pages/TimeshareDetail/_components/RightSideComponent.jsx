@@ -8,10 +8,10 @@ const RightSideComponent = (props) => {
 
     const [openModalReservedPlace, setOpenModalReservedPlace] = useState(false);
 
-     // stage_1
-     const [memberList, setMemberList] = useState([])
-     const [optionTypeReservedPlace, setOptionTypeReservedPlace] = useState('');
-     const [error, setError] = useState('')
+    // stage_1
+    const [memberList, setMemberList] = useState([])
+    const [optionTypeReservedPlace, setOptionTypeReservedPlace] = useState('');
+    const [error, setError] = useState('')
 
     const handleActionTransition = () => {
         if (item?.sell_timeshare_status === "Chưa được bán") {
@@ -45,6 +45,7 @@ const RightSideComponent = (props) => {
 
             {openModalReservedPlace &&
                 <ModalReservedPlace
+                    item={item}
                     show={openModalReservedPlace}
                     handleClose={() => setOpenModalReservedPlace(false)}
                     memberList={memberList}

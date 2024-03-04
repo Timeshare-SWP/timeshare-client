@@ -35,7 +35,7 @@ const MoreAction = ({ transactionSelected, userDecode }) => {
         setOpenModalInvite(true);
     }
 
-    const handleCallApiInviteCustomer = () => {   
+    const handleCallApiInviteCustomer = () => {
         setLoadingHandleEvent(true)
         if (memberList.length !== 0) {
             for (const user of memberList) {
@@ -105,7 +105,15 @@ const MoreAction = ({ transactionSelected, userDecode }) => {
     }
 
     const renderDropDownMenuItem = () => {
-        return RESERVED_PLACE_LIST_ACTION.map((item, index) => (
+        let actionsToShow = RESERVED_PLACE_LIST_ACTION;
+
+        if (transactionSelected
+            && (transactionSelected.timeshare_id.sell_timeshare_status === "Chưa được bán"
+                || transactionSelected.timeshare_id.sell_timeshare_status === "Đã bán")) {
+            actionsToShow = RESERVED_PLACE_LIST_ACTION.filter(item => item.id !== 3);
+        }
+
+        return actionsToShow.map((item, index) => (
             <Dropdown.Item
                 key={index}
                 className='d-flex align-items-center gap-2'
@@ -114,8 +122,9 @@ const MoreAction = ({ transactionSelected, userDecode }) => {
                 {item?.icon}
                 {item?.name}
             </Dropdown.Item>
-        ))
+        ));
     }
+
 
 
     return (
@@ -151,7 +160,7 @@ const MoreAction = ({ transactionSelected, userDecode }) => {
                 />
             }
 
-            {loadingHandleEvent && <SpinnerLoading/>}
+            {loadingHandleEvent && <SpinnerLoading />}
         </Dropdown>
     )
 }

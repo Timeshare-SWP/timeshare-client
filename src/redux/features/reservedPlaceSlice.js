@@ -25,11 +25,11 @@ export const viewAllReservedPlace = createAsyncThunk(
 
 export const createReservedPlace = createAsyncThunk(
   "reservedPlace/createReservedPlace",
-  async (_, thunkAPI) => {
+  async (data, thunkAPI) => {
     try {
       const instance = getInstanceWithToken();
 
-      const response = await instance.get(`/api/reservePlaces`);
+      const response = await instance.post(`/api/reservePlaces`, { ...data });
 
       return response.data;
     } catch (error) {
@@ -72,8 +72,6 @@ export const reservedPlaceSlice = createSlice({
       state.loadingReservedPlace = false;
       state.error = action.payload;
     });
-
-    
   },
 });
 
