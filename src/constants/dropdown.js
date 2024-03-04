@@ -1,7 +1,7 @@
 export const DROPDOWN_HEADER_CUSTOMER = [
   { label: "Trang cá nhân", link: "/my_account" },
-  { label: "Nhà đất yêu thích", link: "/my_account" },
-  { label: "Lịch sử đã xem", link: "/my_account" },
+  { label: "Timeshare đã giữ chỗ", link: "/reserved-place-list" },
+  { label: "Giao dịch cá nhân", link: "/customer-transaction" },
   { label: "Tin nhắn", link: "/messages" },
   { label: "Hỗ trợ", link: "/support" },
 ];

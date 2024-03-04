@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { CiBellOn } from "react-icons/ci";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { BsThreeDots } from "react-icons/bs";
 import { useDispatch } from 'react-redux';
-import { markAllNotifications, markSelectedNotification, viewAllNotifications } from '../../../../redux/features/notificationSlice';
-import { getDateTimeDifference } from '../../../../utils/handleFunction';
+import { createNotification, markAllNotifications, markSelectedNotification, viewAllNotifications } from '../../../../redux/features/notificationSlice';
+import { generateFallbackAvatar, getDateTimeDifference } from '../../../../utils/handleFunction';
 import ThreeDotDropdown from '../ThreeDotDropdown';
+import { replyToJoinTimeshare } from '../../../../redux/features/transactionSlice';
+import toast from 'react-hot-toast';
+import { AuthContext } from '../../../../contexts/authContext';
 
 const Notification = () => {
 
@@ -15,10 +18,12 @@ const Notification = () => {
     const [readCount, setReadCount] = useState(0);
     const [showUnread, setShowUnread] = useState(false);
 
+    const { userDecode } = useContext(AuthContext)
+    const navigate = useNavigate();
+
     const handleMarkSelectedNoti = (item) => {
         if (item?.is_read === false) {
             dispatch(markSelectedNotification(item?._id)).then((result) => {
-                console.log('read', result.payload)
 
                 const updatedDataNoti = dataNoti.map(dataItem => {
                     if (dataItem._id === item._id) {
@@ -34,14 +39,21 @@ const Notification = () => {
             if (readCount > 0) {
                 setReadCount(readCount - 1)
             }
-        } else {
-            console.log('do something')
         }
+
+        switch (item?.notification_type) {
+            case "ACCEPT_JOIN_TIMESHARE_TO_CUSTOMER":
+            case "REJECT_JOIN_TIMESHARE_TO_CUSTOMER":
+                navigate("/reserved-place-list");
+                break;
+            default:
+            // Không làm gì cả
+        }
+
     }
 
     const handleMarkAllNoti = () => {
         dispatch(markAllNotifications()).then((result) => {
-            console.log('read all', result.payload)
             const updatedDataNoti = dataNoti.map(dataItem => ({
                 ...dataItem,
                 is_read: true
@@ -49,6 +61,39 @@ const Notification = () => {
 
             setDataNoti(updatedDataNoti);
             setReadCount(0)
+        })
+    }
+
+    const handleReplyTimeshareInvite = (item, answer) => {
+
+        const related_object = JSON.parse(item?.related_object);
+
+        const dataReply = {
+            transaction_invite_id: related_object.transaction_invite_id,
+            transaction_invite_status: answer
+        }
+
+        dispatch(replyToJoinTimeshare(dataReply)).then((result) => {
+            if (replyToJoinTimeshare.rejected.match(result)) {
+                toast.error(`${result.payload}`)
+            } else {
+                toast.success(`Chấp thuận thành công!`)
+
+                navigate("/reserved-place-list");
+
+                const dataBodyNoti = {
+                    user_id: related_object?.sender_id,
+                    notification_content: `${userDecode?.fullName} đã ${answer === 'Accepted' ? 'chấp thuận' : 'từ chối'} lời mời tham gia ${related_object?.timeshare_name}`,
+                    notification_title: `${answer === 'Accepted' ? 'ACCEPT_JOIN_TIMESHARE_TO_CUSTOMER' : 'REJECT_JOIN_TIMESHARE_TO_CUSTOMER'}`,
+                    notification_type: `${answer === 'Accepted' ? 'ACCEPT_JOIN_TIMESHARE_TO_CUSTOMER' : 'REJECT_JOIN_TIMESHARE_TO_CUSTOMER'}`,
+                };
+
+                dispatch(createNotification(dataBodyNoti)).then(
+                    (resNoti) => {
+                        // console.log(resNoti)
+                    }
+                );
+            }
         })
     }
 
@@ -71,11 +116,23 @@ const Notification = () => {
                         <Dropdown.Item key={index} onClick={() => handleMarkSelectedNoti(item)}>
                             <div className={`border rounded-xl card d-flex align-items-center p-3 ${!item?.is_read ? 'border-black' : ''}`}>
                                 <img className="object-cover w-12 h-12 rounded-circle border"
-                                    src="https://fpt.com/-/media/project/fpt-corporation/fpt/common/images/navigation/logo/fpt-logo-open-graph.png" alt="ava" />
+                                    src="https://www.shutterstock.com/image-vector/default-avatar-profile-icon-social-600nw-1677509740.jpg" alt="ava" />
                                 <div className="w-80">
                                     <p className={`text-sm ${!item?.is_read ? 'text-black' : 'text-gray-500'}`}>{item?.notification_content}</p>
                                     <p className={`text-xs ${!item?.is_read ? 'text-black' : 'text-gray-500'}`}>{getDateTimeDifference(item?.createdAt)} trước</p>
+
+                                    {item?.notification_type === "INVITE_JOIN_TIMESHARE_TO_CUSTOMER"
+                                        &&
+                                        (
+                                            <div className='d-flex gap-2 mt-2'>
+                                                <div style={{ fontSize: '12px' }} className='btn btn-outline-danger' onClick={() => handleReplyTimeshareInvite(item, 'Accepted')}>Đồng ý</div>
+                                                <div style={{ fontSize: '12px' }} className='btn' onClick={() => handleReplyTimeshareInvite(item, 'Rejected')}>Từ chối</div>
+                                            </div>
+                                        )
+                                    }
                                 </div>
+
+
                             </div>
                             {!item?.is_read && <div className='new-noti-dot'></div>}
                         </Dropdown.Item>

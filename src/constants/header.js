@@ -63,3 +63,5 @@ export const USER_HEADER_LINK = [
     ],
   },
 ];
+
+export const RESERVED_PLACE_TABLE_HEADER_NAME = ['Tên Timeshare', 'Tình trạng mở bán', 'Bên giữ chân', 'Số điện thoại','Tiền đặt cọc', 'Thanh toán đặt cọc', 'Ngày giữ chỗ']

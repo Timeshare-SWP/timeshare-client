@@ -4,23 +4,20 @@ import { saveOtpToSessionStorage } from "../utils/handleOtp";
 
 const initialState = {
   notificationData: null,
-  loadingNoti: false,
+  loadingTransaction: false,
   error: "",
 };
 
-export const sendOtpWhenRegister = createAsyncThunk(
-  "notification/sendOtpWhenRegister",
-  async (email, thunkAPI) => {
+export const searchCustomerByNameToInvite = createAsyncThunk(
+  "transaction/searchCustomerToInvite",
+  async (stringName, thunkAPI) => {
     try {
       const instance = getInstanceWithToken();
 
-      const body = {
-        email: email,
-      };
+      const response = await instance.get(
+        `/api/transactions/searchCustomerToInvite?fullName=${stringName}`
+      );
 
-      const response = await instance.post(`/api/users/otpRegister`, body);
-
-      saveOtpToSessionStorage(response.data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error?.response?.data);
@@ -28,28 +25,83 @@ export const sendOtpWhenRegister = createAsyncThunk(
   }
 );
 
-export const notificationSlice = createSlice({
-  name: "notification",
+export const inviteToJoinTimeshare = createAsyncThunk(
+  "transaction/inviteToJoinTimeshare",
+  async (data, thunkAPI) => {
+    try {
+      const instance = getInstanceWithToken();
+
+      const response = await instance.post(
+        `/api/transactions/transactionInvite`,
+        { ...data }
+      );
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+export const replyToJoinTimeshare = createAsyncThunk(
+  "transaction/replyToJoinTimeshare",
+  async (data, thunkAPI) => {
+    try {
+      const instance = getInstanceWithToken();
+
+      const response = await instance.post(
+        `/api/transactions/replyTransactionInvite`,
+        { ...data }
+      );
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+export const transactionSlice = createSlice({
+  name: "transaction",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    //sendOtpWhenRegister
-    builder.addCase(sendOtpWhenRegister.pending, (state) => {
-      state.loadingNoti = true;
+    //searchCustomerByNameToInvite
+    builder.addCase(searchCustomerByNameToInvite.pending, (state) => {
       state.error = "";
     });
-    builder.addCase(sendOtpWhenRegister.fulfilled, (state, action) => {
-      state.loadingNoti = false;
+    builder.addCase(searchCustomerByNameToInvite.fulfilled, (state, action) => {
       // state.data = action.payload;
       state.error = "";
     });
-    builder.addCase(sendOtpWhenRegister.rejected, (state, action) => {
-      state.loadingNoti = false;
+    builder.addCase(searchCustomerByNameToInvite.rejected, (state, action) => {
       state.error = action.payload;
     });
 
-    
+    //inviteToJoinTimeshare
+    builder.addCase(inviteToJoinTimeshare.pending, (state) => {
+      state.error = "";
+    });
+    builder.addCase(inviteToJoinTimeshare.fulfilled, (state, action) => {
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(inviteToJoinTimeshare.rejected, (state, action) => {
+      state.error = action.payload;
+    });
+
+    //replyToJoinTimeshare
+    builder.addCase(replyToJoinTimeshare.pending, (state) => {
+      state.error = "";
+    });
+    builder.addCase(replyToJoinTimeshare.fulfilled, (state, action) => {
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(replyToJoinTimeshare.rejected, (state, action) => {
+      state.error = action.payload;
+    });
   },
 });
 
-export default notificationSlice.reducer;
+export default transactionSlice.reducer;

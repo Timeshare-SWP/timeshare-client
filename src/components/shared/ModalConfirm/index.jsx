@@ -3,16 +3,16 @@ import { Modal } from 'react-bootstrap'
 
 const ModalConfirm = (props) => {
 
-    const { show, handleClose, handleAccept, title, body } = props
+    const { show, handleClose, handleAccept, nameBtnCLose, title, body } = props
     return (
-        <Modal show={show} onHide={handleClose}>
+        <Modal show={show} onHide={handleClose} centered backdrop="static">
             <Modal.Header closeButton>
                 <Modal.Title>{title}</Modal.Title>
             </Modal.Header>
             <Modal.Body>{body}</Modal.Body>
             <Modal.Footer>
                 <button className="btn btn-secondary" onClick={handleClose}>
-                    Hủy
+                    {nameBtnCLose ? 'Quay lại': 'Hủy'}
                 </button>
                 <button className="btn btn-primary" onClick={handleAccept}>
                     Xác nhận

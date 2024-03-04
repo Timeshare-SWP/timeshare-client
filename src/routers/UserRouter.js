@@ -13,6 +13,9 @@ import PostTimeshare from "../pages/Investor/PostTimeshare";
 import InvestorStatistics from "../pages/Investor/InvestorStatistics";
 import ManagementTransaction from "../pages/Investor/ManagementTransaction";
 
+import CustomerTransaction from "../pages/Customer/_sub-page/CustomerTransaction";
+import ReservedPlaceManagement from "../pages/Customer/_sub-page/ReservedPlaceManagement";
+
 const UserRouter = () => {
   return (
     <Routes>
@@ -22,14 +25,28 @@ const UserRouter = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot_password" element={<ForgotPassword />} />
 
-        <Route path="/personal-projects" element={<PersonalProjectManagement />} />
+        <Route
+          path="/personal-projects"
+          element={<PersonalProjectManagement />}
+        />
         <Route path="/timeshare-list" element={<TimeshareList />} />
         <Route path="/timeshare-list/:slug" element={<TimeshareDetail />} />
 
         {/* investor */}
-        <Route path="/up-timeshare" element={<PostTimeshare />}/>
-        <Route path="/investor-statistics" element={<InvestorStatistics />}/>
-        <Route path="/management-transaction" element={<ManagementTransaction />}/>
+        <Route path="/up-timeshare" element={<PostTimeshare />} />
+        <Route path="/investor-statistics" element={<InvestorStatistics />} />
+        <Route
+          path="/management-transaction"
+          element={<ManagementTransaction />}
+        />
+
+        {/* customer */}
+
+        <Route
+          path="/reserved-place-list"
+          element={<ReservedPlaceManagement />}
+        />
+        <Route path="/customer-transaction" element={<CustomerTransaction />} />
       </Route>
     </Routes>
   );

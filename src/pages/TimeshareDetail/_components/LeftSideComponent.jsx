@@ -48,8 +48,8 @@ export const LeftSideComponent = (props) => {
                 </div>
 
                 <div className='timeshare-img'>
-                    {item.timeshare_image && item.timeshare_image.length > 0 && (
-                        item.timeshare_image.map((image, index) => {
+                    {item?.timeshare_image && item?.timeshare_image.length > 0 && (
+                        item?.timeshare_image.map((image, index) => {
                             if (image.timeshare_img_type === "Ảnh timeshare") {
                                 return (
                                     <img
@@ -160,8 +160,8 @@ export const LeftSideComponent = (props) => {
 
                 <div className='section-premises' id="premises">
                     <h3 className='mb-3'>Mặt bằng dự án</h3>
-                    {item.timeshare_image && item.timeshare_image.length > 0 ? (
-                        item.timeshare_image.map((image, index) => {
+                    {item?.timeshare_image && item?.timeshare_image.length > 0 ? (
+                        item?.timeshare_image.map((image, index) => {
                             if (image.timeshare_img_type === "Ảnh mặt bằng") {
                                 return (
                                     <img
