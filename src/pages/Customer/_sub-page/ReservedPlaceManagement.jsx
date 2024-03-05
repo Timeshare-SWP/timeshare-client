@@ -19,9 +19,12 @@ const ReservedPlaceManagement = () => {
         return new Date(b.createdAt) - new Date(a.createdAt);
       });
 
-      setReservedPlaceList(sortedReservedPlaceList);
+      const filteredReservedPlaceList = sortedReservedPlaceList.filter(item => item.transaction_status !== "Unreserve");
+
+      setReservedPlaceList(filteredReservedPlaceList);
     });
   }, []);
+
 
   if (loadingReservedPlace) {
     return (
@@ -41,6 +44,7 @@ const ReservedPlaceManagement = () => {
         <TableLayout
           tableHeaderName={RESERVED_PLACE_TABLE_HEADER_NAME}
           reservedPlaceList={reservedPlaceList}
+          setReservedPlaceList={setReservedPlaceList}
         />
       </div>
     </GeneralManagementLayout>

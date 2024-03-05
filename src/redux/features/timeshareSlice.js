@@ -71,7 +71,9 @@ export const createTimeshareImage = createAsyncThunk(
     try {
       const instance = getInstanceWithToken();
 
-      const response = await instance.post(`/api/timeshares/timeshare_image`, { ...data });
+      const response = await instance.post(`/api/timeshares/timeshare_image`, {
+        ...data,
+      });
 
       return response.data;
     } catch (error) {
@@ -86,7 +88,9 @@ export const changeTimeshareStatus = createAsyncThunk(
     try {
       const instance = getInstanceWithToken();
 
-      const response = await instance.patch(`/api/timeshares/changeStatus`, { ...data });
+      const response = await instance.patch(`/api/timeshares/changeStatus`, {
+        ...data,
+      });
 
       return response.data;
     } catch (error) {
@@ -101,7 +105,59 @@ export const changeSellTimeshareStatus = createAsyncThunk(
     try {
       const instance = getInstanceWithToken();
 
-      const response = await instance.patch(`/api/timeshares/changeSellTimeshareStatus`, { ...data });
+      const response = await instance.patch(
+        `/api/timeshares/changeSellTimeshareStatus`,
+        { ...data }
+      );
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+export const deleteTimeshare = createAsyncThunk(
+  "timeshare/deleteTimeshare",
+  async (timeshare_id, thunkAPI) => {
+    try {
+      const instance = getInstanceWithToken();
+
+      const response = await instance.delete(`/api/timeshares/${timeshare_id}`);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+export const buyTimeshare = createAsyncThunk(
+  "timeshare/buyTimeshare",
+  async (data, thunkAPI) => {
+    try {
+      const instance = getInstanceWithToken();
+
+      const response = await instance.post(`/api/transactions/buyTimeshare`, {
+        ...data,
+      });
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+export const confirmSellTimeshare = createAsyncThunk(
+  "timeshare/confirmSellTimeshare",
+  async (transaction_id, thunkAPI) => {
+    try {
+      const instance = getInstanceWithToken();
+
+      const response = await instance.patch(
+        `/api/transactions/confirmSellTimeshare?transaction_id=${transaction_id}`
+      );
 
       return response.data;
     } catch (error) {
@@ -216,6 +272,51 @@ export const timeshareSlice = createSlice({
       state.error = "";
     });
     builder.addCase(changeSellTimeshareStatus.rejected, (state, action) => {
+      state.loadingUpdate = false;
+      state.error = action.payload;
+    });
+
+    //deleteTimeshare
+    builder.addCase(deleteTimeshare.pending, (state) => {
+      state.loadingUpdate = true;
+      state.error = "";
+    });
+    builder.addCase(deleteTimeshare.fulfilled, (state, action) => {
+      state.loadingUpdate = false;
+      // state.dataTimeshareList = action.payload;
+      state.error = "";
+    });
+    builder.addCase(deleteTimeshare.rejected, (state, action) => {
+      state.loadingUpdate = false;
+      state.error = action.payload;
+    });
+
+    //buyTimeshare
+    builder.addCase(buyTimeshare.pending, (state) => {
+      state.loadingUpdate = true;
+      state.error = "";
+    });
+    builder.addCase(buyTimeshare.fulfilled, (state, action) => {
+      state.loadingUpdate = false;
+      // state.dataTimeshareList = action.payload;
+      state.error = "";
+    });
+    builder.addCase(buyTimeshare.rejected, (state, action) => {
+      state.loadingUpdate = false;
+      state.error = action.payload;
+    });
+
+    //confirmSellTimeshare
+    builder.addCase(confirmSellTimeshare.pending, (state) => {
+      state.loadingUpdate = true;
+      state.error = "";
+    });
+    builder.addCase(confirmSellTimeshare.fulfilled, (state, action) => {
+      state.loadingUpdate = false;
+      // state.dataTimeshareList = action.payload;
+      state.error = "";
+    });
+    builder.addCase(confirmSellTimeshare.rejected, (state, action) => {
       state.loadingUpdate = false;
       state.error = action.payload;
     });

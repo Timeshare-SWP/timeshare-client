@@ -4,12 +4,12 @@ import TableBody from './TableBody'
 
 const TableLayout = (props) => {
 
-    const { tableHeaderName, reservedPlaceList, setReservedPlaceList } = props
+    const { tableHeaderName, transactionList, setTransactionList } = props
 
     return (
         <div className="table100 ver2 m-b-110">
             <TableHeader tableHeaderName={tableHeaderName} />
-            <TableBody reservedPlaceList={reservedPlaceList} setReservedPlaceList={setReservedPlaceList}/>
+            <TableBody transactionList={transactionList} setTransactionList={setTransactionList}/>
         </div>
     )
 }

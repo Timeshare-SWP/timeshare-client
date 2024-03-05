@@ -2,17 +2,20 @@ import React, { useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { BsThreeDots } from "react-icons/bs";
 import { RESERVED_PLACE_LIST_ACTION } from "../../../../constants/action"
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ModalInvite from '../../../../components/shared/ModalInvite';
 import ModalConfirm from '../../../../components/shared/ModalConfirm';
 import toast from 'react-hot-toast';
 import { inviteToJoinTimeshare } from '../../../../redux/features/transactionSlice';
 import { createNotification } from '../../../../redux/features/notificationSlice';
 import SpinnerLoading from '../../../../components/shared/SpinnerLoading'
+import { cancelReservedPlace } from '../../../../redux/features/reservedPlaceSlice';
+import SimpleLoading from '../../../../components/shared/SimpleLoading';
 
-const MoreAction = ({ transactionSelected, userDecode }) => {
+const MoreAction = ({ transactionSelected, setReservedPlaceList, userDecode }) => {
 
     const [openModalInvite, setOpenModalInvite] = useState(false)
+    const [openModalCancel, setOpenModalCancel] = useState(false)
     const [openModalConfirm, setOpenModalConfirm] = useState(false)
     const [loadingHandleEvent, setLoadingHandleEvent] = useState(false)
 
@@ -85,32 +88,58 @@ const MoreAction = ({ transactionSelected, userDecode }) => {
 
     }
 
+    const handleCallApiCancelReservedPlace = () => {
+        setLoadingHandleEvent(true)
+        dispatch(cancelReservedPlace(transactionSelected._id)).then((resCancel) => {
+            if (cancelReservedPlace.rejected.match(resCancel)) {
+                toast.error(`${resCancel.payload}`)
+                console.log(resCancel.payload)
+                setLoadingHandleEvent(false)
+            } else {
+                console.log(resCancel.payload)
+                toast.success('Hủy đặt giữ chỗ thành công!')
+
+                setReservedPlaceList(prevReservedPlaceList => {
+                    return prevReservedPlaceList.filter(item => item._id !== resCancel.payload._id);
+                });
+
+                setLoadingHandleEvent(false)
+            }
+        })
+    }
+
     const handleItemClick = (id) => {
         switch (id) {
             case 1:
+                // xem thông tin chi tiết
                 alert('action 1')
                 break;
             case 2:
+                // mời thêm người tham gia
                 setOpenModalInvite(true)
                 break;
             case 3:
+                // đăng ký mua
                 alert('action 3')
                 break;
             case 4:
-                alert('action 4')
+                // hủy đặt chỗ
+                setOpenModalCancel(true)
                 break;
             default:
-                alert('Hmmmm')
+                alert('Hmmmm, something wrong!')
         }
     }
 
     const renderDropDownMenuItem = () => {
         let actionsToShow = RESERVED_PLACE_LIST_ACTION;
 
-        if (transactionSelected
-            && (transactionSelected.timeshare_id.sell_timeshare_status === "Chưa được bán"
-                || transactionSelected.timeshare_id.sell_timeshare_status === "Đã bán")) {
-            actionsToShow = RESERVED_PLACE_LIST_ACTION.filter(item => item.id !== 3);
+        if (transactionSelected) {
+            if (transactionSelected.timeshare_id.sell_timeshare_status === "Chưa được bán") {
+                actionsToShow = RESERVED_PLACE_LIST_ACTION.filter(item => item.id !== 3);
+            } else if (transactionSelected.timeshare_id.sell_timeshare_status === "Đã bán") {
+                actionsToShow = RESERVED_PLACE_LIST_ACTION.filter(item => item.id !== 2 && item.id !== 3 && item.id !== 4);
+            }
         }
 
         return actionsToShow.map((item, index) => (
@@ -124,8 +153,6 @@ const MoreAction = ({ transactionSelected, userDecode }) => {
             </Dropdown.Item>
         ));
     }
-
-
 
     return (
         <Dropdown className='notification-container'>
@@ -157,6 +184,24 @@ const MoreAction = ({ transactionSelected, userDecode }) => {
                     nameBtnCLose={'Quay lại'}
                     title={'Xác nhận hành động'}
                     body={'Bạn có chắc muốn mời những người này?'}
+                />
+            }
+
+            {openModalCancel
+                &&
+                <ModalConfirm
+                    show={openModalCancel}
+                    handleClose={() => setOpenModalCancel(false)}
+                    handleAccept={handleCallApiCancelReservedPlace}
+                    title={'Xác nhận hành động'}
+                    body={
+                        <div className="confirmation-message">
+                            <p className="warning-text">P/s: </p>
+                            <p className="warning-text">- Nếu bạn hủy thì số tiền đặt cọc đã chuyển sẽ không được hoàn lại</p>
+                            <p className="warning-text">- Nhóm người tham gia bao gồm cả bạn sẽ tự động giải tán</p>
+                            <p>Bạn có chắc vẫn muốn tiếp tục hủy giữ chỗ timeshare này?</p>
+                        </div>
+                    }
                 />
             }
 

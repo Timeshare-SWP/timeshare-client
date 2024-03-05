@@ -106,6 +106,37 @@
     .customer-transaction-container {
     }
 
+    .investor-transaction-container {
+      .column1 {
+        width: 20%;
+        padding-left: 40px;
+      }
+
+      .column2 {
+        width: 13%;
+      }
+
+      .column3 {
+        width: 15%;
+      }
+
+      .column4 {
+        width: 15%;
+      }
+
+      .column5 {
+        width: 15%;
+      }
+
+      .column6 {
+        width: 15%;
+      }
+      
+      .column7 {
+        width: 15%;
+      }
+    }
+
     //style for table
 
     .table100.ver2 {
@@ -214,4 +245,36 @@
   :not(.btn-check) + .btn:active {
     border-color: transparent;
   }
+}
+
+.confirmation-message {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  margin-bottom: 20px;
+
+  p {
+    margin: 10px 0;
+    color: #333;
+    font-size: 20px;
+  }
+
+  .warning-text {
+    color: #c72528;
+    font-weight: bold;
+    font-size: 15px;
+  }
+}
+
+.status-waiting {
+  color: #FFC374;
+}
+
+.status-selected {
+  color: green;
+}
+
+.status-rejected {
+  color: #D24545;
 }

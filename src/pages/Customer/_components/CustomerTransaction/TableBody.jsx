@@ -3,16 +3,16 @@ import { convertToNumberFormat, convertToVietnameseTime } from '../../../../util
 import MoreAction from './MoreAction';
 import { AuthContext } from '../../../../contexts/authContext';
 
-const TableBody = ({ reservedPlaceList, setReservedPlaceList }) => {
+const TableBody = ({ transactionList, setTransactionList }) => {
 
-    console.log("reservedPlaceList", reservedPlaceList)
+    console.log("transactionList", transactionList)
     const { userDecode } = useContext(AuthContext);
 
     return (
         <div className="table100-body js-pscroll ps ps--active-y">
             <table>
                 <tbody>
-                    {reservedPlaceList.length === 0 ? (
+                    {transactionList.length === 0 ? (
                         <tr className="row100 body">
                             <td className="cell100" colSpan="8">
                                 <div style={{ textAlign: 'center' }}>
@@ -22,18 +22,10 @@ const TableBody = ({ reservedPlaceList, setReservedPlaceList }) => {
                             </td>
                         </tr>
                     ) : (
-                        reservedPlaceList.map((item, index) => (
+                        transactionList.map((item, index) => (
                             <tr className="row100 body" key={index}>
                                 <td className="cell100 column1">{item?.timeshare_id?.timeshare_name}</td>
                                 <td className="cell100 column2">
-                                    {item?.timeshare_id?.sell_timeshare_status === "Chưa được bán"
-                                        ? <div className='btn btn-danger status-buy' style={{ fontSize: '12px' }}>Sắp mở bán</div>
-                                        : item?.timeshare_id?.sell_timeshare_status === "Đang mở bán"
-                                            ? <div className='btn btn-success status-buy' style={{ fontSize: '12px' }}>Đang mở bán</div>
-                                            : <div className='btn btn-secondary status-buy' style={{ fontSize: '12px' }}>Đã bán</div>
-                                    }
-                                </td>
-                                <td className="cell100 column3">
                                     {item?.customers.map((person, index) => (
                                         <>
                                             <p key={index}>
@@ -43,8 +35,7 @@ const TableBody = ({ reservedPlaceList, setReservedPlaceList }) => {
                                         </>
                                     ))}
                                 </td>
-
-                                <td className="cell100 column4">
+                                <td className="cell100 column3">
                                     {item?.customers.map((person, index) => (
                                         <>
                                             <p key={index} style={{ fontStyle: person?.phone_number ? 'normal' : 'italic' }}>
@@ -53,12 +44,23 @@ const TableBody = ({ reservedPlaceList, setReservedPlaceList }) => {
                                         </>
                                     ))}
                                 </td>
-                                <td className="cell100 column5">{convertToNumberFormat(item?.reservation_price)}</td>
-                                <td className="cell100 column6">{item?.is_reservation_paid ? 'Đã thanh toán' : 'Chưa thanh toán'}</td>
-                                <td className="cell100 column7">{convertToVietnameseTime(item?.createdAt)}</td>
-                                <td className='cell100 column8'>
+                                <td className="cell100 column4">
+                                    {item?.reservation_time ? convertToVietnameseTime(item.reservation_time) : "Chưa đặt chỗ trước"}
+                                </td>
+                                <td className="cell100 column5">{convertToVietnameseTime(item?.createdAt)}</td>
+                                <td className="cell100 column6">
+                                    <span className={item?.transaction_status === "Waiting" ? "status-waiting" :
+                                        item?.transaction_status === "Selected" ? "status-selected" :
+                                            item?.transaction_status === "Rejected" ? "status-rejected" : ""}>
+                                        {item?.transaction_status === "Waiting" ? "Đang chờ phản hồi" :
+                                            item?.transaction_status === "Selected" ? "Đã đồng ý bán" :
+                                                item?.transaction_status === "Rejected" ? "Đã từ chối bán" :
+                                                    item?.transaction_status}
+                                    </span>
+                                </td>
+                                <td className='cell100 column7'>
                                     <MoreAction transactionSelected={item}
-                                        setReservedPlaceList={setReservedPlaceList}
+                                        setTransactionList={setTransactionList}
                                         userDecode={userDecode} />
                                 </td>
                             </tr>

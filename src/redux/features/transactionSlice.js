@@ -61,6 +61,21 @@ export const replyToJoinTimeshare = createAsyncThunk(
   }
 );
 
+export const viewAllTransaction = createAsyncThunk(
+  "transaction/viewAllTransaction",
+  async (_, thunkAPI) => {
+    try {
+      const instance = getInstanceWithToken();
+
+      const response = await instance.get(`/api/transactions`);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 export const transactionSlice = createSlice({
   name: "transaction",
   initialState,
@@ -99,6 +114,21 @@ export const transactionSlice = createSlice({
       state.error = "";
     });
     builder.addCase(replyToJoinTimeshare.rejected, (state, action) => {
+      state.error = action.payload;
+    });
+
+    //viewAllTransaction
+    builder.addCase(viewAllTransaction.pending, (state) => {
+      state.error = "";
+      state.loadingTransaction = true;
+    });
+    builder.addCase(viewAllTransaction.fulfilled, (state, action) => {
+      state.loadingTransaction = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(viewAllTransaction.rejected, (state, action) => {
+      state.loadingTransaction = false;
       state.error = action.payload;
     });
   },

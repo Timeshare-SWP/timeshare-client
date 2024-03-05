@@ -46,6 +46,13 @@ const Notification = () => {
             case "REJECT_JOIN_TIMESHARE_TO_CUSTOMER":
                 navigate("/reserved-place-list");
                 break;
+            case "NOTI_RESERVER_PLACE_TO_INVESTOR":
+                navigate("/personal-projects");
+                break;
+            case "NOTI_CAN_BUY_TIMESHARE_TO_CUSTOMER":
+                navigate("/reserved-place-list")
+            case "REQUEST_CONFIRM_BUY_TIMESHARE_TO_INVESTOR":
+                navigate("/management-transaction")
             default:
             // Không làm gì cả
         }

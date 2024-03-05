@@ -23,3 +23,7 @@ p {
 .dropdown-menu {
   --bs-dropdown-link-active-bg: transparent !important;
 }
+
+.modal-90w {
+  max-width: 90vw !important;
+}

@@ -38,6 +38,38 @@ export const createReservedPlace = createAsyncThunk(
   }
 );
 
+export const cancelReservedPlace = createAsyncThunk(
+  "reservedPlace/cancelReservedPlace",
+  async (transaction_id, thunkAPI) => {
+    try {
+      const instance = getInstanceWithToken();
+
+      const response = await instance.delete(
+        `/api/reservePlaces/cancel?transaction_id=${transaction_id}`
+      );
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+export const viewAllCustomerWhoReservePlaceByTimeshareId = createAsyncThunk(
+  "reservedPlace/viewAllCustomerWhoReservePlaceByTimeshareId",
+  async (timeshare_id, thunkAPI) => {
+    try {
+      const instance = getInstanceWithToken();
+
+      const response = await instance.get(`/api/reservePlaces/whoReservePlace/${timeshare_id}`);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 export const reservedPlaceSlice = createSlice({
   name: "reservedPlace",
   initialState,
@@ -70,6 +102,21 @@ export const reservedPlaceSlice = createSlice({
     });
     builder.addCase(createReservedPlace.rejected, (state, action) => {
       state.loadingReservedPlace = false;
+      state.error = action.payload;
+    });
+
+    //cancelReservedPlace
+    builder.addCase(cancelReservedPlace.pending, (state) => {
+      // state.loadingReservedPlace = true;
+      state.error = "";
+    });
+    builder.addCase(cancelReservedPlace.fulfilled, (state, action) => {
+      // state.loadingReservedPlace = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(cancelReservedPlace.rejected, (state, action) => {
+      // state.loadingReservedPlace = false;
       state.error = action.payload;
     });
   },

@@ -340,7 +340,7 @@ const PostForm = () => {
 
         Promise.all(dispatchPromises).then(() => {
             console.log("juridicalFilesURLs", juridicalFilesURLs)
-            
+
             const data = {
                 ...formData, ...anotherInfo,
                 price: removeCommas(formData.price),
@@ -673,11 +673,13 @@ const PostForm = () => {
                     />
                 }
 
-                {openModalConfirmState && <ModalConfirm show={openModalConfirmState}
+                {openModalConfirmState && <ModalConfirm
+                    show={openModalConfirmState}
                     handleClose={handleCancelModalConfirm}
                     handleAccept={handleConfirmPostTimeshare}
                     title={"Xác nhận hành động"}
-                    body={"Bạn có chắc chắn muốn đăng Timeshare này lên?"} />
+                    body={"Bạn có chắc chắn muốn đăng Timeshare này lên?"}
+                />
                 }
             </div>
 

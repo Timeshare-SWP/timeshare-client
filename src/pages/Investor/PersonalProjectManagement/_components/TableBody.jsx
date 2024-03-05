@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { BsThreeDots } from "react-icons/bs";
 import { BiDetail } from "react-icons/bi";
 import { CgArrowsExchange } from "react-icons/cg";
@@ -9,14 +9,22 @@ import { convertToNumberFormat, convertToVnTime } from '../../../../utils/handle
 import { Dropdown } from 'react-bootstrap';
 import ModalConfirm from '../../../../components/shared/ModalConfirm';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeSellTimeshareStatus, changeTimeshareStatus } from '../../../../redux/features/timeshareSlice';
+import { changeSellTimeshareStatus, changeTimeshareStatus, deleteTimeshare } from '../../../../redux/features/timeshareSlice';
+import { inviteToJoinTimeshare } from '../../../../redux/features/transactionSlice';
+import { createNotification } from '../../../../redux/features/notificationSlice';
 import toast from 'react-hot-toast';
 import SpinnerLoading from "../../../../components/shared/SpinnerLoading"
+import { MdGroups } from "react-icons/md";
+import ModalReservedPlaceList from './ModalReservedPlaceList';
+import { AuthContext } from '../../../../contexts/authContext';
+import { viewAllCustomerWhoReservePlaceByTimeshareId } from '../../../../redux/features/reservedPlaceSlice';
+
 
 const TableBody = (props) => {
     const { timeshareList, setTimeShareList } = props
 
     const dispatch = useDispatch();
+    const { userDecode } = useContext(AuthContext);
     const { loadingUpdate } = useSelector((state) => state.timeshare)
 
     const [selectedItem, setSelectedItem] = useState(null);
@@ -27,6 +35,8 @@ const TableBody = (props) => {
         handleAccept: () => { }
     });
 
+    const [openModalReservedPlaceList, setOpenModalReservedPlaceList] = useState(false);
+    const [openModalDelete, setOpenModalDelete] = useState(false);
 
     const renderStatus = (status, statuses) => {
         let classNames = "";
@@ -115,9 +125,9 @@ const TableBody = (props) => {
         })
     }
 
+    //xử lý mở bán
     const handleChangeSellTimeshareStatus = (item) => {
         setSelectedItem(item);
-        console.log(item)
         setModalInfo({
             title: 'Xác nhận hành động',
             body: buildModalBodyChangeSellTimeshareStatus(item.sell_timeshare_status),
@@ -126,7 +136,7 @@ const TableBody = (props) => {
         setShowModal(true);
     }
 
-    const callApiChangeSellTimeshareStatus = (item) => {
+    const callApiChangeSellTimeshareStatus = async (item) => {
 
         let newSellTimeshareStatus = '';
 
@@ -141,7 +151,9 @@ const TableBody = (props) => {
             sell_timeshare_status: newSellTimeshareStatus
         }
 
-        dispatch(changeSellTimeshareStatus(data)).then((result) => {
+        try {
+            const result = await dispatch(changeSellTimeshareStatus(data));
+
             if (changeSellTimeshareStatus.fulfilled.match(result)) {
                 toast.success("Thay đổi trạng thái thành công!")
                 const updatedTimeshare = result.payload;
@@ -154,15 +166,83 @@ const TableBody = (props) => {
             } else {
                 toast.error(`${result.payload}`)
             }
-            setShowModal(false);
+        } catch (error) {
+            toast.error(`${error}`);
+        }
 
-        })
+        if (newSellTimeshareStatus === "Đang mở bán") {
+            try {
+                const resViewAllCustomer = await dispatch(viewAllCustomerWhoReservePlaceByTimeshareId(item._id));
 
+                if (viewAllCustomerWhoReservePlaceByTimeshareId.rejected.match(resViewAllCustomer)) {
+                    console.log("resViewAllCustomer error", resViewAllCustomer.payload)
+                } else {
+                    const reservedCustomers = resViewAllCustomer.payload.filter(obj => obj.transaction_status === "Reserving");
+
+                    for (const obj of reservedCustomers) {
+                        for (const user of obj.customers) {
+                            try {
+                                const related_object = {
+                                    sender_id: `${userDecode?._id}`,
+                                    timeshare_name: `${item?.timeshare_name}`,
+                                    timeshare_id: `${item?._id}`
+                                };
+
+                                const dataBodyNoti = {
+                                    user_id: user._id,
+                                    notification_content: `${userDecode?.fullName} đã mở bán timeshare ${item.timeshare_name} mà bạn có đặt giữ chỗ`,
+                                    notification_title: `NOTI_CAN_BUY_TIMESHARE_TO_CUSTOMER`,
+                                    notification_type: `NOTI_CAN_BUY_TIMESHARE_TO_CUSTOMER`,
+                                    related_object: JSON.stringify(related_object)
+                                };
+
+                                const resNoti = await dispatch(createNotification(dataBodyNoti));
+
+                                // console.log("resNoti", resNoti)
+
+                            } catch (error) {
+                                toast.error(`${error}`);
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                toast.error(`${error}`);
+            }
+        }
+
+        setShowModal(false);
     }
 
-    const handleDeleteTimeshare = () => {
+    const [listReservedPlace, setListReservedPlace] = useState([]);
+    const [loadingData, setLoadingData] = useState(false);
 
+    const handleOpenListReservedPlace = (item) => {
+        setOpenModalReservedPlaceList(true)
+        setSelectedItem(item)
     }
+
+    const handleDeleteTimeshare = (item) => {
+        setOpenModalDelete(true)
+        setSelectedItem(item)
+    }
+
+    const handleCallApiDeleteTimeshare = () => {
+        dispatch(deleteTimeshare(selectedItem._id)).then((resDelete) => {
+            if (deleteTimeshare.fulfilled.match(resDelete)) {
+                toast.success(`Xóa timeshare thành công!`);
+                console.log("resDelete.payload", resDelete)
+                const deletedTimeshareId = resDelete.payload._id;
+                const updatedList = timeshareList.filter(item => item._id !== selectedItem._id);
+                setTimeShareList(updatedList);
+            } else {
+                console.log("resDelete.payload", resDelete)
+                toast.error(`${resDelete.payload}`);
+            }
+            setOpenModalDelete(false);
+        });
+    }
+
 
     const handleCloseModal = () => {
         setSelectedItem(null);
@@ -197,19 +277,37 @@ const TableBody = (props) => {
                                     </Dropdown.Toggle>
 
                                     <Dropdown.Menu>
-                                        <Dropdown.Item ><div className='d-flex gap-2 align-items-center'><BiDetail /> Xem chi tiết</div></Dropdown.Item>
-                                        {item.timeshare_status !== "Đã triển khai" && <Dropdown.Item onClick={() => handleChangeTimeshareStatus(item)}>
+                                        <Dropdown.Item ><div className='d-flex gap-2 align-items-center'><BiDetail /> Xem chi tiết dự án</div></Dropdown.Item>
+
+                                        <Dropdown.Item onClick={() => handleOpenListReservedPlace(item)}>
                                             <div className='d-flex gap-2 align-items-center'>
-                                                <CgArrowsExchange /> {renderTimeshareAction(item.timeshare_status)}
-                                            </div>
-                                        </Dropdown.Item >}
-                                        {item.sell_timeshare_status !== "Đã bán" && <Dropdown.Item onClick={() => handleChangeSellTimeshareStatus(item)}>
-                                            <div className='d-flex gap-2 align-items-center'>
-                                                <MdOutlinePublishedWithChanges /> {renderSellTimeshareAction(item.sell_timeshare_status)}
+                                                <MdGroups /> Xem danh sách đặt giữ chỗ
                                             </div>
                                         </Dropdown.Item>
+
+                                        {item.timeshare_status !== "Đã triển khai"
+                                            &&
+                                            <Dropdown.Item onClick={() => handleChangeTimeshareStatus(item)}>
+                                                <div className='d-flex gap-2 align-items-center'>
+                                                    <CgArrowsExchange /> {renderTimeshareAction(item.timeshare_status)}
+                                                </div>
+                                            </Dropdown.Item >
                                         }
-                                        <Dropdown.Item ><div className='d-flex gap-2 align-items-center'><MdOutlineDelete />Xóa timeshare</div></Dropdown.Item>
+
+                                        {item.sell_timeshare_status !== "Đã bán" && item.timeshare_status === "Đã triển khai"
+                                            &&
+                                            <Dropdown.Item onClick={() => handleChangeSellTimeshareStatus(item)}>
+                                                <div className='d-flex gap-2 align-items-center'>
+                                                    <MdOutlinePublishedWithChanges /> {renderSellTimeshareAction(item.sell_timeshare_status)}
+                                                </div>
+                                            </Dropdown.Item>
+                                        }
+
+                                        <Dropdown.Item onClick={() => handleDeleteTimeshare(item)}>
+                                            <div className='d-flex gap-2 align-items-center'>
+                                                <MdOutlineDelete />Xóa timeshare
+                                            </div>
+                                        </Dropdown.Item>
                                     </Dropdown.Menu>
                                 </Dropdown>
                             </td>
@@ -220,7 +318,34 @@ const TableBody = (props) => {
                         handleClose={handleCloseModal}
                         handleAccept={modalInfo.handleAccept}
                         title={modalInfo.title}
-                        body={modalInfo.body} />}
+                        body={modalInfo.body} />
+                    }
+
+                    {openModalReservedPlaceList
+                        &&
+                        <ModalReservedPlaceList
+                            show={openModalReservedPlaceList}
+                            handleClose={() => setOpenModalReservedPlaceList(false)}
+                            item={selectedItem}
+                            setListReservedPlace={setListReservedPlace}
+                            setLoadingData={setLoadingData}
+                            listReservedPlace={listReservedPlace}
+                            loadingData={loadingData}
+                        />
+                    }
+
+                    {openModalDelete
+                        &&
+                        <ModalConfirm show={openModalDelete}
+                            handleClose={() => setOpenModalDelete(false)}
+                            handleAccept={handleCallApiDeleteTimeshare}
+                            title={'Xác nhận hành động'}
+                            body={
+                                <div className="confirmation-message">
+                                    <p>Bạn có chắc vẫn muốn tiếp tục xóa timeshare này?</p>
+                                </div>
+                            } />
+                    }
                 </>
             )}
 

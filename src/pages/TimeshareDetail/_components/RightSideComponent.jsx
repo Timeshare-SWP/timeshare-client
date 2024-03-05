@@ -1,12 +1,23 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { convertToNumberFormat } from '../../../utils/handleFunction';
 import ModalReservedPlace from './ModalReservedPlace';
+import ModalConfirm from '../../../components/shared/ModalConfirm'
+import { useDispatch } from 'react-redux';
+import { viewAllReservedPlace } from '../../../redux/features/reservedPlaceSlice';
+import { buyTimeshare } from '../../../redux/features/timeshareSlice';
+import toast from 'react-hot-toast';
+import SpinnerLoading from '../../../components/shared/SpinnerLoading'
+import { AuthContext } from '../../../contexts/authContext';
+import { createNotification } from '../../../redux/features/notificationSlice';
 
 const RightSideComponent = (props) => {
 
     const { item } = props
 
     const [openModalReservedPlace, setOpenModalReservedPlace] = useState(false);
+    const [openModalConfirmBuy, setOpenModalConfirmBuy] = useState(false);
+    const [isLoadingBuy, setIsLoadingBuy] = useState(false);
+    const { userDecode } = useContext(AuthContext)
 
     // stage_1
     const [memberList, setMemberList] = useState([])
@@ -17,9 +28,69 @@ const RightSideComponent = (props) => {
         if (item?.sell_timeshare_status === "Chưa được bán") {
             setOpenModalReservedPlace(true)
         } else if (item?.sell_timeshare_status === "Đang mở bán") {
-            alert("Mua ngay");
+            setOpenModalConfirmBuy(true)
         }
     }
+
+    // Xử lý việc mua timeshare
+    console.log("item", item)
+
+    const dispatch = useDispatch();
+
+    const handleCallApiToBuyTimeshare = () => {
+        setIsLoadingBuy(true)
+        dispatch(viewAllReservedPlace()).then((resViewAll) => {
+            if (viewAllReservedPlace.fulfilled.match(resViewAll)) {
+                const reservedPlaces = resViewAll.payload.filter(place => place.timeshare_id._id === item._id);
+
+                let is_reserve_state
+
+                if (reservedPlaces.length > 0) {
+                    const nearestUpdatedPlace = reservedPlaces.reduce((nearest, place) => {
+                        return place.updatedAt > nearest.updatedAt ? place : nearest;
+                    });
+
+                    is_reserve_state = nearestUpdatedPlace.transaction_status === "Reserving";
+
+                } else {
+                    is_reserve_state = false;
+                }
+
+                const data = {
+                    timeshare_id: item._id,
+                    is_reserve: is_reserve_state
+                }
+
+                dispatch(buyTimeshare(data)).then((resBuy) => {
+                    if (buyTimeshare.fulfilled.match(resBuy)) {
+                        toast.success('Mua thành công!')
+
+                        const dataBodyNoti = {
+                            user_id: item.investor_id._id,
+                            notification_content: `${userDecode?.fullName} muốn mua dự án timeshare ${item.timeshare_name} của bạn`,
+                            notification_title: `REQUEST_CONFIRM_BUY_TIMESHARE_TO_INVESTOR`,
+                            notification_type: `REQUEST_CONFIRM_BUY_TIMESHARE_TO_INVESTOR`,
+                        };
+
+                        dispatch(createNotification(dataBodyNoti)).then(
+                            (resNoti) => {
+                                console.log(resNoti)
+                            }
+                        );
+                        setIsLoadingBuy(false)
+                        setOpenModalConfirmBuy(false)
+                    } else {
+                        toast.error(`${resBuy.payload}`)
+                        console.log('error', resBuy)
+                        setIsLoadingBuy(false)
+                        setOpenModalConfirmBuy(false)
+                    }
+                })
+            }
+
+        });
+    }
+
 
     return (
         <>
@@ -54,7 +125,20 @@ const RightSideComponent = (props) => {
                     setOptionTypeReservedPlace={setOptionTypeReservedPlace}
                     error={error}
                     setError={setError}
-                />}
+                />
+            }
+
+            {openModalConfirmBuy &&
+                <ModalConfirm
+                    show={openModalConfirmBuy}
+                    handleClose={() => setOpenModalConfirmBuy(false)}
+                    handleAccept={handleCallApiToBuyTimeshare}
+                    title={''}
+                    body={<h5>Bạn có chắc chắn muốn mua Timeshare này?</h5>}
+                />
+            }
+
+            {isLoadingBuy && <SpinnerLoading />}
         </>
 
     )
