@@ -7,6 +7,7 @@ const index = () => {
         <div className='d-flex'>
             <AdminSideBar />
             <div className="main flex-grow-1 p-5 main-admin">
+                
                 <Outlet />
             </div>
         </div>

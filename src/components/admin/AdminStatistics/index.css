@@ -1,0 +1,22 @@
+.box1{
+    
+}
+.box2{
+   
+}
+
+.statistics .project .account {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;
+    
+}
+
+.statistics .project .project {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;
+   
+}
