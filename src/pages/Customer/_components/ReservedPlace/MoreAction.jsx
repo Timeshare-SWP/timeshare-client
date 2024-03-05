@@ -9,14 +9,16 @@ import toast from 'react-hot-toast';
 import { inviteToJoinTimeshare } from '../../../../redux/features/transactionSlice';
 import { createNotification } from '../../../../redux/features/notificationSlice';
 import SpinnerLoading from '../../../../components/shared/SpinnerLoading'
-import { cancelReservedPlace } from '../../../../redux/features/reservedPlaceSlice';
+import { cancelReservedPlace, viewAllReservedPlace } from '../../../../redux/features/reservedPlaceSlice';
 import SimpleLoading from '../../../../components/shared/SimpleLoading';
+import { buyTimeshare } from '../../../../redux/features/timeshareSlice';
 
 const MoreAction = ({ transactionSelected, setReservedPlaceList, userDecode }) => {
 
     const [openModalInvite, setOpenModalInvite] = useState(false)
     const [openModalCancel, setOpenModalCancel] = useState(false)
     const [openModalConfirm, setOpenModalConfirm] = useState(false)
+    const [openModalConfirmBuy, setOpenModalConfirmBuy] = useState(false)
     const [loadingHandleEvent, setLoadingHandleEvent] = useState(false)
 
     const [memberList, setMemberList] = React.useState([]);
@@ -108,6 +110,62 @@ const MoreAction = ({ transactionSelected, setReservedPlaceList, userDecode }) =
         })
     }
 
+    const [isLoadingBuy, setIsLoadingBuy] = useState(false)
+
+    const handleCallApiToBuyTimeshare = () => {
+        setIsLoadingBuy(true)
+        dispatch(viewAllReservedPlace()).then((resViewAll) => {
+            if (viewAllReservedPlace.fulfilled.match(resViewAll)) {
+                const reservedPlaces = resViewAll.payload.filter(place => place.timeshare_id._id === transactionSelected.timeshare_id._id);
+
+                let is_reserve_state
+
+                if (reservedPlaces.length > 0) {
+                    const nearestUpdatedPlace = reservedPlaces.reduce((nearest, place) => {
+                        return place.updatedAt > nearest.updatedAt ? place : nearest;
+                    });
+
+                    is_reserve_state = nearestUpdatedPlace.transaction_status === "Reserving";
+
+                } else {
+                    is_reserve_state = false;
+                }
+
+                const data = {
+                    timeshare_id: transactionSelected.timeshare_id._id,
+                    is_reserve: is_reserve_state
+                }
+
+                dispatch(buyTimeshare(data)).then((resBuy) => {
+                    if (buyTimeshare.fulfilled.match(resBuy)) {
+                        toast.success('Mua thành công!')
+
+                        const dataBodyNoti = {
+                            user_id: transactionSelected.timeshare_id.investor_id._id,
+                            notification_content: `${userDecode?.fullName} muốn mua dự án timeshare ${transactionSelected.timeshare_id.timeshare_name} của bạn`,
+                            notification_title: `REQUEST_CONFIRM_BUY_TIMESHARE_TO_INVESTOR`,
+                            notification_type: `REQUEST_CONFIRM_BUY_TIMESHARE_TO_INVESTOR`,
+                        };
+
+                        dispatch(createNotification(dataBodyNoti)).then(
+                            (resNoti) => {
+                                console.log(resNoti)
+                            }
+                        );
+                        setIsLoadingBuy(false)
+                        setOpenModalConfirmBuy(false)
+                    } else {
+                        toast.error(`${resBuy.payload}`)
+                        console.log('error', resBuy)
+                        setIsLoadingBuy(false)
+                        setOpenModalConfirmBuy(false)
+                    }
+                })
+            }
+
+        });
+    }
+
     const handleItemClick = (id) => {
         switch (id) {
             case 1:
@@ -120,7 +178,7 @@ const MoreAction = ({ transactionSelected, setReservedPlaceList, userDecode }) =
                 break;
             case 3:
                 // đăng ký mua
-                alert('action 3')
+                setOpenModalConfirmBuy(true)
                 break;
             case 4:
                 // hủy đặt chỗ
@@ -205,7 +263,18 @@ const MoreAction = ({ transactionSelected, setReservedPlaceList, userDecode }) =
                 />
             }
 
+            {openModalConfirmBuy &&
+                <ModalConfirm
+                    show={openModalConfirmBuy}
+                    handleClose={() => setOpenModalConfirmBuy(false)}
+                    handleAccept={handleCallApiToBuyTimeshare}
+                    title={''}
+                    body={<h5>Bạn có chắc chắn muốn mua Timeshare này?</h5>}
+                />
+            }
+
             {loadingHandleEvent && <SpinnerLoading />}
+            {isLoadingBuy && <SpinnerLoading />}
         </Dropdown>
     )
 }
