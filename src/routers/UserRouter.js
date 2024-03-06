@@ -8,7 +8,7 @@ import Register from "../pages/Register";
 import ForgotPassword from "../components/auth/ForgotPassword";
 import TimeshareList from "../pages/TimeshareList";
 import TimeshareDetail from "../pages/TimeshareDetail";
-import PersonalProjectManagement from "../pages/Investor/PersonalProjectManagement";
+import PersonalProjectManagement from "../pages/Investor/_sub-page/PersonalProjectManagement";
 import PostTimeshare from "../pages/Investor/PostTimeshare";
 import InvestorStatistics from "../pages/Investor/_sub-page/InvestorStatistics";
 import ManagementTransaction from "../pages/Investor/_sub-page/ManagementTransaction";
@@ -25,10 +25,6 @@ const UserRouter = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot_password" element={<ForgotPassword />} />
 
-        <Route
-          path="/personal-projects"
-          element={<PersonalProjectManagement />}
-        />
         <Route path="/timeshare-list" element={<TimeshareList />} />
         <Route path="/timeshare-list/:slug" element={<TimeshareDetail />} />
 
@@ -38,6 +34,10 @@ const UserRouter = () => {
         <Route
           path="/management-transaction"
           element={<ManagementTransaction />}
+        />
+        <Route
+          path="/personal-projects"
+          element={<PersonalProjectManagement />}
         />
 
         {/* customer */}

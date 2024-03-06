@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Modal } from 'react-bootstrap'
 import { useDispatch } from 'react-redux'
-import { viewAllCustomerWhoReservePlaceByTimeshareId } from '../../../../redux/features/reservedPlaceSlice'
-import SimpleLoading from '../../../../components/shared/SimpleLoading'
-import { convertToVietnameseTime } from '../../../../utils/handleFunction'
+import { viewAllCustomerWhoReservePlaceByTimeshareId } from '../../../../../redux/features/reservedPlaceSlice'
+import SimpleLoading from '../../../../../components/shared/SimpleLoading'
+import { convertToVietnameseTime } from '../../../../../utils/handleFunction'
 
 const ModalReservedPlaceList = (props) => {
 

@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import './style.scss'
 import { useDispatch, useSelector } from 'react-redux'
-import { getTimeshareForInvestor } from '../../../redux/features/timeshareSlice';
-import SimpleLoading from "../../../components/shared/SimpleLoading"
-import CommonSection from '../../../components/CommonSection';
+import { getTimeshareForInvestor } from '../../../../redux/features/timeshareSlice'
+import SimpleLoading from "../../../../components/shared/SimpleLoading"
+import CommonSection from '../../../../components/CommonSection';
 import { Container, Form } from 'react-bootstrap';
 import TableHeader from './_components/TableHeader';
 import TableBody from './_components/TableBody';
 import { BsPlusLg, BsSearch } from "react-icons/bs";
 import { Link } from 'react-router-dom';
-import Pagination from '../../../components/shared/Pagination';
+import Pagination from '../../../../components/shared/Pagination';
+import GeneralInvestorLayout from '../../layout/GeneralInvestorLayout'
 
 const PersonalProjectManagement = () => {
     const dispatch = useDispatch();
@@ -47,18 +48,17 @@ const PersonalProjectManagement = () => {
 
 
     if (loadingTimeshare) {
-        return (<>
-            <CommonSection title="Dự án cá nhân" />
-            <div style={{ height: '50vh' }} className='d-flex justify-content-center align-items-center'>
-                <SimpleLoading />
-            </div>
-        </>)
+        return (
+            <GeneralInvestorLayout>
+                <div style={{ height: '50vh' }} className='d-flex justify-content-center align-items-center'>
+                    <SimpleLoading />
+                </div>
+            </GeneralInvestorLayout>
+        )
     }
 
     return (
-        <>
-            <CommonSection title="Dự án cá nhân" />
-
+        <GeneralInvestorLayout>
             <Container className='my-3'>
                 <div className="d-flex justify-content-between align-items-center px-3 my-3 header-function">
                     <div className='d-flex'>
@@ -96,8 +96,7 @@ const PersonalProjectManagement = () => {
                     paginate={paginate}
                 />
             </Container>
-        </>
-
+        </GeneralInvestorLayout>
     )
 }
 

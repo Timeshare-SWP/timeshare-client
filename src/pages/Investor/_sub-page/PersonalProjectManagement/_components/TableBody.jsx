@@ -5,19 +5,19 @@ import { CgArrowsExchange } from "react-icons/cg";
 import { MdOutlineDelete } from "react-icons/md";
 import { MdOutlinePublishedWithChanges } from "react-icons/md";
 
-import { convertToNumberFormat, convertToVnTime } from '../../../../utils/handleFunction';
+import { convertToNumberFormat, convertToVnTime } from '../../../../../utils/handleFunction';
 import { Dropdown } from 'react-bootstrap';
-import ModalConfirm from '../../../../components/shared/ModalConfirm';
+import ModalConfirm from '../../../../../components/shared/ModalConfirm';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeSellTimeshareStatus, changeTimeshareStatus, deleteTimeshare } from '../../../../redux/features/timeshareSlice';
-import { inviteToJoinTimeshare } from '../../../../redux/features/transactionSlice';
-import { createNotification } from '../../../../redux/features/notificationSlice';
+import { changeSellTimeshareStatus, changeTimeshareStatus, deleteTimeshare } from '../../../../../redux/features/timeshareSlice';
+import { inviteToJoinTimeshare } from '../../../../../redux/features/transactionSlice';
+import { createNotification } from '../../../../../redux/features/notificationSlice';
 import toast from 'react-hot-toast';
-import SpinnerLoading from "../../../../components/shared/SpinnerLoading"
+import SpinnerLoading from "../../../../../components/shared/SpinnerLoading"
 import { MdGroups } from "react-icons/md";
 import ModalReservedPlaceList from './ModalReservedPlaceList';
-import { AuthContext } from '../../../../contexts/authContext';
-import { viewAllCustomerWhoReservePlaceByTimeshareId } from '../../../../redux/features/reservedPlaceSlice';
+import { AuthContext } from '../../../../../contexts/authContext';
+import { viewAllCustomerWhoReservePlaceByTimeshareId } from '../../../../../redux/features/reservedPlaceSlice';
 
 
 const TableBody = (props) => {

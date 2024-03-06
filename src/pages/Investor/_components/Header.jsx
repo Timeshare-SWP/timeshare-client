@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { INVESTOR_HEADER_MENU_PROFILE } from '../../../constants/header';
 
 const Header = () => {
     const location = useLocation();
@@ -7,13 +8,11 @@ const Header = () => {
     return (
         <div className='container general-management__menu'>
             <ul className=''>
-                <li>
-                    <Link to="/investor-statistics" className={location.pathname === '/investor-statistics' ? 'active' : ''}>Dashboard</Link>
-                </li>
-                <li>
-                    <Link to="/management-transaction" className={location.pathname === '/management-transaction' ? 'active' : ''}>Quản lý mua bán</Link>
-                </li>
-
+                {INVESTOR_HEADER_MENU_PROFILE.map((item, index) => (
+                    <li key={index}>
+                        <Link to={item.pathName} className={location.pathname === `${item.pathName}` ? 'active' : ''}>{item.nameItem}</Link>
+                    </li>
+                ))}
             </ul>
         </div>
     )
