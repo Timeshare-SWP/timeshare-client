@@ -117,11 +117,11 @@
       }
 
       .column3 {
-        width: 15%;
+        width: 10%;
       }
 
       .column4 {
-        width: 15%;
+        width: 13%;
       }
 
       .column5 {
@@ -129,11 +129,23 @@
       }
 
       .column6 {
+        width: 13%;
+      }
+
+      .column7 {
+        width: 10%;
+      }
+
+      .column8 {
         width: 15%;
       }
-      
-      .column7 {
-        width: 15%;
+
+      .table100.ver2 .table100-body tr {
+        border-bottom: 1px solid rgb(192, 182, 182) !important;
+      }
+
+      .table100.ver2 .table100-body tr:last-child {
+        border-bottom: none !important;
       }
     }
 
@@ -228,22 +240,23 @@
       padding-top: 16px;
       padding-bottom: 16px;
     }
-  }
 
-  .dropdown-toggle {
-    padding: 0px !important;
+    //button dropdown
+    .dropdown-toggle {
+      padding: 0px !important;
 
-    &:after {
-      display: none !important;
+      &:after {
+        display: none !important;
+      }
     }
-  }
 
-  .btn-check:checked + .btn,
-  .btn.active,
-  .btn.show,
-  .btn:first-child:active,
-  :not(.btn-check) + .btn:active {
-    border-color: transparent;
+    .btn-check:checked + .btn,
+    .btn.active,
+    .btn.show,
+    .btn:first-child:active,
+    :not(.btn-check) + .btn:active {
+      border-color: transparent;
+    }
   }
 }
 
@@ -268,7 +281,7 @@
 }
 
 .status-waiting {
-  color: #FFC374;
+  color: #ffc374;
 }
 
 .status-selected {
@@ -276,5 +289,5 @@
 }
 
 .status-rejected {
-  color: #D24545;
+  color: #d24545;
 }

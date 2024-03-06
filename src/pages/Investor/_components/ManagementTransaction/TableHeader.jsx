@@ -11,7 +11,7 @@ const TableHeader = (props) => {
                         {tableHeaderName?.map((item, index) => (
                             <th className={`cell100 column${index + 1}`} key={index}>{item}</th>
                         ))}
-                        <th className={`cell100 column7`}></th>
+                        <th className={`cell100 column${tableHeaderName.length + 1}`}></th>
                     </tr>
                 </thead>
             </table>

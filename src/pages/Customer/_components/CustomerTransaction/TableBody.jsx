@@ -44,7 +44,7 @@ const TableBody = ({ transactionList, setTransactionList }) => {
                                         </>
                                     ))}
                                 </td>
-                                <td className="cell100 column4">
+                                <td className='cell100 column4' style={{ fontStyle: item?.reservation_time ? 'normal' : 'italic' }}>
                                     {item?.reservation_time ? convertToVietnameseTime(item.reservation_time) : "Chưa đặt chỗ trước"}
                                 </td>
                                 <td className="cell100 column5">{convertToVietnameseTime(item?.createdAt)}</td>

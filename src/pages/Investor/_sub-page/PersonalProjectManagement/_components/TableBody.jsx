@@ -273,84 +273,86 @@ const TableBody = (props) => {
                             <td>{convertToVnTime(item?.createdAt)}</td>
                             <td style={{ cursor: 'pointer' }}>
                                 <Dropdown>
-                                    <Dropdown.Toggle variant="ghost" id="dropdown-basic">
-                                    </Dropdown.Toggle>
+                                    <Dropdown.Toggle variant="ghost" id="dropdown-basic" className='d-flex justify-content-center align-items-center'>
+                                        <BsThreeDots style={{ cursor: 'pointer' }} />
+                                </Dropdown.Toggle>
 
-                                    <Dropdown.Menu>
-                                        <Dropdown.Item ><div className='d-flex gap-2 align-items-center'><BiDetail /> Xem chi tiết dự án</div></Dropdown.Item>
+                                <Dropdown.Menu>
+                                    <Dropdown.Item ><div className='d-flex gap-2 align-items-center'><BiDetail /> Xem chi tiết dự án</div></Dropdown.Item>
 
-                                        <Dropdown.Item onClick={() => handleOpenListReservedPlace(item)}>
+                                    <Dropdown.Item onClick={() => handleOpenListReservedPlace(item)}>
+                                        <div className='d-flex gap-2 align-items-center'>
+                                            <MdGroups /> Xem danh sách đặt giữ chỗ
+                                        </div>
+                                    </Dropdown.Item>
+
+                                    {item.timeshare_status !== "Đã triển khai"
+                                        &&
+                                        <Dropdown.Item onClick={() => handleChangeTimeshareStatus(item)}>
                                             <div className='d-flex gap-2 align-items-center'>
-                                                <MdGroups /> Xem danh sách đặt giữ chỗ
+                                                <CgArrowsExchange /> {renderTimeshareAction(item.timeshare_status)}
+                                            </div>
+                                        </Dropdown.Item >
+                                    }
+
+                                    {item.sell_timeshare_status !== "Đã bán" && item.timeshare_status === "Đã triển khai"
+                                        &&
+                                        <Dropdown.Item onClick={() => handleChangeSellTimeshareStatus(item)}>
+                                            <div className='d-flex gap-2 align-items-center'>
+                                                <MdOutlinePublishedWithChanges /> {renderSellTimeshareAction(item.sell_timeshare_status)}
                                             </div>
                                         </Dropdown.Item>
+                                    }
 
-                                        {item.timeshare_status !== "Đã triển khai"
-                                            &&
-                                            <Dropdown.Item onClick={() => handleChangeTimeshareStatus(item)}>
-                                                <div className='d-flex gap-2 align-items-center'>
-                                                    <CgArrowsExchange /> {renderTimeshareAction(item.timeshare_status)}
-                                                </div>
-                                            </Dropdown.Item >
-                                        }
-
-                                        {item.sell_timeshare_status !== "Đã bán" && item.timeshare_status === "Đã triển khai"
-                                            &&
-                                            <Dropdown.Item onClick={() => handleChangeSellTimeshareStatus(item)}>
-                                                <div className='d-flex gap-2 align-items-center'>
-                                                    <MdOutlinePublishedWithChanges /> {renderSellTimeshareAction(item.sell_timeshare_status)}
-                                                </div>
-                                            </Dropdown.Item>
-                                        }
-
-                                        <Dropdown.Item onClick={() => handleDeleteTimeshare(item)}>
-                                            <div className='d-flex gap-2 align-items-center'>
-                                                <MdOutlineDelete />Xóa timeshare
-                                            </div>
-                                        </Dropdown.Item>
-                                    </Dropdown.Menu>
-                                </Dropdown>
-                            </td>
+                                    <Dropdown.Item onClick={() => handleDeleteTimeshare(item)}>
+                                        <div className='d-flex gap-2 align-items-center'>
+                                            <MdOutlineDelete />Xóa timeshare
+                                        </div>
+                                    </Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        </td>
                         </tr>
                     ))}
 
-                    {showModal && <ModalConfirm show={showModal}
-                        handleClose={handleCloseModal}
-                        handleAccept={modalInfo.handleAccept}
-                        title={modalInfo.title}
-                        body={modalInfo.body} />
-                    }
+            {showModal && <ModalConfirm show={showModal}
+                handleClose={handleCloseModal}
+                handleAccept={modalInfo.handleAccept}
+                title={modalInfo.title}
+                body={modalInfo.body} />
+            }
 
-                    {openModalReservedPlaceList
-                        &&
-                        <ModalReservedPlaceList
-                            show={openModalReservedPlaceList}
-                            handleClose={() => setOpenModalReservedPlaceList(false)}
-                            item={selectedItem}
-                            setListReservedPlace={setListReservedPlace}
-                            setLoadingData={setLoadingData}
-                            listReservedPlace={listReservedPlace}
-                            loadingData={loadingData}
-                        />
-                    }
+            {openModalReservedPlaceList
+                &&
+                <ModalReservedPlaceList
+                    show={openModalReservedPlaceList}
+                    handleClose={() => setOpenModalReservedPlaceList(false)}
+                    item={selectedItem}
+                    setListReservedPlace={setListReservedPlace}
+                    setLoadingData={setLoadingData}
+                    listReservedPlace={listReservedPlace}
+                    loadingData={loadingData}
+                />
+            }
 
-                    {openModalDelete
-                        &&
-                        <ModalConfirm show={openModalDelete}
-                            handleClose={() => setOpenModalDelete(false)}
-                            handleAccept={handleCallApiDeleteTimeshare}
-                            title={'Xác nhận hành động'}
-                            body={
-                                <div className="confirmation-message">
-                                    <p>Bạn có chắc vẫn muốn tiếp tục xóa timeshare này?</p>
-                                </div>
-                            } />
-                    }
-                </>
-            )}
+            {openModalDelete
+                &&
+                <ModalConfirm show={openModalDelete}
+                    handleClose={() => setOpenModalDelete(false)}
+                    handleAccept={handleCallApiDeleteTimeshare}
+                    title={'Xác nhận hành động'}
+                    body={
+                        <div className="confirmation-message">
+                            <p>Bạn có chắc vẫn muốn tiếp tục xóa timeshare này?</p>
+                        </div>
+                    } />
+            }
+        </>
+    )
+}
 
-            {loadingUpdate && <SpinnerLoading />}
-        </tbody>
+{ loadingUpdate && <SpinnerLoading /> }
+        </tbody >
     )
 }
 

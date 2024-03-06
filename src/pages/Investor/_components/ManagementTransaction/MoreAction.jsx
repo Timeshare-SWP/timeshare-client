@@ -7,11 +7,13 @@ import ModalConfirm from "../../../../components/shared/ModalConfirm"
 import { confirmSellTimeshare } from '../../../../redux/features/timeshareSlice';
 import toast from 'react-hot-toast';
 import SpinnerLoading from '../../../../components/shared/SpinnerLoading'
+import ModalContract from '../../../../components/shared/ModalContract';
 
 const MoreAction = ({ transactionSelected, setTransactionList, userDecode }) => {
 
     const dispatch = useDispatch();
     const [openModalConfirmSell, setOpenModalConfirmSell] = useState(false);
+    const [openModalContract, setOpenModalContract] = useState(false)
     const [isLoading, setIsLoading] = useState(false);
 
     const handleItemClick = (id) => {
@@ -26,7 +28,7 @@ const MoreAction = ({ transactionSelected, setTransactionList, userDecode }) => 
                 break;
             case 3:
                 //hợp đồng
-                alert('Hợp đồng')
+                setOpenModalContract(true)
                 break;
             default:
                 alert('Hmmmm, something wrong!')
@@ -104,6 +106,15 @@ const MoreAction = ({ transactionSelected, setTransactionList, userDecode }) => 
                     handleClose={() => setOpenModalConfirmSell(false)}
                     handleAccept={handleCallApiConfirmSell}
                     body={<h5>Bạn có chắc muốn bán timeshare cho bên này?</h5>}
+                />
+            }
+
+            {openModalContract
+                &&
+                <ModalContract
+                    show={openModalContract}
+                    handleClose={() => setOpenModalContract(false)}
+                    handleAccept={() => setOpenModalContract(true)}
                 />
             }
             {isLoading && <SpinnerLoading />}

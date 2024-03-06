@@ -17,8 +17,10 @@ const ModalReservedPlaceList = (props) => {
         setLoadingData(true);
         dispatch(viewAllCustomerWhoReservePlaceByTimeshareId(item._id)).then((result) => {
             const sortedList = result.payload.sort((a, b) => {
-                return new Date(b.createdAt) - new Date(a.createdAt);
+                return new Date(a.createdAt) - new Date(b.createdAt);
             });
+
+            console.log(result.payload)
 
             setListReservedPlace(sortedList);
             setLoadingData(false);
@@ -91,8 +93,8 @@ const ModalReservedPlaceList = (props) => {
                                                     </td>
                                                     <td className="cell100 column4">
                                                         {item?.transaction_status === "Reserving" ? "Đang đặt chỗ" : item?.transaction_status === "Unreserve" ? "Đã hủy đặt" : item?.transaction_status}
-                                                    </td>
-                                                    <td className="cell100 column5">{convertToVietnameseTime(item?.createdAt)}</td>
+                                                    </td>                                               
+                                                    <td className="cell100 column5">{convertToVietnameseTime(item?.reservation_time)}</td>
                                                 </tr>
                                             ))
                                         )}
