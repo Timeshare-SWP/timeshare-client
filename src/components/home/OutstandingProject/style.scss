@@ -1,5 +1,20 @@
 .outstanding-project-section {
   .list-outstanding-project {
+    .slick-prev {
+      left: -30px !important;
+    }
+
+    .slick-track {
+      display: flex !important;
+      gap: 20px;
+    }
+
+    .slick-prev:before,
+    .slick-next:before {
+      // font-size: 45px !important;
+      color: rgb(63, 61, 61);
+    }
+
     .item {
       width: 300px;
       height: 450px;
@@ -59,15 +74,15 @@
   }
 }
 
-.inner-card{
-  height:20px;
+.inner-card {
+  height: 20px;
   width: 100px;
-  background-color:#eee;
+  background-color: #eee;
 }
 
 .inner-text {
   width: 200px;
   height: 20px;
-  background-color:#eee;
+  background-color: #eee;
   margin-top: 10px;
 }

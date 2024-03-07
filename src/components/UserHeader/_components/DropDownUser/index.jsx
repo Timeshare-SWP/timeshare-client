@@ -2,13 +2,14 @@ import React from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { Link } from "react-router-dom";
 import { DROPDOWN_HEADER_CUSTOMER, DROPDOWN_HEADER_INVESTOR, DROPDOWN_HEADER_STAFF } from '../../../../constants/dropdown';
+import { generateFallbackAvatar } from '../../../../utils/handleFunction';
 
 const DropDownUser = (props) => {
 
     const { user, actionLogout } = props
 
-    console.log(user)
-    
+    // console.log(user)
+
     const getMenuItems = () => {
         switch (user?.role_id?.roleName) {
             case 'Customer':
@@ -38,14 +39,14 @@ const DropDownUser = (props) => {
         <Dropdown className="dropdown-header" >
             <Dropdown.Toggle variant="ghost" id="dropdown-basic" className='d-flex justify-content-center align-items-center '>
                 <div className="avatar-profile">
-                    <img src={user?.avatar_url ? user?.avatar_url : "https://cdn.popsww.com/blog/sites/2/2021/03/doraemon-tap-97.jpg"}
+                    <img src={user?.avatar_url ? user?.avatar_url : generateFallbackAvatar(user?.email)}
                         alt={user?.avatar_url ? "UserAva" : "IncognitoAva"} />
                 </div>
             </Dropdown.Toggle>
 
             <Dropdown.Menu>
                 <div className="label-name">
-                    <img src={user?.avatar_url ? user?.avatar_url : "https://cdn.popsww.com/blog/sites/2/2021/03/doraemon-tap-97.jpg"}
+                    <img src={user?.avatar_url ? user?.avatar_url : generateFallbackAvatar(user?.email)}
                         alt={user?.avatar_url ? "UserAva" : "IncognitoAva"} />
 
                     <p>{user?.fullName}</p>

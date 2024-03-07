@@ -34,6 +34,7 @@ function Authentication(props) {
             {!swapToRegisterState
                 ? <LoginModal
                     loginAction={login}
+                    swapToRegisterState={swapToRegisterState}
                     loginGoogleAction={loginWithGoogle}
                     closeModalAction={onClose}
                     actionSwapToRegister={actionSwapToRegister}

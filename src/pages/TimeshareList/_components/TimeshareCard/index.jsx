@@ -3,7 +3,7 @@ import { GiPositionMarker } from "react-icons/gi";
 import { BsTextareaResize } from "react-icons/bs";
 import { LuClipboardType } from "react-icons/lu";
 import { useNavigate } from 'react-router';
-import { convertToSlug } from '../../../../utils/handleFunction';
+import { convertToNumberFormat, convertToSlug, convertToVNDFormat, truncateString } from '../../../../utils/handleFunction';
 
 const TimeshareCard = (props) => {
 
@@ -23,19 +23,57 @@ const TimeshareCard = (props) => {
         else if (status === statuses[1]) classNames = "button-green";
         else classNames = "button-gray";
 
-        return <div className={`btn ${classNames}`}>{status}</div>;
+        return <div className={`btn ${classNames}`} style={{ fontSize: '10px' }}>{status}</div>;
     }
 
     return (
-        <div className='card my-5 timeshare-card' key={key} onClick={handleToNavigateTimeshareDetail}>
+        <div className='card my-2 timeshare-card' key={key} onClick={handleToNavigateTimeshareDetail}>
             <div
                 className="row"
             >
-                <div className='col-4 d-flex justify-content-center align-items-center'>
+                <div className='col-4 d-flex flex-column justify-content-center align-items-center'>
                     <img src={`${item?.timeshare_image
                         && item.timeshare_image.length > 0
                         ? item.timeshare_image[0]?.timeshare_img_url
-                        : img_tmp}`} className='img-fluid rounded-start' />
+                        : img_tmp}`} className='img-fluid'
+                        alt="timeshare" />
+
+                    <div className="sub-img">
+                        {item.timeshare_image && item.timeshare_image.length > 1 && (
+                            <>
+                                {item.timeshare_image.length > 1
+                                    &&
+                                    <div className="item">
+                                        <img
+                                            src={item.timeshare_image[1]?.timeshare_img_url}
+                                            alt="timeshare"
+                                        />
+                                    </div>
+                                }
+                                {item.timeshare_image.length > 2
+                                    &&
+                                    <div className="item">
+                                        <img
+                                            src={item.timeshare_image[2]?.timeshare_img_url}
+                                            alt="timeshare"
+                                        />
+                                    </div>
+                                }
+                                {item.timeshare_image.length > 3 && (
+                                    <div className="item">
+                                        <div className="overlay">
+                                            +{item?.timeshare_image.length - 3}
+                                        </div>
+                                        <img
+                                            src={item.timeshare_image[3]?.timeshare_img_url}
+                                            alt="timeshare"
+                                        />
+                                    </div>
+                                )}
+
+                            </>
+                        )}
+                    </div>
                 </div>
 
                 <div className='col-8'>
@@ -44,19 +82,19 @@ const TimeshareCard = (props) => {
                         {renderStatus(item.timeshare_status, ["Sắp triển khai", "Đang triển khai", "Đã triển khai"])}
                     </div>
 
-                    <h4>{item.timeshare_name}</h4>
+                    <h5>{item.timeshare_name}</h5>
 
                     <div className='other-option d-flex gap-3 align-items-center'>
-                        <div><GiPositionMarker /> {item.timeshare_address}</div>
+                        <div style={{ fontSize: '15px' }}><GiPositionMarker /> {item.timeshare_address}</div>
 
-                        <div><BsTextareaResize /> {item.land_area}</div>
+                        <div style={{ fontSize: '15px' }}><BsTextareaResize /> {convertToNumberFormat(item.land_area)} m&#178;</div>
 
-                        <div><LuClipboardType />  {item.timeshare_type}</div>
+                        <div style={{ fontSize: '15px' }}><LuClipboardType />  {item.timeshare_type}</div>
                     </div>
 
-                    <p>Giá: <span className='text-price'>{item.price} triệu/m2</span></p>
+                    <p>Giá: <span className='text-price'>{convertToVNDFormat(item.price)}/m&#178;</span></p>
 
-                    <p className='description'>{item.timeshare_description}</p>
+                    <p className='description'>{truncateString(item.timeshare_description, 45)}</p>
 
                     <div className='d-flex investor-profile gap-3'>
                         <div className='avatar'>
