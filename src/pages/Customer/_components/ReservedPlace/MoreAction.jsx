@@ -119,21 +119,23 @@ const MoreAction = ({ transactionSelected, setReservedPlaceList, userDecode }) =
                 const reservedPlaces = resViewAll.payload.filter(place => place.timeshare_id._id === transactionSelected.timeshare_id._id);
 
                 let is_reserve_state
-
+                let transaction_id
+                
                 if (reservedPlaces.length > 0) {
                     const nearestUpdatedPlace = reservedPlaces.reduce((nearest, place) => {
                         return place.updatedAt > nearest.updatedAt ? place : nearest;
                     });
 
                     is_reserve_state = nearestUpdatedPlace.transaction_status === "Reserving";
-
+                    transaction_id = nearestUpdatedPlace?._id
                 } else {
                     is_reserve_state = false;
                 }
 
                 const data = {
                     timeshare_id: transactionSelected.timeshare_id._id,
-                    is_reserve: is_reserve_state
+                    is_reserve: is_reserve_state,
+                    transaction_id: transaction_id
                 }
 
                 dispatch(buyTimeshare(data)).then((resBuy) => {

@@ -107,9 +107,39 @@
     }
 
     .investor-transaction-container {
+      .table100.ver2 th {
+        font-size: 15px;
+      }
+
+      th,
+      td {
+        border: 1px solid rgb(192, 182, 182);
+        border-bottom: none;
+        border-top: none;
+
+        &:first-child {
+          border-left: none;
+        }
+
+        &:last-child {
+          border-right: none;
+        }
+
+        &[rowspan]:first-child {
+          border-left: none;
+        }
+
+        &[rowspan]:last-child {
+          border-right: none;
+        }
+      }
+
+      .cell100 {
+        padding-left: 10px;
+      }
+
       .column1 {
         width: 20%;
-        padding-left: 40px;
       }
 
       .column2 {
@@ -280,12 +310,33 @@
   }
 }
 
-.status-waiting {
-  color: #ffc374;
+.status-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: gray;
+}
+
+.status-button:hover {
+  text-decoration: underline;
+}
+
+.status-button.accept:hover {
+  font-weight: bold;
+  color: green;
+}
+
+.status-button.reject:hover {
+  font-weight: bold;
+  color: red;
 }
 
 .status-selected {
   color: green;
+}
+
+.status-waiting {
+  color: orange
 }
 
 .status-rejected {

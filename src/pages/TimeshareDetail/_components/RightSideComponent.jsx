@@ -11,11 +11,15 @@ import { AuthContext } from '../../../contexts/authContext';
 import { createNotification } from '../../../redux/features/notificationSlice';
 import { CiEdit } from "react-icons/ci";
 import { MdDeleteOutline } from "react-icons/md";
+import { LiaCitySolid } from "react-icons/lia";
+import { MdAttachMoney } from "react-icons/md";
+import { useNavigate } from 'react-router-dom';
 
 
 const RightSideComponent = (props) => {
 
     const { item } = props
+    const navigate = useNavigate();
 
     const [openModalReservedPlace, setOpenModalReservedPlace] = useState(false);
     const [openModalConfirmBuy, setOpenModalConfirmBuy] = useState(false);
@@ -36,7 +40,7 @@ const RightSideComponent = (props) => {
     }
 
     // Xử lý việc mua timeshare
-    console.log("item", item)
+    // console.log("item", item)
 
     const dispatch = useDispatch();
 
@@ -47,25 +51,29 @@ const RightSideComponent = (props) => {
                 const reservedPlaces = resViewAll.payload.filter(place => place.timeshare_id._id === item._id);
 
                 let is_reserve_state
+                let transaction_id
 
                 if (reservedPlaces.length > 0) {
                     const nearestUpdatedPlace = reservedPlaces.reduce((nearest, place) => {
                         return place.updatedAt > nearest.updatedAt ? place : nearest;
                     });
-
+                    console.log("nearestUpdatedPlace", nearestUpdatedPlace)
                     is_reserve_state = nearestUpdatedPlace.transaction_status === "Reserving";
-
+                    transaction_id = nearestUpdatedPlace?._id
                 } else {
                     is_reserve_state = false;
                 }
 
                 const data = {
                     timeshare_id: item._id,
-                    is_reserve: is_reserve_state
+                    is_reserve: is_reserve_state,
+                    transaction_id: transaction_id
                 }
+                console.log('data', data)
 
                 dispatch(buyTimeshare(data)).then((resBuy) => {
                     if (buyTimeshare.fulfilled.match(resBuy)) {
+                        navigate('/customer-transaction')
                         toast.success('Mua thành công!')
 
                         const dataBodyNoti = {
@@ -97,8 +105,21 @@ const RightSideComponent = (props) => {
     return (
         <>
             <div className='col-4 container-right'>
-                <div className='text-price'>Khoảng giá: <span className='detail'>{convertToNumberFormat(item?.price)} VNĐ/m&#178;</span></div>
-                <div className='text-price'>Chủ đầu tư: <span className='fw-bold'>{item?.investor_id?.fullName}</span></div>
+                <div className='text-price'>
+                    <div className='d-flex justify-content-center align-items-center gap-2'>
+                        <MdAttachMoney />
+                        Khoảng giá:
+                    </div>
+                    <span className='detail'>{convertToNumberFormat(item?.price)} VNĐ/m&#178;</span>
+                </div>
+
+                <div className='text-price'>
+                    <div className='d-flex justify-content-center align-items-center gap-2'>
+                        <LiaCitySolid />
+                        Chủ đầu tư:
+                    </div>
+                    <span className='fw-bold'>{item?.investor_id?.fullName}</span>
+                </div>
                 <hr></hr>
                 {userDecode._id === item?.investor_id._id
                     ?

@@ -47,7 +47,7 @@ const TableBody = ({ transactionList, setTransactionList }) => {
                                 <td className='cell100 column4' style={{ fontStyle: item?.reservation_time ? 'normal' : 'italic' }}>
                                     {item?.reservation_time ? convertToVietnameseTime(item.reservation_time) : "Chưa đặt chỗ trước"}
                                 </td>
-                                <td className="cell100 column5">{convertToVietnameseTime(item?.createdAt)}</td>
+                                <td className="cell100 column5">{convertToVietnameseTime(item?.updatedAt)}</td>
                                 <td className="cell100 column6">
                                     <span className={item?.transaction_status === "Waiting" ? "status-waiting" :
                                         item?.transaction_status === "Selected" ? "status-selected" :
@@ -58,7 +58,8 @@ const TableBody = ({ transactionList, setTransactionList }) => {
                                                     item?.transaction_status}
                                     </span>
                                 </td>
-                                <td className='cell100 column7'>
+                                <td className='cell100 column7'>Chưa đăng</td>
+                                <td className='cell100 column8'>
                                     <MoreAction transactionSelected={item}
                                         setTransactionList={setTransactionList}
                                         userDecode={userDecode} />

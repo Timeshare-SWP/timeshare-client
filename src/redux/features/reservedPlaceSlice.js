@@ -70,6 +70,22 @@ export const viewAllCustomerWhoReservePlaceByTimeshareId = createAsyncThunk(
   }
 );
 
+export const createPaymentUrlForReserving = createAsyncThunk(
+  "reservedPlace/createPaymentUrlForReserving",
+  async (data, thunkAPI) => {
+    try {
+      const instance = getInstanceWithToken();
+
+      const response = await instance.post(`/api/vnpays/create_payment_url`, {...data});
+
+      return response.data;
+    } catch (error) {
+      console.log('api', error)
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 export const reservedPlaceSlice = createSlice({
   name: "reservedPlace",
   initialState,

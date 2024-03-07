@@ -44,15 +44,23 @@ const Notification = () => {
         switch (item?.notification_type) {
             case "ACCEPT_JOIN_TIMESHARE_TO_CUSTOMER":
             case "REJECT_JOIN_TIMESHARE_TO_CUSTOMER":
+            case "NOTI_CAN_BUY_TIMESHARE_TO_CUSTOMER":
                 navigate("/reserved-place-list");
                 break;
             case "NOTI_RESERVER_PLACE_TO_INVESTOR":
+            case "NOTI_PAYMENT_BY_PHASE_TO_INVESTOR":
                 navigate("/personal-projects");
                 break;
-            case "NOTI_CAN_BUY_TIMESHARE_TO_CUSTOMER":
-                navigate("/reserved-place-list")
             case "REQUEST_CONFIRM_BUY_TIMESHARE_TO_INVESTOR":
+            case "ACCEPT_CONTRACT_TO_INVESTOR":
                 navigate("/management-transaction")
+                break;
+            case "ACCEPT_BUY_TIMESHARE_TO_CUSTOMER":
+            case "REJECT_BUY_TIMESHARE_TO_CUSTOMER":
+            case "REQUEST_CONFIRM_CONTRACT_TO_CUSTOMER":
+            case "CHANGE_CONTRACT_TO_CUSTOMER":
+                navigate("/customer-transaction")
+                break;
             default:
             // Không làm gì cả
         }

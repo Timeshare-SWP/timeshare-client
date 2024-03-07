@@ -1,0 +1,134 @@
+.contract-body-modal {
+  .contract-container {
+    &__left {
+      display: flex;
+      flex-direction: column;
+
+      .section-image-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+
+        img {
+          width: 100%;
+          height: auto;
+          object-fit: cover;
+          cursor: pointer;
+        }
+      }
+    }
+
+    &__right {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 15px 15px;
+      box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+      border-radius: 10px;
+      height: fit-content;
+    }
+  }
+
+  .create-contract-container {
+    .sub-title {
+      color: gray;
+      font-weight: bold;
+    }
+
+    .section-form {
+      .photo-upload {
+        width: 100%;
+        border-radius: 8px;
+        padding: 24px 46px;
+        border: 1px dashed #9fa4aa;
+        cursor: pointer;
+
+        img {
+          display: block;
+          width: 24px;
+          height: 24px;
+          margin: 0 auto 16px;
+          vertical-align: middle;
+        }
+
+        .photo-upload-title {
+          font-size: 14px;
+          line-height: 20px;
+          color: #30333a;
+          text-align: center;
+          margin-bottom: 10px !important;
+        }
+
+        p {
+          margin: 0;
+          font-size: 13px;
+          line-height: 18px;
+          color: #5f666d;
+          text-align: center;
+        }
+      }
+
+      .photo-uploaded {
+        margin-bottom: -8px;
+
+        h4 {
+          margin-bottom: 8px;
+          font-size: 14px;
+          line-height: 20px;
+          color: #30333a;
+        }
+
+        .list-photo {
+          margin: 10px 0px !important;
+          padding-left: 0rem !important;
+          list-style: none;
+          display: flex;
+          flex-wrap: wrap;
+          margin: 0 -4px;
+          gap: 15px;
+          justify-content: center;
+
+          li {
+            padding: 0px !important;
+          }
+
+          .photo-item {
+            position: relative;
+            width: 140px;
+            height: 72px;
+            border-radius: 4px;
+            overflow: hidden;
+
+            img {
+              display: block;
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              object-position: center;
+            }
+
+            .delete-item {
+              cursor: pointer;
+              position: absolute;
+              top: 4px;
+              right: 4px;
+              width: 24px;
+              height: 24px;
+              display: -webkit-box;
+              display: -ms-flexbox;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              background: #fff;
+              padding: 0;
+              border: 1px solid #f5f5f7;
+              border-radius: 4px;
+              box-shadow: 0 8px 16px rgba(28, 30, 34, 0.04);
+              font-size: 16px;
+              color: #5f666d;
+            }
+          }
+        }
+      }
+    }
+  }
+}

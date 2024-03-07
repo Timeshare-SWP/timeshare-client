@@ -6,6 +6,7 @@ import Stage_2 from "../StagePostTimeshare/stage_2"
 import Stage_3 from "../StagePostTimeshare/stage_3"
 import Stage_4 from "../StagePostTimeshare/stage_4"
 import toast from 'react-hot-toast'
+import Stage_5 from '../StagePostTimeshare/stage_5'
 
 const ModalContinuePostTimeshare = (props) => {
     const { show, handleCloseModalContinuePost,
@@ -15,7 +16,8 @@ const ModalContinuePostTimeshare = (props) => {
         setSelectedTimeshareStatus, selectedJuridicalFiles,
         setSelectedJuridicalFiles, juridicalFilesOrigin, setJuridicalFilesOrigin, anotherInfo, setAnotherInfo,
         priorityLevel, setPriorityLevel, openModalConfirmState,
-        handleCancelModalConfirm, handleConfirmPostTimeshare, handleOpenConfirmModal } = props
+        handleCancelModalConfirm, handleConfirmPostTimeshare, handleOpenConfirmModal,
+        depositPrice, setDepositPrice, errorDepositPrice, setErrorDepositPice } = props
 
     const handleStageClick = (stage) => {
         setCurrentStage(stage);
@@ -50,6 +52,8 @@ const ModalContinuePostTimeshare = (props) => {
                 return "Cập nhập các thông tin khác";
             case 4:
                 return "Mức độ ưu tiên";
+            case 5:
+                return "Giá giữ chân"
             default:
                 return "";
         }
@@ -60,11 +64,13 @@ const ModalContinuePostTimeshare = (props) => {
             case 1:
                 return <Stage_1 selectedTimeshareStatus={selectedTimeshareStatus} setSelectedTimeshareStatus={setSelectedTimeshareStatus} />;
             case 2:
-                return <Stage_2 selectedJuridicalFiles={selectedJuridicalFiles} setSelectedJuridicalFiles={setSelectedJuridicalFiles} juridicalFilesOrigin={juridicalFilesOrigin} setJuridicalFilesOrigin={setJuridicalFilesOrigin}/>;
+                return <Stage_2 selectedJuridicalFiles={selectedJuridicalFiles} setSelectedJuridicalFiles={setSelectedJuridicalFiles} juridicalFilesOrigin={juridicalFilesOrigin} setJuridicalFilesOrigin={setJuridicalFilesOrigin} />;
             case 3:
                 return <Stage_3 anotherInfo={anotherInfo} setAnotherInfo={setAnotherInfo} />;
             case 4:
                 return <Stage_4 priorityLevel={priorityLevel} setPriorityLevel={setPriorityLevel} />;
+            case 5:
+                return <Stage_5 depositPrice={depositPrice} setDepositPrice={setDepositPrice} errorDepositPrice={errorDepositPrice} setErrorDepositPice={setErrorDepositPice}/>
             default:
                 return null;
         }
@@ -78,7 +84,7 @@ const ModalContinuePostTimeshare = (props) => {
 
             <Modal.Body className='webkit-scrollbar-modal'>
                 <div className="stage-header">
-                    {[1, 2, 3, 4].map(stageNum => (
+                    {[1, 2, 3, 4, 5].map(stageNum => (
                         <button
                             key={stageNum}
                             className={`stage btn ${stageEnabled[stageNum] ? '' : 'disabled'} ${currentStage === stageNum ? 'active' : ''}`}
@@ -102,13 +108,13 @@ const ModalContinuePostTimeshare = (props) => {
                         </button>
                     )}
 
-                    {currentStage < 4 && (
+                    {currentStage < 5 && (
                         <button className="btn fw-bold btn-continue mx-2" onClick={handleContinueStage}>
                             Tiếp tục
                         </button>
                     )}
 
-                    {currentStage === 4 && (
+                    {currentStage === 5 && (
                         <button className="btn fw-bold btn-continue mx-2" onClick={handleOpenConfirmModal}>
                             Xác nhận đăng bán
                         </button>

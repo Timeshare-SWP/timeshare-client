@@ -114,6 +114,8 @@ const PostForm = () => {
         year_of_handover: null,
     }); //stage 3
     const [priorityLevel, setPriorityLevel] = useState("Time") //stage 4
+    const [depositPrice, setDepositPrice] = useState('') //stage 5
+    const [errorDepositPrice, setErrorDepositPice] = useState('')
 
     // console.log('juridicalFilesOrigin', juridicalFilesOrigin)
 
@@ -170,6 +172,7 @@ const PostForm = () => {
 
     const removeGeneralImage = (path) => {
         setImageSelectedTimeshare((prevFiles) => prevFiles.filter((file) => file.path !== path));
+        setImageSelectedTimeshareOrigin((prevFiles) => prevFiles.filter((file) => file.path !== path));
     };
 
     //xử lý ảnh mặt bằng
@@ -225,6 +228,7 @@ const PostForm = () => {
 
     const removeFloorImage = (path) => {
         setFloorPlanImages((prevFiles) => prevFiles.filter((file) => file.path !== path));
+        setFloorPlanImagesOrigin((prevFiles) => prevFiles.filter((file) => file.path !== path));
     };
 
     //luồng trong modal continue post
@@ -254,7 +258,8 @@ const PostForm = () => {
         1: true,
         2: false,
         3: false,
-        4: false
+        4: false,
+        5: false
     });
 
     // xử lý luồng post timeshare
@@ -263,6 +268,17 @@ const PostForm = () => {
     const dispatch = useDispatch();
 
     const handleOpenConfirmModal = () => {
+        if (depositPrice === 0 || depositPrice === '') {
+            setErrorDepositPice('Vui lòng nhập số tiền đặt cọc bạn muốn')
+            return;
+        }
+
+        const depositPercentage = parseFloat(removeCommas(depositPrice)) / parseFloat(removeCommas(formData.price)) * 100;
+
+        if (depositPercentage < 5 || depositPercentage > 10) {
+            setErrorDepositPice('Số tiền đặt cọc phải nằm trong khoảng từ 5% đến 10% của giá tiền gốc');
+            return;
+        }
         setOpenModalContinuePostState(false)
         setOpenModalConfirmState(true)
     }
@@ -271,7 +287,6 @@ const PostForm = () => {
         setOpenModalContinuePostState(true)
         setOpenModalConfirmState(false)
     }
-
 
     // gọi api xử lý
 
@@ -339,7 +354,6 @@ const PostForm = () => {
         });
 
         Promise.all(dispatchPromises).then(() => {
-            console.log("juridicalFilesURLs", juridicalFilesURLs)
 
             const data = {
                 ...formData, ...anotherInfo,
@@ -351,7 +365,8 @@ const PostForm = () => {
                 timeshare_image,
                 priority_level: priorityLevel,
                 timeshare_status: selectedTimeshareStatus.name_status,
-                timeshare_related_link: juridicalFilesURLs
+                timeshare_related_link: juridicalFilesURLs,
+                deposit_price: removeCommas(depositPrice)
             }
 
             dispatch(createTimeshare(data)).then((result) => {
@@ -670,6 +685,10 @@ const PostForm = () => {
                         handleCancelModalConfirm={handleCancelModalConfirm}
                         handleConfirmPostTimeshare={handleConfirmPostTimeshare}
                         handleOpenConfirmModal={handleOpenConfirmModal}
+                        depositPrice={depositPrice}
+                        setDepositPrice={setDepositPrice}
+                        errorDepositPrice={errorDepositPrice}
+                        setErrorDepositPice={setErrorDepositPice}
                     />
                 }
 

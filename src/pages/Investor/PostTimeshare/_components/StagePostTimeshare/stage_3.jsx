@@ -32,8 +32,6 @@ const Stage_3 = (props) => {
     });
   };
 
-  console.log('selectedUtilities', selectedUtilities)
-
   const convert_utilities_list = UTILITIES_LIST.map(item => ({
     value: item.id,
     label: item.name,

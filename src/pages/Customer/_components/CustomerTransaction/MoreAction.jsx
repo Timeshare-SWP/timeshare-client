@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const MoreAction = ({ transactionSelected, setReservedPlaceList, userDecode }) => {
 
+    console.log('transactionSelected', transactionSelected)
     const dispatch = useDispatch();
 
     const handleItemClick = (id) => {
@@ -18,12 +19,16 @@ const MoreAction = ({ transactionSelected, setReservedPlaceList, userDecode }) =
                 alert('Hợp đồng')
                 break;
             default:
-                alert('Hmmmm, something wrong!')
+                alert('thanh toán!')
         }
     }
 
     const renderDropDownMenuItem = () => {
         let actionsToShow = TRANSACTION_LIST_ACTION_CUSTOMER;
+
+        if (transactionSelected && transactionSelected.transaction_status !== "Selected") {
+            actionsToShow = actionsToShow.filter(item => item.id !== 2 && item.id !== 3);
+        }
 
         return actionsToShow.map((item, index) => (
             <Dropdown.Item
@@ -37,6 +42,7 @@ const MoreAction = ({ transactionSelected, setReservedPlaceList, userDecode }) =
         ));
     }
 
+
     return (
         <Dropdown className='notification-container'>
             <Dropdown.Toggle variant="ghost" id="dropdown-basic" className='d-flex justify-content-center align-items-center '>
@@ -46,7 +52,7 @@ const MoreAction = ({ transactionSelected, setReservedPlaceList, userDecode }) =
             <Dropdown.Menu>
                 {renderDropDownMenuItem()}
             </Dropdown.Menu>
-           
+
         </Dropdown>
     )
 }
