@@ -14,8 +14,13 @@ import find_contract from "../../../assets/svg/find-contract.svg";
 import FormCreateContract from './_components/FormCreateContract';
 
 const ModalContract = (props) => {
-    const { show, handleClose, handleAccept, nameBtnCLose,
-        nameBtnAccept, transactionSelected, setTransactionList } = props
+    const { show, handleClose,
+        transactionSelected, setTransactionList,
+        handleOpenModalConfirmToCreateContract,
+        imagesContract, setImagesContract, imagesContractOrigin, setImagesContractOrigin,
+        fileContract, setFileContract, fileContractOrigin, setFileContractOrigin,
+        formErrors, setFormErrors
+    } = props
 
     const { userDecode } = useContext(AuthContext);
     const dispatch = useDispatch()
@@ -24,10 +29,6 @@ const ModalContract = (props) => {
 
     const [dataContract, setDataContract] = useState('')
     const [openCreateContractMode, setOpenCreateContractMode] = useState(false);
-
-    const handleApiCreateContract = () => {
-
-    }
 
     useEffect(() => {
         setIsLoading(true)
@@ -68,7 +69,18 @@ const ModalContract = (props) => {
                         ?
                         openCreateContractMode
                             ?
-                            <FormCreateContract />
+                            <FormCreateContract
+                                imagesContract={imagesContract}
+                                setImagesContract={setImagesContract}
+                                imagesContractOrigin={imagesContractOrigin}
+                                setImagesContractOrigin={setImagesContractOrigin}
+                                fileContract={fileContract}
+                                setFileContract={setFileContract}
+                                fileContractOrigin={fileContractOrigin}
+                                setFileContractOrigin={setFileContractOrigin}
+                                formErrors={formErrors}
+                                setFormErrors={setFormErrors}
+                            />
                             :
                             <Container className='d-flex align-items-center justify-content-center flex-column'>
                                 {transactionSelected?.timeshare_id.investor_id === userDecode._id
@@ -101,41 +113,12 @@ const ModalContract = (props) => {
                         Hủy
                     </button>
 
-                    <button className="btn btn-primary" onClick={handleAccept}>
+                    <button className="btn btn-primary" onClick={handleOpenModalConfirmToCreateContract}>
                         Thêm hợp đồng
                     </button>
                 </Modal.Footer>
             }
 
-            {/* {isLoading
-                ?
-                <div style={{ height: '400px' }}
-                    className='d-flex justify-content-center align-items-center'>
-                    <SimpleLoading />
-                </div>
-                :
-                <>
-                    <Modal.Body className='contract-body-modal'>
-                        <Container className='row contract-container'>
-                            <LeftSiteContract />
-                            <RightSiteContract />
-                        </Container>
-                    </Modal.Body>
-
-                    {nameBtnAccept
-                        && nameBtnAccept
-                        && <Modal.Footer>
-                            <button className="btn btn-secondary" onClick={handleClose}>
-                                {nameBtnCLose}
-                            </button>
-
-                            <button className="btn btn-primary" onClick={handleAccept}>
-                                {nameBtnAccept}
-                            </button>
-                        </Modal.Footer>
-                    }
-                </>
-            } */}
         </Modal>
     )
 }

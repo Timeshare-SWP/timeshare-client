@@ -35,6 +35,14 @@
     }
 
     .section-form {
+      .form-title {
+        margin-top: 24px !important;
+        margin-bottom: 24px !important;
+        font-size: 20px;
+        line-height: 24px;
+        color: #30333a;
+      }
+
       .photo-upload {
         width: 100%;
         border-radius: 8px;
@@ -128,6 +136,11 @@
             }
           }
         }
+      }
+
+      .error-message {
+        font-size: 15px;
+        color: red;
       }
     }
   }
