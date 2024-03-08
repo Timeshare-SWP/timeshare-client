@@ -35,6 +35,81 @@
     }
 
     .section-form {
+      .form-group-material {
+        position: relative;
+
+        .form-control {
+          border-radius: 8px;
+          border: 1px solid #ced4da;
+          padding: 20px 16px 4px;
+        }
+
+        label {
+          top: 6px;
+          left: 16px;
+          font-size: 12px;
+          color: #30333a;
+          opacity: 0.7;
+          position: absolute;
+          pointer-events: none;
+          z-index: 2;
+        }
+
+        .unit-area {
+          position: absolute;
+          z-index: 2;
+          right: 15px;
+          bottom: 5px;
+        }
+
+        .form-select {
+          position: absolute;
+          top: 14px;
+          bottom: 0px;
+          border: none;
+          margin-left: 4px;
+          width: 98%;
+          height: 60%;
+          z-index: 1;
+          padding-bottom: 0px !important;
+          outline: none;
+          -webkit-appearance: none;
+        }
+
+        .form-select:focus {
+          outline: none;
+          box-shadow: none;
+        }
+
+       
+      }
+
+      .year-select {
+        cursor: pointer;
+
+        .react-datepicker-wrapper {
+          position: absolute;
+          top: 20px;
+          left: 15px;
+
+          .react-datepicker__input-container {
+            display: flex;
+            align-items: center;
+          }
+
+          svg {
+            padding: 0px !important;
+          }
+
+          input {
+            cursor: pointer;
+            padding: 0px 10px 0px 25px;
+            outline: none;
+            width: 180px;
+          }
+        }
+      }
+
       .form-title {
         margin-top: 24px !important;
         margin-bottom: 24px !important;

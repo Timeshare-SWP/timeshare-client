@@ -3,11 +3,15 @@ import { Dropdown } from 'react-bootstrap'
 import { BsThreeDots } from "react-icons/bs";
 import { TRANSACTION_LIST_ACTION_CUSTOMER } from "../../../../constants/action"
 import { useDispatch, useSelector } from 'react-redux';
+import DrawerPaymentProgress from '../../../../components/shared/DrawerPaymentProgress';
+import ModalContractByCustomer from '../../../../components/shared/ModalContractByCustomer';
 
-const MoreAction = ({ transactionSelected, setReservedPlaceList, userDecode }) => {
-
-    console.log('transactionSelected', transactionSelected)
+const MoreAction = (props) => {
+    const { transactionSelected, transactionList, setTransactionList, userDecode } = props
     const dispatch = useDispatch();
+
+    const [openModalContract, setOpenModalContract] = useState(false);
+    const [openModalPaymentProgress, setOpenModalPaymentProgress] = useState(false);
 
     const handleItemClick = (id) => {
         switch (id) {
@@ -16,19 +20,15 @@ const MoreAction = ({ transactionSelected, setReservedPlaceList, userDecode }) =
                 alert('xem thông tin chi tiết')
                 break;
             case 2:
-                alert('Hợp đồng')
+                setOpenModalContract(true)
                 break;
             default:
-                alert('thanh toán!')
+                setOpenModalPaymentProgress(true)
         }
     }
 
     const renderDropDownMenuItem = () => {
         let actionsToShow = TRANSACTION_LIST_ACTION_CUSTOMER;
-
-        if (transactionSelected && transactionSelected.transaction_status !== "Selected") {
-            actionsToShow = actionsToShow.filter(item => item.id !== 2 && item.id !== 3);
-        }
 
         return actionsToShow.map((item, index) => (
             <Dropdown.Item
@@ -52,6 +52,28 @@ const MoreAction = ({ transactionSelected, setReservedPlaceList, userDecode }) =
             <Dropdown.Menu>
                 {renderDropDownMenuItem()}
             </Dropdown.Menu>
+
+            {openModalContract
+                &&
+                <ModalContractByCustomer
+                    show={openModalContract}
+                    handleClose={() => setOpenModalContract(false)}
+                    transactionSelected={transactionSelected}
+                    transactionList={transactionList}
+                    setTransactionList={setTransactionList}
+                />
+            }
+
+            {openModalPaymentProgress
+                &&
+                <DrawerPaymentProgress
+                    show={openModalPaymentProgress}
+                    handleClose={() => setOpenModalPaymentProgress(false)}
+                    transactionSelected={transactionSelected}
+                    transactionList={transactionList}
+                    setTransactionList={setTransactionList}
+                />
+            }
 
         </Dropdown>
     )

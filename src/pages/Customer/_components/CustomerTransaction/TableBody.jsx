@@ -60,9 +60,12 @@ const TableBody = ({ transactionList, setTransactionList }) => {
                                 </td>
                                 <td className='cell100 column7'>Chưa đăng</td>
                                 <td className='cell100 column8'>
-                                    <MoreAction transactionSelected={item}
+                                    <MoreAction
+                                        transactionSelected={item}
+                                        transactionList={transactionList}
                                         setTransactionList={setTransactionList}
-                                        userDecode={userDecode} />
+                                        userDecode={userDecode}
+                                    />
                                 </td>
                             </tr>
                         ))
