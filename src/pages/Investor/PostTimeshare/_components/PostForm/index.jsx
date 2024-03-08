@@ -127,7 +127,7 @@ const PostForm = () => {
         setImageSelectedTimeshareOrigin([...imageSelectedTimeshareOrigin, ...acceptedFiles])
         setImageSelectedTimeshare([...imageSelectedTimeshare, ...acceptedFiles]);
 
-        acceptedFiles.forEach((file) => {
+        acceptedFiles?.forEach((file) => {
             previewImage(file);
         });
 
@@ -183,7 +183,7 @@ const PostForm = () => {
         setFloorPlanImagesOrigin([...floorPlanImages, ...acceptedFiles]);
         setFloorPlanImages([...floorPlanImages, ...acceptedFiles]);
 
-        acceptedFiles.forEach((file) => {
+        acceptedFiles?.forEach((file) => {
             previewFloorImage(file);
         });
 
@@ -295,7 +295,7 @@ const PostForm = () => {
 
         //xử lý ảnh up lên firebase
         setIsLoading(true);
-        toast.error('Quá trình diễn ra sẽ hơi lâu, vui lòng chờ trong giây lát!')
+        toast('Quá trình diễn ra sẽ hơi lâu, vui lòng chờ trong giây lát!', { icon: '⚠' })
 
         const uploadPromises = [];
         const uploadedFiles = [];

@@ -118,7 +118,7 @@ const ModalReservedPlace = (props) => {
                     console.log("error resPayment", resPayment);
                 } else {
                     window.open(resPayment.payload.vnpUrl);
-                    // navigate("/reserved-place-list");
+                    navigate("/reserved-place-list");
                     console.log("success resPayment", resPayment.payload);
                     // toast.success(`Giữ chỗ thành công!`);
                 }

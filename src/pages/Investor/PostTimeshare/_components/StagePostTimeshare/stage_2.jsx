@@ -11,7 +11,7 @@ const Stage_2 = (props) => {
     setJuridicalFilesOrigin([...juridicalFilesOrigin, ...acceptedFiles])
     setSelectedJuridicalFiles([...selectedJuridicalFiles, ...acceptedFiles]);
 
-    acceptedFiles.forEach((file) => {
+    acceptedFiles?.forEach((file) => {
       previewImage(file);
     });
   };

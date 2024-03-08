@@ -15,11 +15,12 @@ import FormCreateContract from './_components/FormCreateContract';
 
 const ModalContract = (props) => {
     const { show, handleClose,
-        transactionSelected, setTransactionList,
+        transactionSelected, transactionList, setTransactionList,
         handleOpenModalConfirmToCreateContract,
         imagesContract, setImagesContract, imagesContractOrigin, setImagesContractOrigin,
         fileContract, setFileContract, fileContractOrigin, setFileContractOrigin,
-        formErrors, setFormErrors
+        formErrors, setFormErrors, phases, setPhases, minDates, setMinDates,
+        phaseError, setPhaseError
     } = props
 
     const { userDecode } = useContext(AuthContext);
@@ -32,7 +33,15 @@ const ModalContract = (props) => {
 
     useEffect(() => {
         setIsLoading(true)
-        dispatch(getContractByTransactionId(transactionSelected._id)).then((resGet) => {
+        const filteredTransactions = transactionList.filter(
+            (transaction) => transaction?.timeshare_id?._id === transactionSelected?.timeshare_id?._id
+        );
+
+        const selectedTransaction = filteredTransactions.find(
+            (transaction) => transaction.transaction_status === "Selected"
+        );
+
+        dispatch(getContractByTransactionId(selectedTransaction?._id)).then((resGet) => {
             if (getContractByTransactionId.fulfilled.match(resGet)) {
                 setDataContract(resGet.payload)
             } else {
@@ -48,7 +57,7 @@ const ModalContract = (props) => {
             <Modal.Header closeButton>
                 <Modal.Title>
                     Hợp đồng
-                    {transactionSelected?.timeshare_id.investor_id === userDecode._id
+                    {transactionSelected?.timeshare_id?.investor_id === userDecode._id
                         && dataContract
                         &&
                         <CiEdit />
@@ -65,7 +74,7 @@ const ModalContract = (props) => {
                         <SimpleLoading />
                     </div>
                     :
-                    dataContract === ''
+                    dataContract === ""
                         ?
                         openCreateContractMode
                             ?
@@ -80,6 +89,12 @@ const ModalContract = (props) => {
                                 setFileContractOrigin={setFileContractOrigin}
                                 formErrors={formErrors}
                                 setFormErrors={setFormErrors}
+                                phases={phases}
+                                setPhases={setPhases}
+                                minDates={minDates}
+                                setMinDates={setMinDates}
+                                phaseError={phaseError}
+                                setPhaseError={setPhaseError}
                             />
                             :
                             <Container className='d-flex align-items-center justify-content-center flex-column'>
@@ -99,8 +114,8 @@ const ModalContract = (props) => {
                         :
                         (<Modal.Body className='contract-body-modal'>
                             <Container className='row contract-container'>
-                                <LeftSiteContract />
-                                <RightSiteContract />
+                                <LeftSiteContract dataContract={dataContract} setDataContract={setDataContract}/>
+                                <RightSiteContract dataContract={dataContract} setDataContract={setDataContract}/>
                             </Container>
                         </Modal.Body>)
                 }

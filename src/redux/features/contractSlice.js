@@ -22,6 +22,21 @@ export const getContractByTransactionId = createAsyncThunk(
   }
 );
 
+export const getAllContractStatusByContractId = createAsyncThunk(
+  "contract/getAllContractStatusByContractId",
+  async (contract_id, thunkAPI) => {
+    try {
+      const instance = getInstanceWithToken();
+
+      const response = await instance.get(`/api/contracts/contractStatus/${contract_id}`);
+
+      return response.data;
+    } catch (error) { 
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 export const createContractImage = createAsyncThunk(
   "contract/createContractImage",
   async (data, thunkAPI) => {
@@ -85,6 +100,24 @@ export const confirmContractByCustomer = createAsyncThunk(
     }
   }
 );
+
+export const checkTimeshareHaveContract = createAsyncThunk(
+  "contract/checkTimeshareHaveContract",
+  async (timeshare_id, thunkAPI) => {
+    try {
+      const instance = getInstanceWithToken();
+
+      const response = await instance.get(
+        `api/contracts/checkTimeshareHaveContract?timeshare_id=${timeshare_id}`
+      );
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 
 export const contractSlice = createSlice({
   name: "contract",
@@ -162,6 +195,36 @@ export const contractSlice = createSlice({
       state.error = "";
     });
     builder.addCase(confirmContractByCustomer.rejected, (state, action) => {
+      state.loadingContract = false;
+      state.error = action.payload;
+    });
+
+    //getAllContractStatusByContractId
+    builder.addCase(getAllContractStatusByContractId.pending, (state) => {
+      state.loadingContract = true;
+      state.error = "";
+    });
+    builder.addCase(getAllContractStatusByContractId.fulfilled, (state, action) => {
+      state.loadingContract = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(getAllContractStatusByContractId.rejected, (state, action) => {
+      state.loadingContract = false;
+      state.error = action.payload;
+    });
+
+    //checkTimeshareHaveContract
+    builder.addCase(checkTimeshareHaveContract.pending, (state) => {
+      state.loadingContract = true;
+      state.error = "";
+    });
+    builder.addCase(checkTimeshareHaveContract.fulfilled, (state, action) => {
+      state.loadingContract = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(checkTimeshareHaveContract.rejected, (state, action) => {
       state.loadingContract = false;
       state.error = action.payload;
     });

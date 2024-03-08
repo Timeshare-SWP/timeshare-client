@@ -49,6 +49,7 @@ const Notification = () => {
                 break;
             case "NOTI_RESERVER_PLACE_TO_INVESTOR":
             case "NOTI_PAYMENT_BY_PHASE_TO_INVESTOR":
+            case "NOTI_PAYMENT_BY_RESERVING_TO_INVESTOR":
                 navigate("/personal-projects");
                 break;
             case "REQUEST_CONFIRM_BUY_TIMESHARE_TO_INVESTOR":

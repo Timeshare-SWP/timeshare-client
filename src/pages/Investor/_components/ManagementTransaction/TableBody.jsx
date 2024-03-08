@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { convertToSlug, convertToVietnameseTime } from '../../../../utils/handleFunction';
 import MoreAction from './MoreAction';
 import { AuthContext } from '../../../../contexts/authContext';
@@ -9,9 +9,47 @@ import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import ModalConfirm from '../../../../components/shared/ModalConfirm';
 import { createNotification } from '../../../../redux/features/notificationSlice';
+import { getContractByTransactionId } from '../../../../redux/features/contractSlice';
 
 const TableBody = ({ transactionList, setTransactionList }) => {
     console.log("transactionList", transactionList);
+
+    //API đang lỏ nên dùng cách tà đạo
+    const transformTransactionList = (transactionList) => {
+        const groupedTransactions = {};
+
+        transactionList.forEach((transaction) => {
+            const { timeshare_id, transaction_status } = transaction;
+            const timeshareId = timeshare_id._id;
+
+            if (!groupedTransactions[timeshareId]) {
+                groupedTransactions[timeshareId] = [];
+            }
+
+            groupedTransactions[timeshareId].push({ transaction, status: transaction_status });
+        });
+
+        const transformedTransactions = [];
+        for (const timeshareId in groupedTransactions) {
+            const transactions = groupedTransactions[timeshareId];
+            let selectedTransaction = null;
+
+            transactions.forEach(({ transaction, status }) => {
+                if (status === "Selected") {
+                    selectedTransaction = transaction;
+                }
+            });
+
+            if (!selectedTransaction && transactions.length > 0) {
+                selectedTransaction = transactions[0].transaction;
+            }
+
+            transformedTransactions.push(selectedTransaction);
+        }
+
+        return transformedTransactions;
+    };
+
     const { userDecode } = useContext(AuthContext);
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -99,8 +137,8 @@ const TableBody = ({ transactionList, setTransactionList }) => {
                     }
 
                     const updatedTransactionList = transactionList.filter(transaction => transaction.transaction_status === "Waiting");
-                    updatedTransactionList.forEach(obj => {
-                        obj.customers.forEach(user => {
+                    updatedTransactionList?.forEach(obj => {
+                        obj?.customers?.forEach(user => {
                             try {
                                 const dataBodyNoti = {
                                     user_id: user._id,
@@ -128,6 +166,21 @@ const TableBody = ({ transactionList, setTransactionList }) => {
             setOpenModalConfirmSell(false)
         })
     }
+
+    // const [haveContract, setHaveContract] = useState([])
+
+    // useEffect(() => {
+    //     const transformedArray = transformTransactionList(transactionList);
+    //     transformedArray.forEach((object) => {
+    //         dispatch(getContractByTransactionId(object._id)).then((resGetContract) => {
+    //             if (getContractByTransactionId.fulfilled.match(resGetContract)) {
+    //                 setHaveContract((prevHaveContract) => [...prevHaveContract, true]);
+    //             } else {
+    //                 setHaveContract((prevHaveContract) => [...prevHaveContract, false]);
+    //             }
+    //         });
+    //     });
+    // }, []);
 
     return (
         <div className="table100-body js-pscroll ps ps--active-y">
@@ -195,13 +248,14 @@ const TableBody = ({ transactionList, setTransactionList }) => {
                                             <td className="cell100 column7"
                                                 rowSpan={transactionList.filter(transaction => transaction.timeshare_id.timeshare_name === item.timeshare_id.timeshare_name).length}
                                             >
-                                                Chưa đăng
+                                                {/* {haveContract[index]} */}
                                             </td>
                                             <td className='cell100 column8'
                                                 rowSpan={transactionList.filter(transaction => transaction.timeshare_id.timeshare_name === item.timeshare_id.timeshare_name).length}
                                             >
                                                 <MoreAction
                                                     item={item}
+                                                    transactionList={transactionList}
                                                     setTransactionList={setTransactionList}
                                                     userDecode={userDecode} />
                                             </td>
