@@ -127,12 +127,12 @@ const App = () => {
                         key: `${tran._id}`,
                         address: `${tran.timeshare_id.timeshare_address}`,
                         name: `${tran.timeshare_id.timeshare_name}`,
-                        land_area: `${tran.land_area}`,
-                        year_of_commencement: `${tran.year_of_commencement}`,
-                        year_of_handover: `${tran.year_of_handover}`,
-                        timeshare_status: `${tran.timeshare_status}`,
-                        createdAt: `${tran.createdAt}`,
-                        updatedAt: `${tran.updatedAt}`,
+                        land_area: `${tran.timeshare_id.land_area}`,
+                        year_of_commencement: `${tran.timeshare_id.year_of_commencement}`,
+                        year_of_handover: `${tran.timeshare_id.year_of_handover}`,
+                        timeshare_status: `${tran.timeshare_id.timeshare_status}`,
+                        createdAt: `${tran.timeshare_id.createdAt}`,
+                        updatedAt: `${tran.timeshare_id.updatedAt}`,
                         price: `${tran.timeshare_id.price}`
                     };
                     data.push(transactionData);

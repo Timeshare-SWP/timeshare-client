@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import { FaRegUserCircle, FaRegBell, FaChartBar } from "react-icons/fa";
+import { FaRegUserCircle, FaMoneyCheckAlt , FaChartBar } from "react-icons/fa";
 import { GrGroup } from "react-icons/gr";
 import { GoProjectRoadmap } from "react-icons/go";
 import { IoIosHelpCircleOutline, IoIosNotificationsOutline, IoIosLogOut } from "react-icons/io";
@@ -44,7 +44,7 @@ const index = () => {
             </li>
             <li>
               <Link to="/group" className='nav-link'>
-                <GrGroup className='mx-2' />
+                <FaMoneyCheckAlt  className='mx-2' />
                 Giao dịch
               </Link>
             </li>
