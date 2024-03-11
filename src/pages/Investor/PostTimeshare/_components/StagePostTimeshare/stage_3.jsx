@@ -10,6 +10,24 @@ const Stage_3 = (props) => {
   const handleInputChange = (e, field) => {
     let value = e.target.value;
 
+    if (field === 'real_estate_code') {
+      console.log(value)
+      value = value.replace(/\D/g, '');
+      const intValue = parseInt(value);
+
+      if (intValue > 100) {
+        value = '100';
+        console.log('come')
+        console.log('after', value);
+      }
+
+      if (!isNaN(intValue)) {
+        value = intValue.toLocaleString();
+      }
+    }
+
+    console.log('value', value)
+
     setAnotherInfo({
       ...anotherInfo,
       [field]: value
@@ -48,14 +66,6 @@ const Stage_3 = (props) => {
         <div className='container-input'>
           <div className="form-group-material mb-0">
             <input type="text" required="required" className="form-control"
-              value={anotherInfo.real_estate_code}
-              onChange={(e) => handleInputChange(e, 'real_estate_code')}
-            />
-            <label>Mã số bất động sản</label>
-          </div>
-
-          <div className="form-group-material mb-0">
-            <input type="text" required="required" className="form-control"
               value={anotherInfo.ownership}
               onChange={(e) => handleInputChange(e, 'ownership')}
             />
@@ -68,6 +78,15 @@ const Stage_3 = (props) => {
               onChange={(e) => handleInputChange(e, 'timeshare_scale')}
             />
             <label>Quy mô dự án</label>
+          </div>
+
+          <div className="form-group-material mb-0">
+            <input type="text" required="required" className="form-control"
+              value={anotherInfo.real_estate_code}
+              onChange={(e) => handleInputChange(e, 'real_estate_code')}
+            />
+            <label>Mật độ xây dựng</label>
+            <p className='unit-area'>%</p>
           </div>
 
           <div className="form-group-material mb-0">
@@ -87,7 +106,7 @@ const Stage_3 = (props) => {
               onChange={(e) => handleYearChange(e, 'year_of_commencement')}
               dateFormat="yyyy"
               showYearPicker
-              minDate={new Date()} 
+              minDate={new Date()}
             />
 
           </div>
@@ -95,14 +114,14 @@ const Stage_3 = (props) => {
           <div className="form-group-material mb-0 year-select">
             <input type="text" required="required" className="form-control" />
             <label>Năm bàn giao</label>
-              <DatePicker
-                showIcon
-                selected={anotherInfo.year_of_handover}
-                onChange={(e) => handleYearChange(e, 'year_of_handover')}
-                dateFormat="yyyy"
-                showYearPicker
-                minDate={anotherInfo.year_of_commencement ? anotherInfo.year_of_commencement : new Date()}
-              />
+            <DatePicker
+              showIcon
+              selected={anotherInfo.year_of_handover}
+              onChange={(e) => handleYearChange(e, 'year_of_handover')}
+              dateFormat="yyyy"
+              showYearPicker
+              minDate={anotherInfo.year_of_commencement ? anotherInfo.year_of_commencement : new Date()}
+            />
           </div>
         </div>
 
