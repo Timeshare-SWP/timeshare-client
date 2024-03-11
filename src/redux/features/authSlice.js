@@ -24,7 +24,7 @@ export const sendOtpWhenRegister = createAsyncThunk(
       saveOtpToSessionStorage(response.data);
       return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error?.response?.data?.message);
+      return thunkAPI.rejectWithValue(error?.response?.data);
     }
   }
 );
@@ -42,8 +42,7 @@ export const verifyOtpWhenRegister = createAsyncThunk(
 
       return response.data;
     } catch (error) {
-      console.log(error);
-      return thunkAPI.rejectWithValue(error?.response?.data?.message);
+      return thunkAPI.rejectWithValue(error?.response?.data);
     }
   }
 );
@@ -58,8 +57,7 @@ export const registerUser = createAsyncThunk(
 
       return response.data;
     } catch (error) {
-      console.log(error);
-      return thunkAPI.rejectWithValue(error?.response?.data?.message);
+      return thunkAPI.rejectWithValue(error?.response?.data);
     }
   }
 );

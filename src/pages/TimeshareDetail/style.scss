@@ -1,0 +1,190 @@
+.timeshare-detail {
+  .container-left {
+    &__content {
+      width: 90%;
+    }
+
+    .title {
+      display: flex;
+      gap: 7px;
+
+      .btn {
+        border-radius: 20px;
+        border: 1.5px solid transparent;
+      }
+
+      .btn.button-red {
+        background-color: #ffcccc;
+        color: #cc0000;
+        border-color: #cc0000;
+      }
+
+      .btn.button-green {
+        background-color: #ccffcc;
+        color: #008000;
+        border-color: #008000;
+      }
+
+      .btn.button-gray {
+        background-color: #cccccc;
+        color: #333333;
+        border-color: #333333;
+      }
+
+      .btn.button-yellow {
+        background-color: #ffffcc;
+        color: #666600;
+        border-color: #666600;
+      }
+    }
+
+    .location {
+      margin-bottom: 15px;
+      p {
+        text-decoration: underline;
+      }
+    }
+
+    .timeshare-img {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-gap: 10px;
+      justify-content: center;
+    }
+
+    .timeshare-img img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .main-image {
+      grid-column: 1 / -1;
+    }
+
+    .sub-image {
+      width: 200px;
+      height: 150px;
+      object-fit: cover;
+    }
+
+    .menu {
+      display: flex;
+      .menu-item {
+        margin-right: 20px;
+        color: #333;
+        text-decoration: none;
+        font-weight: bold;
+        opacity: 0.7;
+        cursor: pointer;
+      }
+
+      .menu-item.active {
+        color: #cc0000;
+        text-decoration: underline;
+        opacity: 1;
+      }
+
+      .menu-item:hover {
+        opacity: 1;
+      }
+    }
+
+    .section-intro {
+      .info-container {
+        .info-item {
+          display: flex;
+          justify-content: space-between;
+          border-bottom: 1px solid #cccccc;
+          padding: 13px 0px;
+
+          .info-label {
+            width: 45%;
+            color: #726d7a;
+          }
+
+          .info-value {
+            width: 45%;
+            font-weight: 500;
+            overflow: hidden;
+          }
+        }
+      }
+    }
+
+    .section-premises {
+      width: 100%;
+
+      img {
+        width: 100%;
+      }
+    }
+
+    .section-utilities {
+      .utilities-list {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+
+        .utility-item {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          margin: 10px;
+          gap: 10px;
+
+          .utility-icon {
+            font-size: 24px;
+          }
+
+          .utility-name {
+            margin-top: 5px;
+            font-size: 14px;
+          }
+        }
+      }
+    }
+  }
+
+  .container-right {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 30px 15px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    border-radius: 20px;
+    height: fit-content;
+
+    .text-price {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      .detail {
+        font-size: 25px;
+        font-weight: bold;
+        color: #cc0000;
+      }
+    }
+
+    hr {
+      margin: 0px !important;
+      opacity: 0.2;
+    }
+
+    .other-text {
+      width: fit-content;
+      position: relative;
+      background-color: white;
+      z-index: 99;
+      padding: 0 5px;
+      left: 44%;
+    }
+
+    .btn {
+      width: 100% !important;
+      font-size: 13px;
+      font-weight: bold;
+      padding-top: 7px;
+      padding-bottom: 7px;
+    }
+  }
+
+}

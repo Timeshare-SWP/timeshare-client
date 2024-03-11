@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Popconfirm, message } from 'antd'; 
+import { Table, Button, Popconfirm, message } from 'antd';
 import Cookies from 'js-cookie';
 
 
@@ -10,44 +10,36 @@ const App = () => {
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            fetch("https://timeshare-l2nv.onrender.com/api/users", {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    Accept: "application/json",
-                },
-            })
-                .then((res) => res.json())
-                .then((data) => {
-                    setUsers(data)
-                })
-        }
+
         fetchData();
     }, [])
 
 
     const fetchData = async () => {
-        try {
-            const response = await fetch(`https://timeshare-l2nv.onrender.com/api/users`);
-            const result = await response.json();
-            setUsers(result);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
+        fetch("https://timeshare-server-7qcr.onrender.com/api/users", {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: "application/json",
+            },
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                setUsers(data)
+            })
+    }
 
     const handleDelete = async (record) => {
         console.log(record)
-        fetch(`https://timeshare-l2nv.onrender.com/api/users/${record.key}`, {
+        fetch(`https://timeshare-server-7qcr.onrender.com/api/users/${record.key}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`,
                 Accept: "application/json",
             },
         })
-        //.then(() => fetchData())
-       
+            .then(() => fetchData())
+
     };
 
     const columns = [
@@ -97,7 +89,7 @@ const App = () => {
                     okText="Yes"
                     cancelText="No"
                 >
-                    <Button type="danger">Delete</Button>
+                    <Button type="danger" style={{ backgroundColor: "red", color: "white" }}>Delete</Button>
                 </Popconfirm>
             ),
         },

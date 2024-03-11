@@ -1,5 +1,20 @@
 .outstanding-project-section {
   .list-outstanding-project {
+    .slick-prev {
+      left: -30px !important;
+    }
+
+    .slick-track {
+      display: flex !important;
+      gap: 20px;
+    }
+
+    .slick-prev:before,
+    .slick-next:before {
+      // font-size: 45px !important;
+      color: rgb(63, 61, 61);
+    }
+
     .item {
       width: 300px;
       height: 450px;
@@ -47,4 +62,27 @@
       filter: brightness(1.2);
     }
   }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.inner-card {
+  height: 20px;
+  width: 100px;
+  background-color: #eee;
+}
+
+.inner-text {
+  width: 200px;
+  height: 20px;
+  background-color: #eee;
+  margin-top: 10px;
 }

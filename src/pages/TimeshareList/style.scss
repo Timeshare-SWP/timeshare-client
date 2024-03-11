@@ -1,0 +1,107 @@
+.timeshare-list-container {
+  &__list-card {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .timeshare-card {
+    padding: 10px;
+    cursor: pointer;
+
+    .sub-img {
+      margin-top: 2px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      
+      .item {
+        position: relative;
+        text-align: center;
+
+        .overlay {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background-color: rgba(0, 0, 0, 0.5);
+          color: white;
+          padding: 5px 10px;
+          border-radius: 5px;
+          font-size: 14px;
+          z-index: 1;
+        }
+
+        img {
+          width: 100%;
+          height: 35px;
+          object-fit: cover;
+        }
+      }
+
+    }
+
+    .col-8 {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .status {
+        display: flex;
+        gap: 20px;
+
+        .btn {
+          border-radius: 20px;
+          border: 1.5px solid transparent;
+        }
+
+        .btn.button-red {
+          background-color: #ffcccc;
+          color: #cc0000;
+          border-color: #cc0000;
+        }
+
+        .btn.button-green {
+          background-color: #ccffcc;
+          color: #008000;
+          border-color: #008000;
+        }
+
+        .btn.button-gray {
+          background-color: #cccccc;
+          color: #333333;
+          border-color: #333333;
+        }
+
+        .btn.button-yellow {
+          background-color: #ffffcc;
+          color: #666600;
+          border-color: #666600;
+        }
+      }
+
+      .text-price {
+        color: #cc0000;
+      }
+    }
+
+    .investor-profile {
+      .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 25px;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 25px;
+        }
+      }
+    }
+  }
+
+  .timeshare-card:hover {
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  }
+}

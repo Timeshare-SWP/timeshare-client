@@ -1,11 +1,5 @@
-export const getTokenFromCookie = () => {
-  const cookieString = document.cookie;
-  const cookies = cookieString.split("; ").reduce((acc, cookie) => {
-    const [name, value] = cookie.split("=");
-    acc[name] = value;
-    return acc;
-  }, {});
+import Cookies from "js-cookie";
 
-  const token = cookies["token"];
-  return token ? JSON.parse(token) : null;
+export const getTokenFromCookie = () => {
+  return Cookies.get("token");
 };

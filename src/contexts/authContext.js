@@ -103,6 +103,7 @@ export default function AuthContextProvider({ children }) {
         config
       );
 
+
       setUserDecode(resUser?.data ?? {});
       setIsLoadingEvent(false);
 

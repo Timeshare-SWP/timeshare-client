@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react'
 import './style.scss'
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/images/logo_timeshare.png"
 import { IoIosArrowDown } from "react-icons/io";
 import Login from '../auth/Authentication';
@@ -10,12 +10,16 @@ import { AuthContext } from '../../contexts/authContext';
 import DropDownUser from '../UserHeader/_components/DropDownUser'
 import { USER_HEADER_LINK } from '../../constants/header';
 import Authentication from '../auth/Authentication';
+import ModalConfirm from '../shared/ModalConfirm';
+import Notification from './_components/Notification';
 
 const UserHeader = () => {
   const { currentToken, logout, userDecode, isLoadingEvent } = useContext(AuthContext);
 
   const [modalLoginOpen, setModalLoginOpen] = useState(false);
   const [swapToRegisterState, setSwapToRegisterState] = useState(false);
+  const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
 
   const handleCloseAuthentication = () => {
     setModalLoginOpen(false)
@@ -39,6 +43,15 @@ const UserHeader = () => {
   const handleMouseLeave = () => {
     setHoveredItem(null);
   };
+
+  const handleUpTimeshare = () => {
+    console.log('hmmm', userDecode)
+    if (!userDecode || !Object.keys(userDecode).length) {
+      setShowModal(true)
+    } else {
+      navigate("/up-timeshare")
+    }
+  }
 
   return (
     <header className="user-header">
@@ -104,11 +117,12 @@ const UserHeader = () => {
                 actionSwapToLogin={handleSwapToLogin}
               />
 
-              <button
+              <div
                 className="btn btn-danger fw-semibold"
+                onClick={handleUpTimeshare}
               >
-                Ký gửi nhà đất
-              </button>
+                Đăng bán timeshare
+              </div>
             </div>
             }
 
@@ -124,25 +138,35 @@ const UserHeader = () => {
               </button>
               <Login open={modalLoginOpen} onClose={() => setModalLoginOpen(false)} />
 
-              <button
+              <div
                 className="btn btn-danger fw-semibold"
+                onClick={handleUpTimeshare}
               >
-                Ký gửi nhà đất
-              </button>
+                Đăng bán timeshare
+              </div>
             </div>}
 
             {userDecode && Object.keys(userDecode).length !== 0 && <>
+
+              <Notification />
               <DropDownUser user={userDecode} actionLogout={logout} />
 
               {userDecode.role_id.roleName === "Investor"
                 &&
-                <button
+                <div
                   className="btn btn-danger fw-semibold"
+                  onClick={handleUpTimeshare}
                 >
-                  Ký gửi nhà đất
-                </button>
+                  Đăng bán timeshare
+                </div>
               }
             </>}
+
+            {showModal && <ModalConfirm show={showModal}
+              handleClose={() => setShowModal(false)}
+              handleAccept={() => { setModalLoginOpen(true); setShowModal(false) }}
+              body={'Vui lòng đăng nhập trước khi đăng bán timeshare!'} />
+            }
 
             {isLoadingEvent && <SpinnerLoading />}
           </div>

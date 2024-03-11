@@ -45,7 +45,7 @@ const index = () => {
             <li>
               <Link to="/group" className='nav-link'>
                 <GrGroup className='mx-2' />
-                Nhóm
+                Giao dịch
               </Link>
             </li>
             <li className='my-3'>

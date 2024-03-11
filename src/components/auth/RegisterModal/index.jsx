@@ -112,6 +112,7 @@ const RegisterModal = (props) => {
 
             dispatch(checkEmailExisted(data?.user?.email)).then((result) => {
                 if (result.payload) {
+                    closeModalAction()
                     loginGoogleAction(dataGoogle)
                 } else {
                     closeModalAction()
@@ -119,7 +120,6 @@ const RegisterModal = (props) => {
                 }
             })
 
-            console.log(data);
         } catch (error) {
             console.error("An error occurred during Google login:", error);
         }
