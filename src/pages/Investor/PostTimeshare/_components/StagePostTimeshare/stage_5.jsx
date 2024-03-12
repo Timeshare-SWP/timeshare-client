@@ -1,8 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { convertRangePriceToVNDFormat } from '../../../../../utils/handleFunction';
 
 const Stage_5 = (props) => {
-    const { depositPrice, setDepositPrice, errorDepositPrice, setErrorDepositPice } = props
+    const { depositPrice, setDepositPrice, errorDepositPrice, setErrorDepositPice, rangePrice } = props
 
+    const [depositRange, setDepositRange] = useState([rangePrice[0] * 1000 * 0.1, rangePrice[1] * 1000 * 0.2])
+    
     const handleInputChange = (e) => {
         setErrorDepositPice('')
         let value = e.target.value;
@@ -24,7 +27,11 @@ const Stage_5 = (props) => {
 
             <div className='stage-5'>
 
-                <p className='comment'>P/s: Giá tiền giữ chân vui lòng trong khoảng từ 5-10% so với tổng giá trị của timeshare</p>
+                <p className='comment'>P/s: Giá tiền giữ chân vui lòng từ 10% - 20% giá trị trung bình trong phạm vị giá của timeshare</p>
+                <div>
+                    <p className=''>Timeshare bạn vừa đăng có phạm vi giá là từ {convertRangePriceToVNDFormat(rangePrice[0] * 1000, rangePrice[1] * 1000)} /m&#178;</p>
+                    <p className=''>Nên giá giữ chân có thể cho phép sẽ từ {convertRangePriceToVNDFormat(depositRange[0], depositRange[1])} /m&#178;</p>
+                </div>
                 <div className="form-group-material">
                     <input type="text" required="required" className="form-control"
                         value={depositPrice}

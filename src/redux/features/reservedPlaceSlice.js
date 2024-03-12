@@ -86,6 +86,22 @@ export const createPaymentUrlForReserving = createAsyncThunk(
   }
 );
 
+export const checkReservingTimeshare = createAsyncThunk(
+  "reservedPlace/checkReservingTimeshare",
+  async (timeshare_id, thunkAPI) => {
+    try {
+      const instance = getInstanceWithToken();
+
+      const response = await instance.get(`/api/reservePlaces/checkReservingTimeshare?timeshare_id=${timeshare_id}`);
+
+      return response.data;
+    } catch (error) {
+      console.log('api', error)
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 export const reservedPlaceSlice = createSlice({
   name: "reservedPlace",
   initialState,
@@ -132,6 +148,21 @@ export const reservedPlaceSlice = createSlice({
       state.error = "";
     });
     builder.addCase(cancelReservedPlace.rejected, (state, action) => {
+      // state.loadingReservedPlace = false;
+      state.error = action.payload;
+    });
+
+    //checkReservingTimeshare
+    builder.addCase(checkReservingTimeshare.pending, (state) => {
+      // state.loadingReservedPlace = true;
+      state.error = "";
+    });
+    builder.addCase(checkReservingTimeshare.fulfilled, (state, action) => {
+      // state.loadingReservedPlace = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(checkReservingTimeshare.rejected, (state, action) => {
       // state.loadingReservedPlace = false;
       state.error = action.payload;
     });

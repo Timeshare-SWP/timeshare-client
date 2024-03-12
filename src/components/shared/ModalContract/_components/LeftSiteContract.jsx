@@ -50,7 +50,7 @@ const LeftSiteContract = (props) => {
             <div className='section-phase mt-5'>
                 <h5 className='mb-4'>Số lần thanh toán</h5>
 
-                <div>
+                <div style={{position: 'relative'}}>
                     <table className='table'>
                         <thead>
                             <tr className='text-center'>
@@ -71,6 +71,11 @@ const LeftSiteContract = (props) => {
                             ))}
                         </tbody>
                     </table >
+
+                    <div style={{position: 'absolute', right: '65px'}}>
+                        <span className='fw-bold'>Tổng tiền phải trả: </span>
+                        {convertToNumberFormat(dataContract?.final_price)}
+                    </div>
                 </div >
             </div >
         </div >

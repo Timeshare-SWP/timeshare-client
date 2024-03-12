@@ -23,13 +23,14 @@ const RightSiteContract = (props) => {
     }
 
     const handleCallApiConfirmContract = () => {
+        setOpenModalConfirm(false)
         setIsLoading(true)
         dispatch(confirmContractByCustomer(dataContract?._id)).then((resConfirm) => {
             if (confirmContractByCustomer.fulfilled.match(resConfirm)) {
 
                 const dataBodyNoti = {
                     user_id: "65ae4a156c28b26cd393f64b", //invester
-                    notification_content: `${userDecode?.fullName} đã xác nhận hợp đồng cho timeshare mà bạn đã mua. Vui lòng vào xác nhận!`,
+                    notification_content: `${userDecode?.fullName} đã xác nhận hợp đồng cho timeshare mà họ đã mua!`,
                     notification_title: `ACCEPT_CONTRACT_TO_INVESTOR`,
                     notification_type: `ACCEPT_CONTRACT_TO_INVESTOR`,
                 };

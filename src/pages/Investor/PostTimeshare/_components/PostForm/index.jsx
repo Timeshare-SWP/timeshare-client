@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { MdDeleteOutline } from "react-icons/md";
 import ModalContinuePostTimeshare from '../ModalContinuePostTimeshare';
@@ -11,6 +11,9 @@ import { storage } from '../../../../../utils/configFirebase';
 import { generateRandomString, removeCommas } from '../../../../../utils/handleFunction';
 import SpinnerLoading from "../../../../../components/shared/SpinnerLoading"
 import { useNavigate } from 'react-router-dom';
+import Slider from 'react-slider'
+import Hint from '../../../../../components/shared/Hint'
+import { IoIosInformation } from 'react-icons/io';
 
 const PostForm = () => {
 
@@ -19,7 +22,7 @@ const PostForm = () => {
     //xử lý dữ liệu trong post form
     const [formData, setFormData] = useState({
         timeshare_type: "Căn hộ",
-        price: "",
+        sell_number: "",
         timeshare_address: "",
         timeshare_name: "",
         land_area: "",
@@ -28,7 +31,7 @@ const PostForm = () => {
 
     const [formErrors, setFormErrors] = useState({
         timeshare_type: false,
-        price: false,
+        sell_number: false,
         timeshare_address: false,
         timeshare_name: false,
         land_area: false,
@@ -59,7 +62,7 @@ const PostForm = () => {
         let value = e.target.value;
         let error = false;
 
-        if (field === 'land_area' || field === 'price') {
+        if (field === 'land_area' || field === 'sell_number') {
             value = value.replace(/\D/g, '');
             if (parseInt(value) > 1000) {
                 value = parseInt(value).toLocaleString();
@@ -75,7 +78,7 @@ const PostForm = () => {
             case 'timeshare_type':
                 error = !value;
                 break;
-            case 'price':
+            case 'sell_number':
                 error = !value;
                 break;
             case 'timeshare_address':
@@ -232,12 +235,58 @@ const PostForm = () => {
     };
 
     //luồng trong modal continue post
+
+    const errorRefs = {
+        sellNumberError: useRef(null),
+        rangePriceError: useRef(null),
+        timeshareAddressError: useRef(null),
+        timeshareNameError: useRef(null),
+        areaLandError: useRef(null),
+        timeshareDescriptionError: useRef(null),
+        imageTimeshareError: useRef(null),
+        imageFloorError: useRef(null)
+    };
+
+    const scrollToError = () => {
+        let highestErrorTop = Number.MAX_VALUE;
+        let errorElementToScroll = null;
+
+        for (const key in errorRefs) {
+            const errorRef = errorRefs[key];
+            if (errorRef.current) {
+                const errorTop = errorRef.current.getBoundingClientRect().top;
+                if (errorTop < highestErrorTop) {
+                    highestErrorTop = errorTop;
+                    errorElementToScroll = errorRef.current;
+                }
+            }
+        }
+
+        if (errorElementToScroll) {
+            errorElementToScroll.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+
     const handleOpenModalContinuePost = () => {
         const isValidForm = validateForm();
         const isValidGeneralImage = imageSelectedTimeshare.length >= 5;
         const isValidFloorImage = floorPlanImages.length >= 1
 
-        if (isValidForm && isValidGeneralImage && isValidFloorImage) {
+        //check valid range price
+        const minPriceFinal = rangePrice[0] * 1000;
+        const maxPriceFinal = rangePrice[1] * 1000;
+
+        const priceDifference = maxPriceFinal - minPriceFinal;
+        const minPriceThreshold = minPriceFinal * 0.2;
+        const maxPriceThreshold = minPriceFinal * 0.4;
+
+        const isPriceDifferenceValid = priceDifference <= maxPriceThreshold && priceDifference >= minPriceThreshold;
+
+        if (!isPriceDifferenceValid) {
+            setErrorRangePrice('Chênh lệch giá không thỏa mãn điều kiện! Không được quá 40% và không nhỏ hơn 20% so với mức hạn dưới của khoảng giá')
+        }
+
+        if (isValidForm && isValidGeneralImage && isValidFloorImage && isPriceDifferenceValid) {
             setOpenModalContinuePostState(true);
         } else {
             setFormImageErrors(prevErrors => ({
@@ -250,6 +299,8 @@ const PostForm = () => {
             }));
             toast.error("Có chỗ chưa được điền, vui lòng kiểm tra lại!")
         }
+
+        scrollToError();
     }
 
     const [currentStage, setCurrentStage] = useState(1);
@@ -268,17 +319,23 @@ const PostForm = () => {
     const dispatch = useDispatch();
 
     const handleOpenConfirmModal = () => {
+
         if (depositPrice === 0 || depositPrice === '') {
             setErrorDepositPice('Vui lòng nhập số tiền đặt cọc bạn muốn')
             return;
         }
 
-        const depositPercentage = parseFloat(removeCommas(depositPrice)) / parseFloat(removeCommas(formData.price)) * 100;
-
-        if (depositPercentage < 5 || depositPercentage > 10) {
-            setErrorDepositPice('Số tiền đặt cọc phải nằm trong khoảng từ 5% đến 10% của giá tiền gốc');
+        if (currentStage === 5 && (parseInt(removeCommas(depositPrice)) < (rangePrice[0] * 1000 * 0.1) || parseInt(removeCommas(depositPrice)) > rangePrice[1] * 1000 * 0.2)) {
+            setErrorDepositPice('Giá tiền đặt cọc không thỏa mãn yêu cầu!')
             return;
         }
+
+        // const depositPercentage = parseFloat(removeCommas(depositPrice)) / parseFloat(removeCommas(formData.price)) * 100;
+
+        // if (depositPercentage < 5 || depositPercentage > 10) {
+        //     setErrorDepositPice('Số tiền đặt cọc phải nằm trong khoảng từ 5% đến 10% của giá tiền gốc');
+        //     return;
+        // }
         setOpenModalContinuePostState(false)
         setOpenModalConfirmState(true)
     }
@@ -357,7 +414,7 @@ const PostForm = () => {
 
             const data = {
                 ...formData, ...anotherInfo,
-                price: removeCommas(formData.price),
+                sell_number: removeCommas(formData.sell_number),
                 land_area: removeCommas(formData.land_area),
                 timeshare_utilities: anotherInfo.timeshare_utilities.map(item => item.value),
                 year_of_commencement: anotherInfo?.year_of_commencement ? anotherInfo?.year_of_commencement.getFullYear() : null,
@@ -366,7 +423,9 @@ const PostForm = () => {
                 priority_level: priorityLevel,
                 timeshare_status: selectedTimeshareStatus.name_status,
                 timeshare_related_link: juridicalFilesURLs,
-                deposit_price: removeCommas(depositPrice)
+                deposit_price: removeCommas(depositPrice),
+                price: rangePrice[0] * 1000,
+                max_price: rangePrice[1] * 1000,
             }
 
             dispatch(createTimeshare(data)).then((result) => {
@@ -391,6 +450,50 @@ const PostForm = () => {
 
         });
     }
+
+    const SUB_MIN = 100;
+    const SUB_MAX = 2000000;
+    const [minPriceRange, setMinPriceRange] = useState(SUB_MIN);
+    const [maxPriceRange, setMaxPriceRange] = useState(SUB_MAX);
+    const [rangePrice, setRangePrice] = useState([minPriceRange, maxPriceRange]);
+    const [errorRangePrice, setErrorRangePrice] = useState(false)
+
+    const handleChangeRangePrice = (rangePrice) => {
+        setErrorRangePrice('');
+
+        setMinPriceRange(rangePrice[0]);
+        setMaxPriceRange(rangePrice[1]);
+        setRangePrice(rangePrice);
+    };
+
+    const handleChangePriceSelect = (e, type) => {
+        setErrorRangePrice('')
+
+        let newValue = e.target.value.trim();
+        newValue = newValue !== '' ? parseInt(newValue.replace(/\D/g, '')) : (type === 'min' ? SUB_MIN : SUB_MAX);
+
+        if (type === 'min') {
+            if (newValue > maxPriceRange) {
+                newValue = maxPriceRange;
+            }
+
+            setMinPriceRange(newValue);
+            setRangePrice([newValue, maxPriceRange]);
+        } else if (type === 'max') {
+            if (newValue > SUB_MAX) {
+                newValue = SUB_MAX;
+            }
+            setMaxPriceRange(newValue);
+            setRangePrice([minPriceRange, newValue]);
+        }
+    }
+
+    const handlePriceInputBlur = (type) => {
+        if (type === 'min' && minPriceRange < SUB_MIN) {
+            setMinPriceRange(SUB_MIN);
+            setRangePrice([SUB_MIN, maxPriceRange]);
+        }
+    };
 
     return (
         <div className='post-timeshare-container__right webkit-scrollbar'>
@@ -451,15 +554,74 @@ const PostForm = () => {
                         <div className="col-md-6">
                             <div className="form-group-material">
                                 <input type="text" required="required" className="form-control"
-                                    value={formData.price}
-                                    onChange={(e) => handleInputChange(e, 'price')}
+                                    value={formData.sell_number}
+                                    onChange={(e) => handleInputChange(e, 'sell_number')}
                                 />
-                                <label>Giá bán mong muốn <span className="text-danger">*</span></label>
-                                <p className='unit-area'>/m&#178;</p>
+                                <label ref={errorRefs.sellNumberError} >Số lượng bán <span className="text-danger">*</span></label>
+                                {/* <p className='unit-area'>/m&#178;</p> */}
                             </div>
-                            {formErrors.price && <span className="error-message">Vui lòng nhập giá muốn bán!</span>}
+                            {formErrors.sell_number && <span className="error-message">Vui lòng nhập số lượng muốn bán!</span>}
                         </div>
-                    </div> <div className="form-group">
+                    </div>
+                    <div className="form-group">
+                        <p ref={errorRefs.rangePriceError}
+                            className="mb-2 mt-3" style={{ position: 'relative' }}
+                        >
+                            Mức giá mong muốn
+
+                            <span className="text-danger"> *</span>
+
+                            <Hint content="Chênh lệch giá phải không quá 40% và không nhỏ hơn 20% so với mức hạn dưới của khoảng giá">
+                                <div className='d-flex justify-content-center align-items-center bg-body-secondary rounded-circle'
+                                    style={{
+                                        cursor: "pointer", width: "15px", height: "15px",
+                                        position: 'absolute', top: '-6px', left: "140px"
+                                    }}>
+                                    <IoIosInformation className='text-black' />
+                                </div>
+                            </Hint>
+                        </p>
+
+                        <div className="row flex-column">
+                            <div className="form-check-range">
+                                <Slider
+                                    className='slider-range'
+                                    value={rangePrice}
+                                    min={SUB_MIN}
+                                    max={SUB_MAX}
+                                    onChange={handleChangeRangePrice}
+                                />
+
+                                <div className='range-price'>
+                                    <div className='line-break'></div>
+                                    <span className="range-left">
+                                        <input type="tel"
+                                            name="price-min-value"
+                                            value={minPriceRange.toLocaleString('vi-VN')}
+                                            onChange={(e) => handleChangePriceSelect(e, 'min')}
+                                            onBlur={() => handlePriceInputBlur('min')}
+                                        />
+                                        <label className="place-holder">.000đ</label>
+                                        <p className='unit-area'>/m&#178;</p>
+                                    </span>
+
+                                    <span className="range-right">
+                                        <input type="tel"
+                                            name="price-max-value"
+                                            value={maxPriceRange.toLocaleString('vi-VN')}
+                                            onChange={(e) => handleChangePriceSelect(e, 'max')}
+                                            onBlur={() => handlePriceInputBlur('max')}
+                                        />
+                                        <label className="place-holder">.000đ</label>
+                                        <p className='unit-area'>/m&#178;</p>
+                                    </span>
+                                </div>
+                            </div>
+
+                            {errorRangePrice && <span className="error-message">{errorRangePrice}</span>}
+                        </div>
+                    </div>
+                    <div className="form-group">
                         <p className="mb-2 mt-3">Tỉnh/Thành phố <span className="text-danger">*</span></p> <div className="row flex-column">
                             <div className="form-check">
                                 <input id="city_Tp.Hồ Chí Minh" type="radio" className="radio" value="Tp.Hồ Chí Minh" defaultChecked />
@@ -472,7 +634,7 @@ const PostForm = () => {
                             value={formData.timeshare_address}
                             onChange={(e) => handleInputChange(e, 'timeshare_address')}
                         />
-                        <label>Địa chỉ <span className="text-danger">*</span></label>
+                        <label ref={errorRefs.timeshareAddressError}>Địa chỉ <span className="text-danger">*</span></label>
                     </div>
                     {formErrors.timeshare_address && <span className="error-message">Vui lòng nhập địa chỉ!</span>}
 
@@ -488,7 +650,7 @@ const PostForm = () => {
                                     value={formData.timeshare_name}
                                     onChange={(e) => handleInputChange(e, 'timeshare_name')}
                                 />
-                                <label>Tên Timeshare<span className="text-danger">*</span></label>
+                                <label ref={errorRefs.timeshareNameError}>Tên Timeshare<span className="text-danger">*</span></label>
                             </div>
                             {formErrors.timeshare_name && <span className="error-message">Vui lòng nhập tên timeshare!</span>}
                         </div>
@@ -499,7 +661,7 @@ const PostForm = () => {
                                     value={formData.land_area}
                                     onChange={(e) => handleInputChange(e, 'land_area')}
                                 />
-                                <label>Tổng diện tích<span className="text-danger">*</span></label>
+                                <label ref={errorRefs.areaLandError}>Tổng diện tích<span className="text-danger">*</span></label>
                                 <p className='unit-area'>m&#178;</p>
                             </div>
                             {formErrors.land_area && <span className="error-message">Vui lòng điền diện tích!</span>}
@@ -511,14 +673,19 @@ const PostForm = () => {
                             value={formData.timeshare_description}
                             onChange={(e) => handleInputChange(e, 'timeshare_description')}
                         />
-                        <label>Mô tả Timeshare <span className="text-danger">*</span></label>
+                        <label ref={errorRefs.timeshareDescriptionError}>Mô tả Timeshare <span className="text-danger">*</span></label>
                     </div>
                     {formErrors.timeshare_description && <span className="error-message">Vui lòng mô tả timeshare!</span>}
 
                     {/* ảnh về timeshare */}
                     <div className="form-group mt-4">
                         <div className="d-flex justify-content-between mb-1">
-                            <label htmlFor="" className="mb-0">Hình ảnh về timeshare<span className="text-danger">*</span></label>
+                            <label htmlFor="" className="mb-0"
+                                ref={errorRefs.imageTimeshareError}
+                            >
+                                Hình ảnh về timeshare
+                                <span className="text-danger">*</span>
+                            </label>
                         </div>
 
                         <label htmlFor="select_photos" className="photo-upload mb-2" {...getRootProps(isFocused, isDragAccept, isDragReject)}>
@@ -588,7 +755,11 @@ const PostForm = () => {
                     {/* ảnh về MẶT BẰNG timeshare*/}
                     <div className="form-group mt-4">
                         <div className="d-flex justify-content-between mb-1">
-                            <label htmlFor="" className="mb-0">Ảnh về mặt bằng timeshare<span className="text-danger">*</span></label>
+                            <label htmlFor="" className="mb-0"
+                                ref={errorRefs.imageFloorError}
+                            >
+                                Ảnh về mặt bằng timeshare<span className="text-danger">*</span>
+                            </label>
                         </div>
                         <label htmlFor="select_floor_plan_photos" className="photo-upload mb-2" {...getRootPropsFloorPlan(isFocusedFloorPlan, isDragAcceptFloorPlan, isDragRejectFloorPlan)}>
                             <input {...getInputPropsFloorPlan()} />
@@ -689,6 +860,7 @@ const PostForm = () => {
                         setDepositPrice={setDepositPrice}
                         errorDepositPrice={errorDepositPrice}
                         setErrorDepositPice={setErrorDepositPice}
+                        rangePrice={rangePrice}
                     />
                 }
 

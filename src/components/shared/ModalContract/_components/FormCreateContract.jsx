@@ -7,13 +7,20 @@ import { MdOutlineDelete } from "react-icons/md";
 import Hint from '../../Hint';
 import { IoIosInformation } from 'react-icons/io';
 import toast from 'react-hot-toast';
+import { convertRangePriceToVNDFormat } from '../../../../utils/handleFunction';
 
 const FormCreateContract = (props) => {
     const {
+        transactionSelected,
         imagesContract, setImagesContract, imagesContractOrigin, setImagesContractOrigin,
         fileContract, setFileContract, fileContractOrigin, setFileContractOrigin,
         formErrors, setFormErrors, phases, setPhases, minDates, setMinDates,
-        phaseError, setPhaseError } = props
+        phaseError, setPhaseError,
+        finalPrice, setFinalPrice,
+        finalPriceError, setFinalPriceError
+    } = props
+
+    // console.log("transactionSelected", transactionSelected)
 
     //xử lý phases
 
@@ -42,6 +49,11 @@ const FormCreateContract = (props) => {
     };
 
     const handleDeadlineChange = (value, index) => {
+        setPhaseError(prevErrors => ({
+            ...prevErrors,
+            percent: ''
+        }));
+
         const newPhases = [...phases];
         newPhases[index].deadline = value;
         setPhases(newPhases);
@@ -66,18 +78,17 @@ const FormCreateContract = (props) => {
             percent: ''
         }));
         let newValue = value.replace(/[^\d]/g, '');
-    
+
         if (newValue === '0' || (newValue.length > 1 && newValue.charAt(0) === '0')) {
-            newValue = ''; 
+            newValue = '';
         }
-        
+
         const limitedValue = isNaN(parseInt(newValue)) ? '' : Math.min(parseInt(newValue), 100);
-    
+
         const newPhases = [...phases];
         newPhases[index].percent = limitedValue;
         setPhases(newPhases);
     };
-    
 
     const removePhase = (index) => {
         if (phases.length > 1) {
@@ -192,6 +203,40 @@ const FormCreateContract = (props) => {
         setFileContractOrigin((prevFiles) => prevFiles.filter((file) => file.path !== path));
     };
 
+    //Xử lý giá chốt sổ, final price
+    const handleInputChange = (e) => {
+        setFinalPriceError('')
+        let value = e.target.value;
+
+        value = value.replace(/\D/g, '');
+        if (parseInt(value) > 1000) {
+            value = parseInt(value).toLocaleString();
+        }
+
+        setFinalPrice(value)
+
+    };
+
+    const handleOnBlurFinalPrice = () => {
+        let newValue = finalPrice;
+
+        newValue = newValue.replace(/\D/g, '');
+
+        let intValue = parseInt(newValue);
+
+        if (intValue > transactionSelected?.timeshare_id?.max_price) {
+            intValue = transactionSelected?.timeshare_id?.max_price;
+        }
+    
+        if (intValue < transactionSelected?.timeshare_id?.price) {
+            intValue = transactionSelected?.timeshare_id?.price;
+        }
+    
+        const formattedValue = intValue.toLocaleString();
+        setFinalPrice(formattedValue);
+
+    }
+
     return (
         <div className='create-contract-container d-flex flex-column justify-content-center align-items-center'>
             <h4 className='title'>Giá thành theo từng giai đoạn và hợp đồng liên quan</h4>
@@ -200,12 +245,39 @@ const FormCreateContract = (props) => {
             </p>
 
             <div className='create-contract-content row'>
+                {/* chọn giá chốt sổ */}
+                <div className='section-form'>
+                    <div className='d-flex flex-row align-items-center'>
+                        <h2 className="form-title">
+                            Giá chốt sổ
+                        </h2>
+                    </div>
+
+                    <div className='final-price-container d-flex justify-content-center align-items-center flex-column'>
+                        <p className='note' style={{fontWeight: 'bold', fontStyle: 'italic'}}>P/s: Timeshare này bạn đang để khoảng giá là {convertRangePriceToVNDFormat(transactionSelected?.timeshare_id?.price, transactionSelected?.timeshare_id?.max_price)}</p>
+
+                        <div className="form-group-material" style={{ width: '500px' }}>
+                            <input type="text" required="required" className="form-control"
+                                value={finalPrice}
+                                onChange={(e) => handleInputChange(e)}
+                                placeholder='000.000.000.000đ'
+                                onBlur={handleOnBlurFinalPrice}
+                            />
+                            <label>Giá chốt sổ mong muốn <span className="text-danger">*</span></label>
+                            <p className='unit-area'>/m&#178;</p>
+                        </div>
+
+                        {finalPriceError && <span className='error-message'>{finalPriceError}</span>}
+                    </div>
+                </div>
+
+                {/* các giai đoạn thanh toán */}
                 <div className='section-form'>
                     <div className='d-flex flex-row align-items-center'>
                         <h2 className="form-title">
                             Các giai đoạn thanh toán
                         </h2>
-                        <Hint content="Giai đoạn thanh toán phải ít nhất là 1 và nhiều nhất là 4">
+                        <Hint content="Giai đoạn thanh toán phải ít nhất là 1 và nhiều nhất là 5">
                             <div className='d-flex justify-content-center align-items-center bg-body-secondary rounded-circle'
                                 style={{
                                     cursor: "pointer", width: "15px", height: "15px",

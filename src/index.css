@@ -27,3 +27,20 @@ p {
 .modal-90w {
   max-width: 90vw !important;
 }
+
+.error-message {
+  font-size: 15px;
+  color: red;
+}
+
+.countdown {
+  position: absolute;
+  top: 20px;
+  right: -65px;
+  transform: translateY(-50%);
+  background-color: #c72528 !important;
+  color: white !important;
+  padding: 5px 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}

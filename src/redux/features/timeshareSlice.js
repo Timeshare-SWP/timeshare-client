@@ -168,6 +168,23 @@ export const confirmSellTimeshare = createAsyncThunk(
   }
 );
 
+export const searchTimeshareByName = createAsyncThunk(
+  "timeshare/searchTimeshareByName",
+  async (searchName, thunkAPI) => {
+    try {
+      const instance = getInstanceWithToken();
+
+      const response = await instance.get(
+        `/api/timeshares/search?searchName=${searchName}`
+      );
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 export const timeshareSlice = createSlice({
   name: "timeshare",
   initialState,
@@ -319,6 +336,21 @@ export const timeshareSlice = createSlice({
       state.error = "";
     });
     builder.addCase(confirmSellTimeshare.rejected, (state, action) => {
+      state.loadingUpdate = false;
+      state.error = action.payload;
+    });
+
+    //searchTimeshareByName
+    builder.addCase(searchTimeshareByName.pending, (state) => {
+      state.loadingUpdate = true;
+      state.error = "";
+    });
+    builder.addCase(searchTimeshareByName.fulfilled, (state, action) => {
+      state.loadingUpdate = false;
+      // state.dataTimeshareList = action.payload;
+      state.error = "";
+    });
+    builder.addCase(searchTimeshareByName.rejected, (state, action) => {
       state.loadingUpdate = false;
       state.error = action.payload;
     });

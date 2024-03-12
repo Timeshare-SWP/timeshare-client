@@ -9,46 +9,11 @@ import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import ModalConfirm from '../../../../components/shared/ModalConfirm';
 import { createNotification } from '../../../../redux/features/notificationSlice';
-import { getContractByTransactionId } from '../../../../redux/features/contractSlice';
+import { checkAllTransactionHaveContract, getContractByTransactionId } from '../../../../redux/features/contractSlice';
+import Skeleton from '../../../../components/shared/Skeleton';
 
 const TableBody = ({ transactionList, setTransactionList }) => {
-    console.log("transactionList", transactionList);
-
-    //API đang lỏ nên dùng cách tà đạo
-    const transformTransactionList = (transactionList) => {
-        const groupedTransactions = {};
-
-        transactionList.forEach((transaction) => {
-            const { timeshare_id, transaction_status } = transaction;
-            const timeshareId = timeshare_id._id;
-
-            if (!groupedTransactions[timeshareId]) {
-                groupedTransactions[timeshareId] = [];
-            }
-
-            groupedTransactions[timeshareId].push({ transaction, status: transaction_status });
-        });
-
-        const transformedTransactions = [];
-        for (const timeshareId in groupedTransactions) {
-            const transactions = groupedTransactions[timeshareId];
-            let selectedTransaction = null;
-
-            transactions.forEach(({ transaction, status }) => {
-                if (status === "Selected") {
-                    selectedTransaction = transaction;
-                }
-            });
-
-            if (!selectedTransaction && transactions.length > 0) {
-                selectedTransaction = transactions[0].transaction;
-            }
-
-            transformedTransactions.push(selectedTransaction);
-        }
-
-        return transformedTransactions;
-    };
+    // console.log("transactionList", transactionList);
 
     const { userDecode } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -68,6 +33,9 @@ const TableBody = ({ transactionList, setTransactionList }) => {
     }
 
     const handleCallApiConfirmSell = () => {
+
+        console.log("selectedTransaction", selectedTransaction)
+
         setIsLoading(true);
 
         dispatch(confirmSellTimeshare({ transaction_id: selectedTransaction._id, transaction_status: actionType })).then((resConfirm) => {
@@ -85,17 +53,27 @@ const TableBody = ({ transactionList, setTransactionList }) => {
                         setTransactionList(updatedTransactionList);
                     }
                 } else {
-                    setTransactionList(transactionPlaces => transactionPlaces.map(place => {
-                        if (place._id === resConfirm.payload._id) {
-                            return resConfirm.payload;
-                        } else if (place.timeshare_id._id === resConfirm?.payload?.timeshare_id._id) {
-                            return {
-                                ...place,
-                                transaction_status: "Rejected"
-                            };
-                        }
-                        return place;
-                    }));
+                    if (selectedTransaction?.timeshare_id?.sell_number === 1) {
+                        setTransactionList(transactionPlaces => transactionPlaces.map(place => {
+                            if (place._id === resConfirm.payload._id) {
+                                return resConfirm.payload;
+                            } else if (place.timeshare_id._id === resConfirm?.payload?.timeshare_id._id) {
+                                return {
+                                    ...place,
+                                    transaction_status: "Rejected"
+                                };
+                            }
+                            return place;
+                        }));
+                    } else {
+                        const updatedTransactionList = transactionList.map(transaction => {
+                            if (transaction._id === selectedTransaction._id) {
+                                return resConfirm.payload;
+                            }
+                            return transaction;
+                        });
+                        setTransactionList(updatedTransactionList);
+                    }
                 }
 
                 //xử lý gửi Noti
@@ -167,20 +145,83 @@ const TableBody = ({ transactionList, setTransactionList }) => {
         })
     }
 
-    // const [haveContract, setHaveContract] = useState([])
+    //reset lại list transaction list để xem đã có contract chưa
+    const [isLoadingContractStatus, setIsLoadingContractStatus] = useState(false)
+    const [transactionContractList, setTransactionContractList] = useState([])
 
-    // useEffect(() => {
-    //     const transformedArray = transformTransactionList(transactionList);
-    //     transformedArray.forEach((object) => {
-    //         dispatch(getContractByTransactionId(object._id)).then((resGetContract) => {
-    //             if (getContractByTransactionId.fulfilled.match(resGetContract)) {
-    //                 setHaveContract((prevHaveContract) => [...prevHaveContract, true]);
-    //             } else {
-    //                 setHaveContract((prevHaveContract) => [...prevHaveContract, false]);
-    //             }
-    //         });
-    //     });
-    // }, []);
+    useEffect(() => {
+        setIsLoadingContractStatus(true)
+        dispatch(checkAllTransactionHaveContract()).then((resCheckTrans) => {
+            if (checkAllTransactionHaveContract.fulfilled.match(resCheckTrans)) {
+                setTransactionContractList(resCheckTrans.payload);
+            }
+            setIsLoadingContractStatus(false)
+        });
+
+    }, []);
+
+    useEffect(() => {
+        const updatedTransactionList = transactionList.map(transaction => {
+            const matchingContract = transactionContractList.find(contract => contract._id === transaction._id);
+            if (matchingContract) {
+                return {
+                    ...transaction,
+                    is_contract: matchingContract.is_contract
+                };
+            } else {
+                return transaction;
+            }
+        });
+
+        // console.log("updatedTransactionList", updatedTransactionList)
+
+        setTransactionList(updatedTransactionList);
+    }, [transactionContractList]);
+
+
+    //Xử lý countdown, đồng hồ đếm ngược 30 phút
+    const [countdown, setCountdown] = useState(null);
+    const [showCountdown, setShowCountdown] = useState(false);
+    const [timeshareIdInLocal, setTimeshareIdInLocal] = useState('');
+
+    useEffect(() => {
+        const storedDataCountdown = localStorage.getItem('data_countdown');
+        if (storedDataCountdown !== null) {
+            const { timeshare_id, countdown_timestamp } = JSON.parse(storedDataCountdown);
+            const storedTimeElapsed = Math.floor((Date.now() - countdown_timestamp) / 1000);
+            const remainingTime = 30 * 60 - storedTimeElapsed;
+            setTimeshareIdInLocal(timeshare_id);
+            if (remainingTime > 0) {
+                setCountdown(remainingTime);
+                setShowCountdown(true);
+            } else {
+                setShowCountdown(false);
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        if (countdown !== null && countdown > 0) {
+            const timer = setTimeout(() => {
+                setCountdown(countdown - 1);
+            }, 1000);
+
+            return () => clearTimeout(timer);
+        } else if (countdown === 0) {
+            setShowCountdown(false);
+        }
+    }, [countdown]);
+
+    const renderCountdown = () => {
+        const minutes = Math.floor(countdown / 60);
+        const seconds = countdown % 60;
+
+        return (
+            <div className="countdown">
+                {minutes.toString().padStart(2, '0')}:{seconds.toString().padStart(2, '0')}
+            </div>
+        );
+    };
 
     return (
         <div className="table100-body js-pscroll ps ps--active-y">
@@ -202,7 +243,7 @@ const TableBody = ({ transactionList, setTransactionList }) => {
                                 displayedTimeshares.push(item.timeshare_id._id);
                                 return (
                                     <>
-                                        <tr className="row100 body" key={index}>
+                                        <tr className="row100 body" key={index} style={{ position: 'relative' }}>
                                             <td className="cell100 column1"
                                                 rowSpan={transactionList.filter(transaction => transaction.timeshare_id.timeshare_name === item.timeshare_id.timeshare_name).length}
                                             >
@@ -245,27 +286,38 @@ const TableBody = ({ transactionList, setTransactionList }) => {
                                                     </span>
                                                 )}
                                             </td>
-                                            <td className="cell100 column7"
-                                                rowSpan={transactionList.filter(transaction => transaction.timeshare_id.timeshare_name === item.timeshare_id.timeshare_name).length}
+                                            <td className={`cell100 column7 ${item?.is_contract ? 'text-success' : 'text-danger'}`}
                                             >
-                                                {/* {haveContract[index]} */}
+                                                {isLoadingContractStatus ? <Skeleton style={{ width: '80px', height: '10px' }} />
+                                                    :
+                                                    (item?.transaction_status === "Selected"
+                                                        ?
+                                                        (item?.is_contract === true || item?.is_contract === undefined)
+                                                            ? 'Đã đăng' : 'Chưa đăng'
+                                                        : null)
+                                                }
                                             </td>
                                             <td className='cell100 column8'
-                                                rowSpan={transactionList.filter(transaction => transaction.timeshare_id.timeshare_name === item.timeshare_id.timeshare_name).length}
                                             >
-                                                <MoreAction
-                                                    item={item}
-                                                    transactionList={transactionList}
-                                                    setTransactionList={setTransactionList}
-                                                    userDecode={userDecode} />
+                                                {item?.transaction_status === "Selected"
+                                                    &&
+                                                    <MoreAction
+                                                        item={item}
+                                                        transactionList={transactionList}
+                                                        setTransactionList={setTransactionList}
+                                                        userDecode={userDecode} />
+                                                }
                                             </td>
+
+                                            {item?.timeshare_id._id === timeshareIdInLocal && (showCountdown && renderCountdown())}
+
                                         </tr >
                                     </>
                                 );
                             } else {
                                 return (
                                     <>
-                                        <tr className="row100 body" key={index}>
+                                        <tr className="row100 body" key={index} style={{ position: 'relative' }}>
                                             <td className="cell100 column2">{item?.customers.map((person, index) => (
                                                 <p key={index}>
                                                     {person?.fullName}
@@ -302,6 +354,28 @@ const TableBody = ({ transactionList, setTransactionList }) => {
                                                         {item?.transaction_status === "Selected" ? "Đã đồng ý bán" : "Đã từ chối bán"}
                                                     </span>
                                                 )}
+                                            </td>
+                                            <td className={`cell100 column7 ${item?.is_contract ? 'text-success' : 'text-danger'}`}
+                                            >
+                                                {isLoadingContractStatus ? <Skeleton style={{ width: '80px', height: '10px' }} />
+                                                    :
+                                                    (item?.transaction_status === "Selected"
+                                                        ?
+                                                        (item?.is_contract === true || item?.is_contract === undefined)
+                                                            ? 'Đã đăng' : 'Chưa đăng'
+                                                        : null)
+                                                }
+                                            </td>
+                                            <td className='cell100 column8'
+                                            >
+                                                {item?.transaction_status === "Selected"
+                                                    &&
+                                                    <MoreAction
+                                                        item={item}
+                                                        transactionList={transactionList}
+                                                        setTransactionList={setTransactionList}
+                                                        userDecode={userDecode} />
+                                                }
                                             </td>
                                         </tr>
                                     </>

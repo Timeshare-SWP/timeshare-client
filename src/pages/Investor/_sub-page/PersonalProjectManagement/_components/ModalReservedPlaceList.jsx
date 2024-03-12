@@ -51,6 +51,8 @@ const ModalReservedPlaceList = (props) => {
                                             <th className={`cell100 column3`}>Số điện thoại</th>
                                             <th className={`cell100 column4`}>Trạng thái giữ chỗ</th>
                                             <th className={`cell100 column5`}>Thời gian đặt giữ chỗ</th>
+                                            <th className={`cell100 column6`}>Trạng thái thanh toán</th>
+                                            <th className={`cell100 column7`}>Thời gian giao dịch</th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -93,8 +95,12 @@ const ModalReservedPlaceList = (props) => {
                                                     </td>
                                                     <td className="cell100 column4">
                                                         {item?.transaction_status === "Reserving" ? "Đang đặt chỗ" : item?.transaction_status === "Unreserve" ? "Đã hủy đặt" : item?.transaction_status}
-                                                    </td>                                               
+                                                    </td>
                                                     <td className="cell100 column5">{convertToVietnameseTime(item?.reservation_time)}</td>
+                                                    <td className={`cell100 column6 ${item?.is_reservation_paid ? 'text-success' : 'text-danger'}`}>
+                                                        {item?.is_reservation_paid ? "Đã thanh toán" : "Chưa thanh toán"}
+                                                    </td>
+                                                    <td className="cell100 column7">{convertToVietnameseTime(item?.reservation_pay_date)}</td>
                                                 </tr>
                                             ))
                                         )}
