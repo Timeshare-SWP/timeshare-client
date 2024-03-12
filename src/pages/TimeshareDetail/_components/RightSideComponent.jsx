@@ -152,7 +152,7 @@ const RightSideComponent = (props) => {
         const seconds = countdown % 60;
 
         return (
-            <div className="countdown">
+            <div className="countdown" style={{width: 'fit-content', top: '400px', left: '15%'}}>
                 {minutes.toString().padStart(2, '0')}:{seconds.toString().padStart(2, '0')}
             </div>
         );

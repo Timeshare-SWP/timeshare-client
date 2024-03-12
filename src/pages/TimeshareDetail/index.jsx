@@ -17,7 +17,7 @@ const TimeshareDetail = () => {
 
   return (
     <Container >
-      <div className='row timeshare-detail my-5'>
+      <div className='row timeshare-detail my-5' style={{position: 'relative'}}>
         <LeftSideComponent item={item} />
         <RightSideComponent item={item} />
       </div>

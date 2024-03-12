@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './style.scss'
 import { BiSearchAlt2 } from "react-icons/bi";
 import Hint from "../../shared/Hint"
@@ -7,7 +7,7 @@ import { AuthContext } from '../../../contexts/authContext';
 import Skeleton from '../../shared/Skeleton';
 import { convertToSlug } from '../../../utils/handleFunction';
 import { useDispatch } from 'react-redux';
-import { searchTimeshareByName } from '../../../redux/features/timeshareSlice'
+import { getTimeshareForGuest, searchTimeshareByName } from '../../../redux/features/timeshareSlice'
 import { useNavigate } from 'react-router-dom';
 
 const BannerSection = () => {
@@ -16,6 +16,9 @@ const BannerSection = () => {
     const [memberResultSearch, setMemberResultSearch] = React.useState([]);
     const [error, setError] = React.useState(false);
     const { userDecode } = useContext(AuthContext);
+
+    const [top3NewestTimeshare, setTop3NewestTimeshare] = useState([]);
+
     const navigate = useNavigate();
 
     const dispatch = useDispatch();
@@ -39,6 +42,18 @@ const BannerSection = () => {
         setNewMember("");
         setMemberResultSearch([]);
     };
+
+    useEffect(() => {
+        dispatch(getTimeshareForGuest()).then((resGetTimeshare) => {
+            console.log('resGetTimeshare', resGetTimeshare.payload);
+            const timesharesCopy = [...resGetTimeshare.payload];
+            timesharesCopy.sort((a, b) => {
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+            const top3Timeshares = timesharesCopy.slice(0, 3);
+            setTop3NewestTimeshare(top3Timeshares);
+        });
+    }, []);
 
     return (
         <section className="p-0 banner-section">
@@ -99,7 +114,7 @@ const BannerSection = () => {
                                     onClick={() => handleClickSelectMember(result)}
                                     style={{ cursor: 'pointer' }}
                                 >
-                                    <div className="flex flex-row" style={{gap: '2rem'}}>
+                                    <div className="flex flex-row" style={{ gap: '2rem' }}>
                                         <p className="font-normal text-sm text-black">{result.timeshare_name}</p>
                                         <p className="font-normal opacity-70 text-sm text-black" style={{ fontStyle: 'italic' }}>
                                             {result.timeshare_address}
@@ -118,9 +133,13 @@ const BannerSection = () => {
                 <div className='d-flex align-items-center gap-2 mt-4'>
                     <p className="fw-semibold">Gợi ý: </p>
                     <div className='list-suggest d-flex align-items-center gap-2'>
-                        <div className='btn btn-outline-light'>The Rivana</div>
-                        <div className='btn btn-outline-light'>The Rivana</div>
-                        <div className='btn btn-outline-light'>The Rivana</div>
+                        {top3NewestTimeshare.map((item, index) => (
+                            <div className='btn btn-outline-light' key={index}
+                                onClick={() => handleClickSelectMember(item)}
+                            >
+                                {item?.timeshare_name}
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>
