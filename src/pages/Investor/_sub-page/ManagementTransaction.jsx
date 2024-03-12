@@ -44,6 +44,7 @@ const ManagementTransaction = () => {
         const timeshareName = transaction.timeshare_id.timeshare_name.toLowerCase();
         return timeshareName.includes(searchTerm.toLowerCase());
     });
+    
 
     if (loadingTransaction) {
         return (

@@ -4,7 +4,7 @@ import Select from 'react-select';
 import { UTILITIES_LIST } from '../../../../../constants/utilities'
 
 const Stage_3 = (props) => {
-  const { anotherInfo, setAnotherInfo } = props
+  const { anotherInfo, setAnotherInfo, errorStage3, setErrorStage3 } = props
   const [selectedUtilities, setSelectedUtilities] = useState(anotherInfo.timeshare_utilities);
 
   const handleInputChange = (e, field) => {
@@ -25,8 +25,6 @@ const Stage_3 = (props) => {
         value = intValue.toLocaleString();
       }
     }
-
-    console.log('value', value)
 
     setAnotherInfo({
       ...anotherInfo,
@@ -60,7 +58,7 @@ const Stage_3 = (props) => {
       <h4 className='title'>Thêm thông tin ngoài lề khác về timeshare</h4>
       <p className='sub-title mt-2'>Bổ sung các thông tin cần thiết về dự án của bạn để có thể hoàn thành
         các bước đăng tin thành công </p>
-      <p className='note-title'>(Bấm tiếp tục để bỏ qua giai đoạn này)</p>
+      <p className='note-title'>(Bấm tiếp tục để bỏ qua giai đoạn này nếu timeshare đang ở giai đoạn Chưa triển khai)</p>
 
       <div className='stage-3'>
         <div className='container-input'>
@@ -139,6 +137,8 @@ const Stage_3 = (props) => {
           />
 
         </div>
+
+        {errorStage3 && <span className='error-message'>{errorStage3}</span>}
 
       </div>
     </div>

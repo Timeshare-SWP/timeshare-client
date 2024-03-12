@@ -17,14 +17,20 @@ const ModalContinuePostTimeshare = (props) => {
         setSelectedJuridicalFiles, juridicalFilesOrigin, setJuridicalFilesOrigin, anotherInfo, setAnotherInfo,
         priorityLevel, setPriorityLevel, openModalConfirmState,
         handleCancelModalConfirm, handleConfirmPostTimeshare, handleOpenConfirmModal,
-        depositPrice, setDepositPrice, errorDepositPrice, setErrorDepositPice } = props
+        depositPrice, setDepositPrice, errorDepositPrice, setErrorDepositPice, rangePrice } = props
+
+    const [errorStage2, setErrorStage2] = useState('');
+    const [errorStage3, setErrorStage3] = useState('');
 
     const handleStageClick = (stage) => {
+        setErrorStage2('')
+        setErrorStage3('')
         setCurrentStage(stage);
-
     };
 
     const handleBackStage = () => {
+        setErrorStage2('')
+        setErrorStage3('')
         setCurrentStage(currentStage - 1);
     };
 
@@ -34,6 +40,29 @@ const ModalContinuePostTimeshare = (props) => {
             return;
         }
 
+        if (currentStage === 2
+            && (selectedTimeshareStatus.name_status === "Đang triển khai"
+                || selectedTimeshareStatus.name_status === "Đã triển khai")
+            && selectedJuridicalFiles.length === 0
+        ) {
+            setErrorStage2(`Timeshare bạn sắp đăng ở giai đoạn "${selectedTimeshareStatus.name_status}" nên phải có hồ sơ pháp lý, vui lòng cập nhập!`)
+            return;
+        }
+
+        let errorMessage;
+
+        if (currentStage === 3 && (anotherInfo.year_of_commencement === null || anotherInfo.year_of_handover === null)) {
+            if (selectedTimeshareStatus.name_status === "Đang triển khai") {
+                errorMessage = `Timeshare bạn sắp đăng ở giai đoạn "Đang triển khai". Vui lòng cập nhập đầy đủ năm bàn giao và năm khởi công!`;
+            } else if (selectedTimeshareStatus.name_status === "Đã triển khai") {
+                errorMessage = `Timeshare bạn sắp đăng ở giai đoạn "Đã triển khai". Vui lòng cập nhập đầy đủ thông tin!`;
+            }
+        }
+
+        if (errorMessage) {
+            setErrorStage3(errorMessage);
+            return;
+        }
         setStageEnabled(prevState => ({
             ...prevState,
             [currentStage + 1]: true
@@ -64,13 +93,30 @@ const ModalContinuePostTimeshare = (props) => {
             case 1:
                 return <Stage_1 selectedTimeshareStatus={selectedTimeshareStatus} setSelectedTimeshareStatus={setSelectedTimeshareStatus} />;
             case 2:
-                return <Stage_2 selectedJuridicalFiles={selectedJuridicalFiles} setSelectedJuridicalFiles={setSelectedJuridicalFiles} juridicalFilesOrigin={juridicalFilesOrigin} setJuridicalFilesOrigin={setJuridicalFilesOrigin} />;
+                return <Stage_2
+                    selectedTimeshareStatus={selectedTimeshareStatus}
+                    selectedJuridicalFiles={selectedJuridicalFiles}
+                    setSelectedJuridicalFiles={setSelectedJuridicalFiles}
+                    juridicalFilesOrigin={juridicalFilesOrigin}
+                    setJuridicalFilesOrigin={setJuridicalFilesOrigin}
+                    errorStage2={errorStage2}
+                    setErrorStage2={setErrorStage2}
+                />;
             case 3:
-                return <Stage_3 anotherInfo={anotherInfo} setAnotherInfo={setAnotherInfo} />;
+                return <Stage_3
+                    anotherInfo={anotherInfo}
+                    setAnotherInfo={setAnotherInfo}
+                    errorStage3={errorStage3}
+                    setErrorStage3={setErrorStage3}
+                />;
             case 4:
                 return <Stage_4 priorityLevel={priorityLevel} setPriorityLevel={setPriorityLevel} />;
             case 5:
-                return <Stage_5 depositPrice={depositPrice} setDepositPrice={setDepositPrice} errorDepositPrice={errorDepositPrice} setErrorDepositPice={setErrorDepositPice}/>
+                return <Stage_5
+                    depositPrice={depositPrice} setDepositPrice={setDepositPrice}
+                    errorDepositPrice={errorDepositPrice} setErrorDepositPice={setErrorDepositPice}
+                    rangePrice={rangePrice}
+                />
             default:
                 return null;
         }

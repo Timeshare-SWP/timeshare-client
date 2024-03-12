@@ -8,6 +8,7 @@ import transactionReducer from "./features/transactionSlice";
 import contractReducer from "./features/contractSlice";
 import phaseReducer from "./features/phaseSlice";
 import feedbackReducer from "./features/feedbackSlice";
+import supportReducer from "./features/supportSlice";
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +21,6 @@ export const store = configureStore({
     contract: contractReducer,
     phase: phaseReducer,
     feedback: feedbackReducer,
-
+    support: supportReducer,
   },
 });

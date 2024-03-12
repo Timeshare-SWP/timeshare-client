@@ -9,7 +9,7 @@ import SpinnerLoading from "../../../../components/shared/SpinnerLoading"
 import { createPhase } from '../../../../redux/features/phaseSlice';
 import { createContract, createContractImage } from '../../../../redux/features/contractSlice';
 import toast from 'react-hot-toast';
-import { generateRandomString } from '../../../../utils/handleFunction';
+import { generateRandomString, removeCommas } from '../../../../utils/handleFunction';
 import { storage } from '../../../../utils/configFirebase';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { createNotification } from '../../../../redux/features/notificationSlice';
@@ -33,6 +33,10 @@ const MoreAction = ({ item, transactionList, setTransactionList, userDecode }) =
         percent: '',
         deadline: ''
     })
+
+    //final price, giá chốt sổ
+    const [finalPrice, setFinalPrice] = useState('');
+    const [finalPriceError, setFinalPriceError] = useState('');
 
     //modal state
     const [openModalContract, setOpenModalContract] = useState(false)
@@ -203,19 +207,11 @@ const MoreAction = ({ item, transactionList, setTransactionList, userDecode }) =
 
             console.log('item', item);
 
-
-            const filteredTransactions = transactionList.filter(
-                (transaction) => transaction?.timeshare_id?._id === item?.timeshare_id?._id
-            );
-
-            const selectedTransaction = filteredTransactions.find(
-                (transaction) => transaction.transaction_status === "Selected"
-            );
-
             const dataCreateContract = {
-                transaction_id: selectedTransaction._id,
+                transaction_id: item._id,
                 contract_image: contract_image,
-                contract_related_link: contract_related_link
+                contract_related_link: contract_related_link,
+                final_price: parseInt(removeCommas(finalPrice))
             }
 
             console.log('dataCreateContract', dataCreateContract)
@@ -225,39 +221,51 @@ const MoreAction = ({ item, transactionList, setTransactionList, userDecode }) =
                 if (createContract.fulfilled.match(resContract)) {
 
                     // tạo phases
-                    for (const eachPhase of phases) {
-
+                    for (let i = 0; i < phases.length; i++) {
+                        const eachPhase = phases[i];
                         const dataPhases = {
                             contract_id: resContract.payload._id,
                             phase_price_percent: parseInt(eachPhase.percent),
-                            remittance_deadline: eachPhase.deadline
+                            remittance_deadline: eachPhase.deadline,
+                            phase_no: i + 1 
                         }
 
-                        console.log("dataPhases", dataPhases)
-
                         dispatch(createPhase(dataPhases)).then((resPhase) => {
-                            console.log("resPhase", resPhase)
                             if (createPhase.fulfilled.match(resPhase)) {
-
+                                toast.success(`Tạo giai đoạn thanh toán ${resPhase.payload.phase_no} thành công cho dự án ${item?.timeshare_id.timeshare_name}!`)
                             } else {
-
+                                toast.error(`${resPhase.payload}`)
                             }
-                        })
+                        });
                     }
 
                     // tạo noti
-                    for (const user of selectedTransaction.customers) {
+                    for (const user of item.customers) {
                         const dataBodyNoti = {
                             user_id: user._id,
-                            notification_content: `${userDecode?.fullName} đã đăng hợp đồng cho ${item.timeshare_name} mà bạn đã mua. Vui lòng vào xác nhận!`,
+                            notification_content: `${userDecode?.fullName} đã đăng hợp đồng cho ${item.timeshare_id?.timeshare_name} mà bạn đã mua. Vui lòng vào xác nhận!`,
                             notification_title: `REQUEST_CONFIRM_CONTRACT_TO_CUSTOMER`,
                             notification_type: `REQUEST_CONFIRM_CONTRACT_TO_CUSTOMER`,
                         };
 
                         dispatch(createNotification(dataBodyNoti)).then((resNoti) => {
-                            console.log("resPhase", resNoti)
+                            console.log("resNoti", resNoti)
                         })
                     }
+
+                    //change is_contract trong transactionList
+                    const updatedTransactionList = transactionList.map(transaction => {
+                        if (transaction._id === item._id) {
+                            return {
+                                ...transaction,
+                                is_contract: true
+                            };
+                        } else {
+                            return transaction;
+                        }
+                    });
+
+                    setTransactionList(updatedTransactionList);
 
                     toast.success('Đăng hợp đồng thành công!')
                 } else {
@@ -317,6 +325,10 @@ const MoreAction = ({ item, transactionList, setTransactionList, userDecode }) =
                     setMinDates={setMinDates}
                     phaseError={phaseError}
                     setPhaseError={setPhaseError}
+                    finalPrice={finalPrice}
+                    setFinalPrice={setFinalPrice}
+                    finalPriceError={finalPriceError}
+                    setFinalPriceError={setFinalPriceError}
                 />
             }
 

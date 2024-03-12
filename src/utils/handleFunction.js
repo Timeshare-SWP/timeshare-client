@@ -63,6 +63,52 @@ export const convertToVNDFormat = (number) => {
   }
 };
 
+export const convertRangePriceToVNDFormat = (minPrice, maxPrice) => {
+  if (
+    (minPrice === null || minPrice === undefined) &&
+    (maxPrice === null || maxPrice === undefined)
+  ) {
+    return "NaN";
+  }
+
+  const minFormatted = convertToVNDFormat(minPrice);
+  let maxFormatted = null;
+
+  if (maxPrice !== null && maxPrice !== undefined) {
+    maxFormatted = convertToVNDFormat(maxPrice);
+  }
+
+  if (
+    minFormatted.includes("triệu") &&
+    maxFormatted &&
+    maxFormatted.includes("triệu")
+  ) {
+    return `${minFormatted.split(" ")[0]} - ${
+      maxFormatted.split(" ")[0]
+    } triệu`;
+  } else if (
+    minFormatted.includes("tỷ") &&
+    maxFormatted &&
+    maxFormatted.includes("tỷ")
+  ) {
+    return `${minFormatted.split(" ")[0]} - ${maxFormatted.split(" ")[0]} tỷ`;
+  } else if (
+    minFormatted.includes("nghìn") &&
+    maxFormatted &&
+    maxFormatted.includes("nghìn")
+  ) {
+    return `${minFormatted.split(" ")[0]} - ${
+      maxFormatted.split(" ")[0]
+    } nghìn`;
+  } else {
+    if (maxFormatted !== null && maxFormatted !== undefined) {
+      return `${minFormatted} - ${maxFormatted}`;
+    } else {
+      return minFormatted;
+    }
+  }
+};
+
 export const convertToNumberFormat = (input) => {
   if (typeof input === "string" && /^\d+$/.test(input)) {
     const number = parseInt(input, 10);

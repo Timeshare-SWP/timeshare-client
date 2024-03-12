@@ -12,6 +12,7 @@ import SpinnerLoading from '../../../../components/shared/SpinnerLoading'
 import { cancelReservedPlace, viewAllReservedPlace } from '../../../../redux/features/reservedPlaceSlice';
 import SimpleLoading from '../../../../components/shared/SimpleLoading';
 import { buyTimeshare } from '../../../../redux/features/timeshareSlice';
+import DrawerDetailInfoReservedPlace from '../../../../components/shared/DrawerDetailInfoReservedPlace';
 
 const MoreAction = ({ transactionSelected, setReservedPlaceList, userDecode }) => {
 
@@ -19,6 +20,7 @@ const MoreAction = ({ transactionSelected, setReservedPlaceList, userDecode }) =
     const [openModalCancel, setOpenModalCancel] = useState(false)
     const [openModalConfirm, setOpenModalConfirm] = useState(false)
     const [openModalConfirmBuy, setOpenModalConfirmBuy] = useState(false)
+    const [openDrawerDetailInfoReservedPlace, setOpenDrawerDetailInfoReservedPlace] = useState(false);
     const [loadingHandleEvent, setLoadingHandleEvent] = useState(false)
 
     const [memberList, setMemberList] = React.useState([]);
@@ -120,7 +122,7 @@ const MoreAction = ({ transactionSelected, setReservedPlaceList, userDecode }) =
 
                 let is_reserve_state
                 let transaction_id
-                
+
                 if (reservedPlaces.length > 0) {
                     const nearestUpdatedPlace = reservedPlaces.reduce((nearest, place) => {
                         return place.updatedAt > nearest.updatedAt ? place : nearest;
@@ -172,7 +174,7 @@ const MoreAction = ({ transactionSelected, setReservedPlaceList, userDecode }) =
         switch (id) {
             case 1:
                 // xem thông tin chi tiết
-                alert('action 1')
+                alert('Hmmmm, not support!')
                 break;
             case 2:
                 // mời thêm người tham gia
@@ -201,6 +203,8 @@ const MoreAction = ({ transactionSelected, setReservedPlaceList, userDecode }) =
                 actionsToShow = RESERVED_PLACE_LIST_ACTION.filter(item => item.id !== 2 && item.id !== 3 && item.id !== 4);
             }
         }
+
+        actionsToShow = RESERVED_PLACE_LIST_ACTION.filter(item => item.id !== 2);
 
         return actionsToShow.map((item, index) => (
             <Dropdown.Item
@@ -273,6 +277,10 @@ const MoreAction = ({ transactionSelected, setReservedPlaceList, userDecode }) =
                     title={''}
                     body={<h5>Bạn có chắc chắn muốn mua Timeshare này?</h5>}
                 />
+            }
+
+            {openDrawerDetailInfoReservedPlace &&
+                <DrawerDetailInfoReservedPlace />
             }
 
             {loadingHandleEvent && <SpinnerLoading />}

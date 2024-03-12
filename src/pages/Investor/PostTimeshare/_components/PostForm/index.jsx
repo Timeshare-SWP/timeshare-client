@@ -286,7 +286,7 @@ const PostForm = () => {
             setErrorRangePrice('Chênh lệch giá không thỏa mãn điều kiện! Không được quá 40% và không nhỏ hơn 20% so với mức hạn dưới của khoảng giá')
         }
 
-        if (isValidForm && isValidGeneralImage && isValidFloorImage) {
+        if (isValidForm && isValidGeneralImage && isValidFloorImage && isPriceDifferenceValid) {
             setOpenModalContinuePostState(true);
         } else {
             setFormImageErrors(prevErrors => ({
@@ -319,8 +319,14 @@ const PostForm = () => {
     const dispatch = useDispatch();
 
     const handleOpenConfirmModal = () => {
+
         if (depositPrice === 0 || depositPrice === '') {
             setErrorDepositPice('Vui lòng nhập số tiền đặt cọc bạn muốn')
+            return;
+        }
+
+        if (currentStage === 5 && (parseInt(removeCommas(depositPrice)) < (rangePrice[0] * 1000 * 0.1) || parseInt(removeCommas(depositPrice)) > rangePrice[1] * 1000 * 0.2)) {
+            setErrorDepositPice('Giá tiền đặt cọc không thỏa mãn yêu cầu!')
             return;
         }
 
@@ -417,7 +423,9 @@ const PostForm = () => {
                 priority_level: priorityLevel,
                 timeshare_status: selectedTimeshareStatus.name_status,
                 timeshare_related_link: juridicalFilesURLs,
-                deposit_price: removeCommas(depositPrice)
+                deposit_price: removeCommas(depositPrice),
+                price: rangePrice[0] * 1000,
+                max_price: rangePrice[1] * 1000,
             }
 
             dispatch(createTimeshare(data)).then((result) => {
@@ -852,6 +860,7 @@ const PostForm = () => {
                         setDepositPrice={setDepositPrice}
                         errorDepositPrice={errorDepositPrice}
                         setErrorDepositPice={setErrorDepositPice}
+                        rangePrice={rangePrice}
                     />
                 }
 
