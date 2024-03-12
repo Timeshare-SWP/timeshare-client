@@ -21,9 +21,10 @@ const Stage_1 = (props) => {
             <h4>{obj.name_status}</h4>
             <p className='text-center'>{obj.description}</p>
             <div className='divider'></div>
-            <p>Mức độ rủi ro: trên {obj.risk_percentage}%</p>
-            <p>Hosting Type</p>
-            <p>Financial Service Features</p>
+            <p style={{ textAlign: 'center' }}
+            >Yêu cầu: {" "}
+              <span className='fw-bold' style={{ fontStyle: 'italic' }}>{obj.required_info}</span>
+            </p>
 
             <button className='btn'>Chọn ngay</button>
           </div>

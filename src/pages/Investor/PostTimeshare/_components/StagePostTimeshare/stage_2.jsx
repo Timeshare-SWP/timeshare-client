@@ -5,9 +5,15 @@ import { MdDeleteOutline } from "react-icons/md";
 import { truncateString } from "../../../../../utils/handleFunction"
 
 const Stage_2 = (props) => {
-  const { selectedJuridicalFiles, setSelectedJuridicalFiles, juridicalFilesOrigin, setJuridicalFilesOrigin } = props
+  const { selectedTimeshareStatus, selectedJuridicalFiles,
+    setSelectedJuridicalFiles, juridicalFilesOrigin,
+    setJuridicalFilesOrigin, errorStage2, setErrorStage2 } = props
+
+  console.log("selectedTimeshareStatus", selectedTimeshareStatus)
+  console.log("errorStage2", errorStage2)
 
   const handleOnDrop = (acceptedFiles) => {
+    setErrorStage2('')
     setJuridicalFilesOrigin([...juridicalFilesOrigin, ...acceptedFiles])
     setSelectedJuridicalFiles([...selectedJuridicalFiles, ...acceptedFiles]);
 
@@ -47,12 +53,14 @@ const Stage_2 = (props) => {
     setSelectedJuridicalFiles((prevFiles) => prevFiles.filter((file) => file.path !== path));
   };
 
+
+
   return (
     <div className='stage-container d-flex flex-column justify-content-center align-items-center'>
       <h4 className='title'>Đăng thông tin về trọn bộ hồ sơ pháp lý của timeshare</h4>
       <p className='sub-title mt-2'>Bổ sung các thông tin cần thiết về dự án của bạn để có thể hoàn thành
         các bước đăng tin thành công </p>
-      <p className='note-title'>(Bấm tiếp tục nếu không có và bỏ qua giai đoạn này)</p>
+      <p className='note-title'>(Bấm tiếp tục nếu timeshare đang ở giai đoạn sắp triển khai)</p>
 
       <div className='stage-2'>
         <label style={{ cursor: 'pointer' }}
@@ -67,6 +75,8 @@ const Stage_2 = (props) => {
           </h5>
           <p>JPG, PNG hoặc PDF, tệp có dung lượng không trên 10MB</p>
         </label>
+
+        {errorStage2 && <span className='error-message'>{errorStage2}</span>}
 
         {selectedJuridicalFiles.length > 0 && (
           <div className="form-group mb-0 mt-4" >
@@ -89,6 +99,8 @@ const Stage_2 = (props) => {
                   </li>
                 ))}
               </ul>
+
+
             </div>
           </div>
         )}

@@ -54,7 +54,9 @@ const TableBody = ({ reservedPlaceList, setReservedPlaceList }) => {
                                     ))}
                                 </td>
                                 <td className="cell100 column5">{convertToNumberFormat(item?.reservation_price)}</td>
-                                <td className="cell100 column6">{item?.is_reservation_paid ? 'Đã thanh toán' : 'Chưa thanh toán'}</td>
+                                <td className={`cell100 column6 ${item?.is_reservation_paid ? 'text-success' : 'text-danger'}`}>
+                                    {item?.is_reservation_paid ? 'Đã thanh toán' : 'Chưa thanh toán'}
+                                </td>
                                 <td className="cell100 column7">{convertToVietnameseTime(item?.createdAt)}</td>
                                 <td className='cell100 column8'>
                                     <MoreAction transactionSelected={item}

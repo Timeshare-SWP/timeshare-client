@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getTimeshareForGuest } from '../../../redux/features/timeshareSlice'
 import LoadingProject from './_component/LoadingProject'
 import { Link, useNavigate } from 'react-router-dom'
-import { convertToSlug, convertToVNDFormat } from '../../../utils/handleFunction'
+import { convertRangePriceToVNDFormat, convertToSlug, convertToVNDFormat } from '../../../utils/handleFunction'
 
 const OutstandingProject = () => {
 
@@ -75,7 +75,7 @@ const OutstandingProject = () => {
                                         <div className='bottom-content'>
                                             <h5 className='fw-semibold'>{item.timeshare_name}</h5>
                                             <p className='address'>{item.timeshare_address}</p>
-                                            <p className='fw-semibold'>Giá: {convertToVNDFormat(item.price)}/m&#178;</p>
+                                            <p className='fw-semibold'>Giá: {convertRangePriceToVNDFormat(item.price, item.max_price)}/m&#178;</p>
                                         </div>
                                     </div>
                                 </div>
@@ -122,7 +122,7 @@ const OutstandingProject = () => {
                                         <div className='bottom-content'>
                                             <h5 className='fw-semibold'>{item.timeshare_name}</h5>
                                             <p className='address'>{item.timeshare_address}</p>
-                                            <p className='fw-semibold'>Giá: {convertToVNDFormat(item.price)}/m&#178;</p>
+                                            <p className='fw-semibold'>Giá: {convertRangePriceToVNDFormat(item?.price, item?.max_price)}/m&#178;</p>
                                         </div>
                                     </div>
                                 </div>

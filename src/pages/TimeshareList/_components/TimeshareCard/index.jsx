@@ -3,7 +3,7 @@ import { GiPositionMarker } from "react-icons/gi";
 import { BsTextareaResize } from "react-icons/bs";
 import { LuClipboardType } from "react-icons/lu";
 import { useNavigate } from 'react-router';
-import { convertToNumberFormat, convertToSlug, convertToVNDFormat, truncateString } from '../../../../utils/handleFunction';
+import { convertRangePriceToVNDFormat, convertToNumberFormat, convertToSlug, convertToVNDFormat, truncateString } from '../../../../utils/handleFunction';
 
 const TimeshareCard = (props) => {
 
@@ -85,14 +85,14 @@ const TimeshareCard = (props) => {
                     <h5>{item.timeshare_name}</h5>
 
                     <div className='other-option d-flex gap-3 align-items-center'>
-                        <div style={{ fontSize: '15px' }}><GiPositionMarker /> {item.timeshare_address}</div>
+                        <div style={{ fontSize: '15px' }}><GiPositionMarker /> {truncateString(item.timeshare_address, 20)}</div>
 
                         <div style={{ fontSize: '15px' }}><BsTextareaResize /> {convertToNumberFormat(item.land_area)} m&#178;</div>
 
                         <div style={{ fontSize: '15px' }}><LuClipboardType />  {item.timeshare_type}</div>
                     </div>
 
-                    <p>Giá: <span className='text-price'>{convertToVNDFormat(item.price)}/m&#178;</span></p>
+                    <p>Giá: <span className='text-price'>{convertRangePriceToVNDFormat(item?.price, item?.max_price)}/m&#178;</span></p>
 
                     <p className='description'>{truncateString(item.timeshare_description, 45)}</p>
 

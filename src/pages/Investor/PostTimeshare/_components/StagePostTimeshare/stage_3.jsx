@@ -4,11 +4,27 @@ import Select from 'react-select';
 import { UTILITIES_LIST } from '../../../../../constants/utilities'
 
 const Stage_3 = (props) => {
-  const { anotherInfo, setAnotherInfo } = props
+  const { anotherInfo, setAnotherInfo, errorStage3, setErrorStage3 } = props
   const [selectedUtilities, setSelectedUtilities] = useState(anotherInfo.timeshare_utilities);
 
   const handleInputChange = (e, field) => {
     let value = e.target.value;
+
+    if (field === 'real_estate_code') {
+      console.log(value)
+      value = value.replace(/\D/g, '');
+      const intValue = parseInt(value);
+
+      if (intValue > 100) {
+        value = '100';
+        console.log('come')
+        console.log('after', value);
+      }
+
+      if (!isNaN(intValue)) {
+        value = intValue.toLocaleString();
+      }
+    }
 
     setAnotherInfo({
       ...anotherInfo,
@@ -42,18 +58,10 @@ const Stage_3 = (props) => {
       <h4 className='title'>Thêm thông tin ngoài lề khác về timeshare</h4>
       <p className='sub-title mt-2'>Bổ sung các thông tin cần thiết về dự án của bạn để có thể hoàn thành
         các bước đăng tin thành công </p>
-      <p className='note-title'>(Bấm tiếp tục để bỏ qua giai đoạn này)</p>
+      <p className='note-title'>(Bấm tiếp tục để bỏ qua giai đoạn này nếu timeshare đang ở giai đoạn Chưa triển khai)</p>
 
       <div className='stage-3'>
         <div className='container-input'>
-          <div className="form-group-material mb-0">
-            <input type="text" required="required" className="form-control"
-              value={anotherInfo.real_estate_code}
-              onChange={(e) => handleInputChange(e, 'real_estate_code')}
-            />
-            <label>Mã số bất động sản</label>
-          </div>
-
           <div className="form-group-material mb-0">
             <input type="text" required="required" className="form-control"
               value={anotherInfo.ownership}
@@ -68,6 +76,15 @@ const Stage_3 = (props) => {
               onChange={(e) => handleInputChange(e, 'timeshare_scale')}
             />
             <label>Quy mô dự án</label>
+          </div>
+
+          <div className="form-group-material mb-0">
+            <input type="text" required="required" className="form-control"
+              value={anotherInfo.real_estate_code}
+              onChange={(e) => handleInputChange(e, 'real_estate_code')}
+            />
+            <label>Mật độ xây dựng</label>
+            <p className='unit-area'>%</p>
           </div>
 
           <div className="form-group-material mb-0">
@@ -87,7 +104,7 @@ const Stage_3 = (props) => {
               onChange={(e) => handleYearChange(e, 'year_of_commencement')}
               dateFormat="yyyy"
               showYearPicker
-              minDate={new Date()} 
+              minDate={new Date()}
             />
 
           </div>
@@ -95,14 +112,14 @@ const Stage_3 = (props) => {
           <div className="form-group-material mb-0 year-select">
             <input type="text" required="required" className="form-control" />
             <label>Năm bàn giao</label>
-              <DatePicker
-                showIcon
-                selected={anotherInfo.year_of_handover}
-                onChange={(e) => handleYearChange(e, 'year_of_handover')}
-                dateFormat="yyyy"
-                showYearPicker
-                minDate={anotherInfo.year_of_commencement ? anotherInfo.year_of_commencement : new Date()}
-              />
+            <DatePicker
+              showIcon
+              selected={anotherInfo.year_of_handover}
+              onChange={(e) => handleYearChange(e, 'year_of_handover')}
+              dateFormat="yyyy"
+              showYearPicker
+              minDate={anotherInfo.year_of_commencement ? anotherInfo.year_of_commencement : new Date()}
+            />
           </div>
         </div>
 
@@ -120,6 +137,8 @@ const Stage_3 = (props) => {
           />
 
         </div>
+
+        {errorStage3 && <span className='error-message'>{errorStage3}</span>}
 
       </div>
     </div>

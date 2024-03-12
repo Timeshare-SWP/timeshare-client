@@ -118,6 +118,23 @@ export const checkTimeshareHaveContract = createAsyncThunk(
   }
 );
 
+export const checkAllTransactionHaveContract = createAsyncThunk(
+  "contract/checkAllTransactionHaveContract",
+  async (_, thunkAPI) => {
+    try {
+      const instance = getInstanceWithToken();
+
+      const response = await instance.get(
+        `/api/contracts/checkAllTransactionHaveContract`
+      );
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 
 export const contractSlice = createSlice({
   name: "contract",
@@ -225,6 +242,21 @@ export const contractSlice = createSlice({
       state.error = "";
     });
     builder.addCase(checkTimeshareHaveContract.rejected, (state, action) => {
+      state.loadingContract = false;
+      state.error = action.payload;
+    });
+
+    //checkAllTransactionHaveContract
+    builder.addCase(checkAllTransactionHaveContract.pending, (state) => {
+      state.loadingContract = true;
+      state.error = "";
+    });
+    builder.addCase(checkAllTransactionHaveContract.fulfilled, (state, action) => {
+      state.loadingContract = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(checkAllTransactionHaveContract.rejected, (state, action) => {
       state.loadingContract = false;
       state.error = action.payload;
     });

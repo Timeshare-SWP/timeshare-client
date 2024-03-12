@@ -1,9 +1,9 @@
-import React, { useContext, useState } from 'react'
-import { convertToNumberFormat } from '../../../utils/handleFunction';
+import React, { useContext, useEffect, useState } from 'react'
+import { convertRangePriceToVNDFormat, convertToNumberFormat } from '../../../utils/handleFunction';
 import ModalReservedPlace from './ModalReservedPlace';
 import ModalConfirm from '../../../components/shared/ModalConfirm'
 import { useDispatch } from 'react-redux';
-import { viewAllReservedPlace } from '../../../redux/features/reservedPlaceSlice';
+import { viewAllReservedPlace, checkReservingTimeshare } from '../../../redux/features/reservedPlaceSlice';
 import { buyTimeshare } from '../../../redux/features/timeshareSlice';
 import toast from 'react-hot-toast';
 import SpinnerLoading from '../../../components/shared/SpinnerLoading'
@@ -32,7 +32,7 @@ const RightSideComponent = (props) => {
     const [error, setError] = useState('')
 
     const handleActionTransition = () => {
-        if (item?.sell_timeshare_status === "Chưa được bán") {
+        if (item?.sell_timeshare_status === "Chưa được bán" && !isReserved) {
             setOpenModalReservedPlace(true)
         } else if (item?.sell_timeshare_status === "Đang mở bán") {
             setOpenModalConfirmBuy(true)
@@ -48,7 +48,7 @@ const RightSideComponent = (props) => {
         setIsLoadingBuy(true)
         dispatch(viewAllReservedPlace()).then((resViewAll) => {
             if (viewAllReservedPlace.fulfilled.match(resViewAll)) {
-                const reservedPlaces = resViewAll.payload.filter(place => place.timeshare_id._id === item._id);
+                const reservedPlaces = resViewAll.payload.filter(place => place.timeshare_id?._id === item?._id);
 
                 let is_reserve_state
                 let transaction_id
@@ -65,7 +65,7 @@ const RightSideComponent = (props) => {
                 }
 
                 const data = {
-                    timeshare_id: item._id,
+                    timeshare_id: item?._id,
                     is_reserve: is_reserve_state,
                     transaction_id: transaction_id
                 }
@@ -77,7 +77,7 @@ const RightSideComponent = (props) => {
                         toast.success('Mua thành công!')
 
                         const dataBodyNoti = {
-                            user_id: item.investor_id._id,
+                            user_id: item?.investor_id?._id,
                             notification_content: `${userDecode?.fullName} muốn mua dự án timeshare ${item.timeshare_name} của bạn`,
                             notification_title: `REQUEST_CONFIRM_BUY_TIMESHARE_TO_INVESTOR`,
                             notification_type: `REQUEST_CONFIRM_BUY_TIMESHARE_TO_INVESTOR`,
@@ -102,6 +102,62 @@ const RightSideComponent = (props) => {
         });
     }
 
+    const [isReserved, setIsReserved] = useState(false)
+
+    useEffect(() => {
+        dispatch(checkReservingTimeshare(item?._id)).then((result) => {
+            console.log(result.payload)
+            if (checkReservingTimeshare.fulfilled.match(result)) {
+                setIsReserved(result.payload)
+            }
+        })
+    }, [])
+
+
+    //xử lý countdown, đếm 30 phút
+    const [countdown, setCountdown] = useState(null);
+    const [showCountdown, setShowCountdown] = useState(false);
+    const [timeshareIdInLocal, setTimeshareIdInLocal] = useState('');
+
+    useEffect(() => {
+        const storedDataCountdown = localStorage.getItem('data_countdown');
+        if (storedDataCountdown !== null) {
+            const { timeshare_id, countdown_timestamp } = JSON.parse(storedDataCountdown);
+            const storedTimeElapsed = Math.floor((Date.now() - countdown_timestamp) / 1000);
+            const remainingTime = 30 * 60 - storedTimeElapsed;
+            setTimeshareIdInLocal(timeshare_id);
+            if (remainingTime > 0) {
+                setCountdown(remainingTime);
+                setShowCountdown(true);
+            } else {
+                setShowCountdown(false);
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        if (countdown !== null && countdown > 0) {
+            const timer = setTimeout(() => {
+                setCountdown(countdown - 1);
+            }, 1000);
+
+            return () => clearTimeout(timer);
+        } else if (countdown === 0) {
+            setShowCountdown(false);
+        }
+    }, [countdown]);
+
+    const renderCountdown = () => {
+        const minutes = Math.floor(countdown / 60);
+        const seconds = countdown % 60;
+
+        return (
+            <div className="countdown">
+                {minutes.toString().padStart(2, '0')}:{seconds.toString().padStart(2, '0')}
+            </div>
+        );
+    };
+
     return (
         <>
             <div className='col-4 container-right'>
@@ -110,7 +166,7 @@ const RightSideComponent = (props) => {
                         <MdAttachMoney />
                         Khoảng giá:
                     </div>
-                    <span className='detail'>{convertToNumberFormat(item?.price)} VNĐ/m&#178;</span>
+                    <span className='detail'>{convertRangePriceToVNDFormat(item?.price, item?.max_price)} VNĐ/m&#178;</span>
                 </div>
 
                 <div className='text-price'>
@@ -121,7 +177,7 @@ const RightSideComponent = (props) => {
                     <span className='fw-bold'>{item?.investor_id?.fullName}</span>
                 </div>
                 <hr></hr>
-                {userDecode._id === item?.investor_id._id
+                {userDecode?._id === item?.investor_id?._id
                     ?
                     <>
                         <div className='btn btn-outline-secondary d-flex justify-content-center align-items-center gap-2'>
@@ -136,10 +192,11 @@ const RightSideComponent = (props) => {
                         <div
                             className={`btn ${item?.sell_timeshare_status === 'Đã bán' ? 'btn-outline-secondary' : 'btn-danger'}`}
                             onClick={handleActionTransition}
-                            disabled={item?.sell_timeshare_status === "Đã bán"}
+                            disabled={item?.sell_timeshare_status === "Đã bán" || (item?.sell_timeshare_status !== "Chưa được bán" && isReserved)}
                             style={{ opacity: item?.sell_timeshare_status === 'Đã bán' ? 0.5 : 1 }}
                         >
-                            {item?.sell_timeshare_status === "Chưa được bán" && "ĐẶT GIỮ CHỖ NGAY"}
+                            {item?.sell_timeshare_status === "Chưa được bán" && isReserved && "Bạn đã đặt giữ chỗ timeshare này"}
+                            {item?.sell_timeshare_status === "Chưa được bán" && !isReserved && "ĐẶT GIỮ CHỖ NGAY"}
                             {item?.sell_timeshare_status === "Đang mở bán" && "MUA NGAY"}
                             {item?.sell_timeshare_status === "Đã bán" && "MUA NGAY"}
                         </div>
@@ -151,6 +208,9 @@ const RightSideComponent = (props) => {
                 }
 
             </div>
+
+            {item?._id === timeshareIdInLocal && (showCountdown && renderCountdown())}
+
 
             {openModalReservedPlace &&
                 <ModalReservedPlace

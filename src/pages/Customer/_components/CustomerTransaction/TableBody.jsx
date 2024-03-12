@@ -1,12 +1,48 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { convertToNumberFormat, convertToVietnameseTime } from '../../../../utils/handleFunction';
 import MoreAction from './MoreAction';
 import { AuthContext } from '../../../../contexts/authContext';
+import { checkAllTransactionHaveContract } from '../../../../redux/features/contractSlice';
+import { useDispatch } from 'react-redux';
+import Skeleton from '../../../../components/shared/Skeleton'
 
 const TableBody = ({ transactionList, setTransactionList }) => {
 
-    console.log("transactionList", transactionList)
     const { userDecode } = useContext(AuthContext);
+    const dispatch = useDispatch();
+
+    //reset lại list transaction list để xem đã có contract chưa
+    const [isLoadingContractStatus, setIsLoadingContractStatus] = useState(false)
+    const [transactionContractList, setTransactionContractList] = useState([])
+
+    useEffect(() => {
+        setIsLoadingContractStatus(true)
+        dispatch(checkAllTransactionHaveContract()).then((resCheckTrans) => {
+            if (checkAllTransactionHaveContract.fulfilled.match(resCheckTrans)) {
+                setTransactionContractList(resCheckTrans.payload);
+            }
+            setIsLoadingContractStatus(false)
+        });
+
+    }, []);
+
+    useEffect(() => {
+        const updatedTransactionList = transactionList.map(transaction => {
+            const matchingContract = transactionContractList.find(contract => contract._id === transaction._id);
+            if (matchingContract) {
+                return {
+                    ...transaction,
+                    is_contract: matchingContract.is_contract
+                };
+            } else {
+                return transaction;
+            }
+        });
+
+        // console.log("updatedTransactionList", updatedTransactionList)
+
+        setTransactionList(updatedTransactionList);
+    }, [transactionContractList]);
 
     return (
         <div className="table100-body js-pscroll ps ps--active-y">
@@ -58,14 +94,27 @@ const TableBody = ({ transactionList, setTransactionList }) => {
                                                     item?.transaction_status}
                                     </span>
                                 </td>
-                                <td className='cell100 column7'>Chưa đăng</td>
+                                <td className={`cell100 column7 ${item?.is_contract ? 'text-success' : 'text-danger'}`}
+                                >
+                                    {isLoadingContractStatus ? <Skeleton style={{ width: '100px', height: '10px' }} />
+                                        :
+                                        (item?.transaction_status === "Selected"
+                                            ?
+                                            (item?.is_contract === true || item?.is_contract === undefined)
+                                                ? 'Đã đăng' : 'Chưa đăng'
+                                            : null)
+                                    }
+                                </td>
                                 <td className='cell100 column8'>
-                                    <MoreAction
-                                        transactionSelected={item}
-                                        transactionList={transactionList}
-                                        setTransactionList={setTransactionList}
-                                        userDecode={userDecode}
-                                    />
+                                    {item?.transaction_status === "Selected"
+                                        &&
+                                        <MoreAction
+                                            transactionSelected={item}
+                                            transactionList={transactionList}
+                                            setTransactionList={setTransactionList}
+                                            userDecode={userDecode}
+                                        />
+                                    }
                                 </td>
                             </tr>
                         ))

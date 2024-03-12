@@ -70,7 +70,8 @@ const Stage_1 = (props) => {
           </div>
         </div>
 
-        <div className="input-container" >
+        {/* bây giờ mua là chỉ 1 người mua, thuê thì mới 1 nhóm */}
+        {/* <div className="input-container" >
           <input id="drive" className="radio-button" type="radio" value="group" name="radio"
             onChange={handleRadioChange}
             defaultChecked={optionTypeReservedPlace === "group"}
@@ -81,7 +82,7 @@ const Stage_1 = (props) => {
             </div>
             <label htmlFor="group" className="radio-tile-label">Nhóm</label>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {optionTypeReservedPlace === "group"
