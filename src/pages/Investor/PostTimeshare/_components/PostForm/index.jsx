@@ -46,17 +46,25 @@ const PostForm = () => {
     const validateForm = () => {
         let hasError = false;
         const newFormErrors = { ...formErrors };
+    
         Object.keys(formData).forEach((key) => {
             if (!formData[key]) {
-                newFormErrors[key] = true;
-                hasError = true;
+                if (key === 'sell_number' && formData.timeshare_type !== 'Chung cư') {
+                    newFormErrors[key] = false;
+                } else {
+                    newFormErrors[key] = true;
+                    hasError = true;
+                }
             } else {
                 newFormErrors[key] = false;
             }
         });
+        console.log("newFormErrors", newFormErrors)
+    
         setFormErrors(newFormErrors);
         return !hasError;
     };
+    
 
     const handleInputChange = (e, field) => {
         let value = e.target.value;
@@ -67,6 +75,10 @@ const PostForm = () => {
             if (parseInt(value) > 1000) {
                 value = parseInt(value).toLocaleString();
             }
+        }
+
+        if (field === 'sell_number' && formData.timeshare_type !== 'Chung cư') {
+            value = 1;
         }
 
         setFormData({
@@ -81,6 +93,9 @@ const PostForm = () => {
             case 'timeshare_address':
                 error = !value;
                 break;
+            // case 'sell_number':
+            //     error = !value;
+            //     break;
             case 'timeshare_name':
                 error = !value;
                 break;
@@ -90,12 +105,15 @@ const PostForm = () => {
             case 'timeshare_description':
                 error = !value;
                 break;
+            case 'sell_number':
+                if (formData.timeshare_type === 'Chung cư') {
+                    error = !value;
+                } else {
+                    error = false;
+                }
+                break;
             default:
                 break;
-        }
-
-        if (formData.timeshare_type === "Chung cư" && formData.sell_number === "") {
-            error = !value;
         }
 
         setFormErrors({
@@ -415,7 +433,8 @@ const PostForm = () => {
 
             const data = {
                 ...formData, ...anotherInfo,
-                sell_number: removeCommas(formData.sell_number),
+                // trước mắt là auto sell_number là 1
+                sell_number: removeCommas(formData?.sell_number),
                 land_area: removeCommas(formData.land_area),
                 timeshare_utilities: anotherInfo.timeshare_utilities.map(item => item.value),
                 year_of_commencement: anotherInfo?.year_of_commencement ? anotherInfo?.year_of_commencement.getFullYear() : null,
@@ -562,7 +581,7 @@ const PostForm = () => {
                                 <label ref={errorRefs.sellNumberError} >Số lượng bán <span className="text-danger">*</span></label>
                                 {/* <p className='unit-area'>/m&#178;</p> */}
                             </div>
-                            {(formErrors.sell_number && formData.timeshare_type === "Chung cư")
+                            {(formErrors.sell_number === true && formData.timeshare_type === "Chung cư")
                                 && <span className="error-message">Vui lòng nhập số lượng căn hộ muốn bán!</span>
                             }
                         </div>
