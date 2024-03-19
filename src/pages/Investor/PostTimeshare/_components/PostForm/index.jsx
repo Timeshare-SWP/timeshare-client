@@ -78,9 +78,6 @@ const PostForm = () => {
             case 'timeshare_type':
                 error = !value;
                 break;
-            case 'sell_number':
-                error = !value;
-                break;
             case 'timeshare_address':
                 error = !value;
                 break;
@@ -95,6 +92,10 @@ const PostForm = () => {
                 break;
             default:
                 break;
+        }
+
+        if (formData.timeshare_type === "Chung cư" && formData.sell_number === "") {
+            error = !value;
         }
 
         setFormErrors({
@@ -551,7 +552,8 @@ const PostForm = () => {
                             </div>
                         </div>
 
-                        <div className="col-md-6">
+
+                        <div className={`col-md-6 ${formData.timeshare_type !== "Chung cư" && 'disabled-style'}`}>
                             <div className="form-group-material">
                                 <input type="text" required="required" className="form-control"
                                     value={formData.sell_number}
@@ -560,8 +562,11 @@ const PostForm = () => {
                                 <label ref={errorRefs.sellNumberError} >Số lượng bán <span className="text-danger">*</span></label>
                                 {/* <p className='unit-area'>/m&#178;</p> */}
                             </div>
-                            {formErrors.sell_number && <span className="error-message">Vui lòng nhập số lượng muốn bán!</span>}
+                            {(formErrors.sell_number && formData.timeshare_type === "Chung cư")
+                                && <span className="error-message">Vui lòng nhập số lượng căn hộ muốn bán!</span>
+                            }
                         </div>
+
                     </div>
                     <div className="form-group">
                         <p ref={errorRefs.rangePriceError}

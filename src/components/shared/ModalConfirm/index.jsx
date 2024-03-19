@@ -1,11 +1,12 @@
 import React from 'react'
 import { Modal } from 'react-bootstrap'
+import './style.scss'
 
 const ModalConfirm = (props) => {
 
     const { show, handleClose, handleAccept, nameBtnCLose, title, body } = props
     return (
-        <Modal show={show} onHide={handleClose} centered backdrop="static">
+        <Modal show={show} onHide={handleClose} centered backdrop="static" className='modal-confirm'>
             <Modal.Header closeButton>
                 <Modal.Title>{title}</Modal.Title>
             </Modal.Header>
