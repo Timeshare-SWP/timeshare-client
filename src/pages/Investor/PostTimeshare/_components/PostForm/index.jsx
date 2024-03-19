@@ -434,7 +434,7 @@ const PostForm = () => {
             const data = {
                 ...formData, ...anotherInfo,
                 // trước mắt là auto sell_number là 1
-                sell_number: removeCommas(formData?.sell_number),
+                sell_number: removeCommas(formData?.sell_number || 1),
                 land_area: removeCommas(formData.land_area),
                 timeshare_utilities: anotherInfo.timeshare_utilities.map(item => item.value),
                 year_of_commencement: anotherInfo?.year_of_commencement ? anotherInfo?.year_of_commencement.getFullYear() : null,
@@ -462,6 +462,7 @@ const PostForm = () => {
                     setFloorPlanImages("");
                     setFloorPlanImagesOrigin("");
                 } else {
+                    console.log("result", result)
                     toast.error(`${result.payload}`)
                 }
             })
