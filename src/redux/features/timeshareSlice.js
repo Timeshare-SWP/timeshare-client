@@ -155,10 +155,9 @@ export const confirmSellTimeshare = createAsyncThunk(
     try {
       const instance = getInstanceWithToken();
 
-      const { transaction_id, transaction_status } = data;
-
       const response = await instance.patch(
-        `/api/transactions/confirmSellTimeshare?transaction_id=${transaction_id}&transaction_status=${transaction_status}`
+        `/api/transactions/confirmSellTimeshare`,
+        { ...data }
       );
 
       return response.data;
