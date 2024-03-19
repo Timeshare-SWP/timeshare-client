@@ -385,8 +385,6 @@
           outline: none;
         }
 
-       
-
         label {
           color: #bdbdbd;
           font-size: 14px;
@@ -401,5 +399,10 @@
         right: 7px;
       }
     }
+  }
+
+  .disabled-style {
+    opacity: 0.5;
+    pointer-events: none;
   }
 }

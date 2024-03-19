@@ -25,6 +25,8 @@ const TableBody = ({ transactionList, setTransactionList }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [actionType, setActionType] = useState("");
     const [selectedTransaction, setSelectedTransaction] = useState("");
+    const [noteRejected, setNoteRejected] = useState("")
+    const [errorNoteRejected, setErrorNoteRejected] = useState("");
 
     const handleActionConfirmBuy = (status, item) => {
         setActionType(status);
@@ -34,14 +36,20 @@ const TableBody = ({ transactionList, setTransactionList }) => {
 
     const handleCallApiConfirmSell = () => {
 
-        console.log("selectedTransaction", selectedTransaction)
+        if (actionType === "Rejected" && noteRejected === "") {
+            setErrorNoteRejected("Vui lòng nhập lý do từ chối!");
+            return;
+        }
 
         setIsLoading(true);
 
-        dispatch(confirmSellTimeshare({ transaction_id: selectedTransaction._id, transaction_status: actionType })).then((resConfirm) => {
-            console.log("resConfirm", resConfirm)
+        dispatch(confirmSellTimeshare({ transaction_id: selectedTransaction._id, transaction_status: actionType, note_rejected: noteRejected })).then((resConfirm) => {
             if (confirmSellTimeshare.fulfilled.match(resConfirm)) {
                 toast.success('Phản hồi thành công!')
+
+                setNoteRejected("")
+                setErrorNoteRejected("");
+
 
                 //xử lý change UI
                 if (actionType === "Rejected") {
@@ -390,12 +398,40 @@ const TableBody = ({ transactionList, setTransactionList }) => {
                 &&
                 <ModalConfirm
                     show={openModalConfirmSell}
-                    handleClose={() => setOpenModalConfirmSell(false)}
+                    handleClose={() => {
+                        setOpenModalConfirmSell(false);
+                        setNoteRejected("");
+                    }}
                     handleAccept={handleCallApiConfirmSell}
                     body={
-                        <p>
-                            Bạn có chắc muốn <span className='fw-bold'>{actionType === "Selected" ? "bán" : "từ chối bán"}</span> timeshare cho bên này?
-                        </p>
+                        <>
+                            <p>
+                                Bạn có chắc muốn <span className='fw-bold'>{actionType === "Selected" ? "bán" : "từ chối bán"}</span> timeshare cho bên này?
+                            </p>
+
+                            {actionType !== "Selected" && (
+                                <>
+                                    <div className="form-group-material mt-4">
+                                        <textarea
+                                            rows="3"
+                                            required="required"
+                                            className="form-control"
+                                            spellCheck="false"
+                                            value={noteRejected}
+                                            onChange={(e) => {
+                                                setNoteRejected(e.target.value);
+                                                setErrorNoteRejected("")
+                                            }}
+                                            placeholder='Timeshare này đã hết slot để mua!'
+                                        />
+                                        <label>Lý do từ chối <span className="text-danger">*</span></label>
+                                    </div>
+                                    {errorNoteRejected && <span className="error-message">{errorNoteRejected}</span>}
+
+
+                                </>
+                            )}
+                        </>
                     }
                 />
             }
