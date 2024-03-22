@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { MdDeleteOutline } from "react-icons/md";
 import ModalContinuePostTimeshare from '../ModalContinuePostTimeshare';
@@ -14,11 +14,57 @@ import { useNavigate } from 'react-router-dom';
 import Slider from 'react-slider'
 import Hint from '../../../../../components/shared/Hint'
 import { IoIosInformation } from 'react-icons/io';
+import AddApartmentForm from '../AddApartmentForm';
+import { APARTMENT_ERRORS } from '../../../../../constants/timeshare';
 
 const PostForm = () => {
 
     const [openModalContinuePostState, setOpenModalContinuePostState] = useState(false);
     const navigate = useNavigate();
+
+    //xử lý dữ liệu khi tạo apartment nếu timeshare_type là chung cư
+    const [listApartmentData, setListApartmentData] = useState([])
+    const [errorApartmentData, setErrorApartmentData] = useState([])
+
+    const handleApartmentDataChange = (index, newData) => {
+        const updatedList = [...listApartmentData];
+        updatedList[index] = newData;
+
+        const updatedErrors = { ...errorApartmentData };
+
+        // newData ở bên AddApartmentForm trả về 1 mảng lận nên phải xem là cái key 
+        // (tức là property name) nào vừa được cập nhập mới thì sẽ xóa lỗi tương ứng 
+        // của index có key đó ra khỏi error list
+        Object.keys(updatedErrors[index] || {}).forEach((key) => {
+            if (newData[key] !== '') {
+                delete updatedErrors[index][key];
+            }
+        });
+
+        setListApartmentData(updatedList);
+        setErrorApartmentData(updatedErrors);
+    };
+
+
+    const handleSubmitApartment = () => {
+        const newErrors = {};
+
+        listApartmentData.forEach((apartment, index) => {
+            Object.entries(apartment).forEach(([key, value]) => {
+                if (!value || value.trim() === '') {
+                    newErrors[index] = { ...newErrors[index], [key]: APARTMENT_ERRORS[key] };
+                }
+            });
+        });
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrorApartmentData(newErrors);
+            return newErrors;
+        }
+
+        console.log('OK');
+    }
+
     //xử lý dữ liệu trong post form
     const [formData, setFormData] = useState({
         timeshare_type: "Căn hộ",
@@ -46,7 +92,7 @@ const PostForm = () => {
     const validateForm = () => {
         let hasError = false;
         const newFormErrors = { ...formErrors };
-    
+
         Object.keys(formData).forEach((key) => {
             if (!formData[key]) {
                 if (key === 'sell_number' && formData.timeshare_type !== 'Chung cư') {
@@ -59,12 +105,10 @@ const PostForm = () => {
                 newFormErrors[key] = false;
             }
         });
-        console.log("newFormErrors", newFormErrors)
-    
+
         setFormErrors(newFormErrors);
         return !hasError;
     };
-    
 
     const handleInputChange = (e, field) => {
         let value = e.target.value;
@@ -121,6 +165,23 @@ const PostForm = () => {
             [field]: error
         });
     };
+
+    // cập nhập length của apartment data list khi có sell_number 
+    //(sell_number sẽ được nhập khi là timeshare_type là chung cư)
+
+    useEffect(() => {
+        const initialApartmentData = Array.from({ length: formData.sell_number }, () => ({
+            apartment_number: '',
+            floor_number: '',
+            area: '',
+            apartment_image: '',
+            note: '',
+            number_of_rooms: '',
+            condition: '',
+            interior: ''
+        }));
+        setListApartmentData(initialApartmentData);
+    }, [formData?.sell_number]);
 
     //quản lý lưu trữ giữa các stage
     const [selectedTimeshareStatus, setSelectedTimeshareStatus] = useState(null); //stage 1
@@ -665,6 +726,16 @@ const PostForm = () => {
 
                 </div>
 
+                {(formData?.timeshare_type === "Chung cư" && formData?.sell_number !== "")
+                    &&
+                    <AddApartmentForm
+                        onChange={handleApartmentDataChange}
+                        sell_number={formData?.sell_number}
+                        errors={errorApartmentData}
+                        values={listApartmentData}
+                    />
+                }
+
                 <div className="section-form">
                     <h2 className="form-title">Thông tin Timeshare</h2>
 
@@ -854,7 +925,10 @@ const PostForm = () => {
                     <p>
                         Đăng kê với Timeshare để bán nhanh gấp 2 lần thị trường và tiết kiệm nhiều hơn với những dịch vụ đi kèm chất lượng cao. Đăng thông tin ngay, chúng tôi sẽ liên hệ tư vấn và hẹn gặp sau ít phút!
                     </p>
-                    <button className='btn btn-danger' onClick={handleOpenModalContinuePost}>Tiếp tục</button>
+                    <button className='btn btn-danger'
+                        // onClick={handleOpenModalContinuePost}
+                        onClick={handleSubmitApartment}
+                    >Tiếp tục</button>
                 </div>
 
                 {openModalContinuePostState

@@ -45,7 +45,6 @@ const UserHeader = () => {
   };
 
   const handleUpTimeshare = () => {
-    console.log('hmmm', userDecode)
     if (!userDecode || !Object.keys(userDecode).length) {
       setShowModal(true)
     } else {
@@ -121,7 +120,7 @@ const UserHeader = () => {
                 className="btn btn-danger fw-semibold"
                 onClick={handleUpTimeshare}
               >
-                Đăng bán timeshare
+                Đăng ký bán timeshare
               </div>
             </div>
             }
@@ -142,7 +141,7 @@ const UserHeader = () => {
                 className="btn btn-danger fw-semibold"
                 onClick={handleUpTimeshare}
               >
-                Đăng bán timeshare
+                Đăng ký bán timeshare
               </div>
             </div>}
 
@@ -157,7 +156,7 @@ const UserHeader = () => {
                   className="btn btn-danger fw-semibold"
                   onClick={handleUpTimeshare}
                 >
-                  Đăng bán timeshare
+                  Đăng ký bán timeshare
                 </div>
               }
             </>}

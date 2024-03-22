@@ -35,9 +35,15 @@ const OutstandingProject = () => {
     }, [])
 
     const [sortedData, setSortedData] = useState([]);
+
     useEffect(() => {
-        const sortedList = [...dataTimeshareList].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        setSortedData(sortedList);
+        if (dataTimeshareList && Array.isArray(dataTimeshareList)) {
+            const filteredList = dataTimeshareList.filter(
+                timeshare => timeshare.is_confirm === true && timeshare.sell_timeshare_status !== "Đã bán"
+            );
+            const sortedList = [...filteredList].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            setSortedData(sortedList);
+        }
     }, [dataTimeshareList]);
 
     if (loadingTimeshare) {

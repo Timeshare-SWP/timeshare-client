@@ -8,6 +8,20 @@ const initialState = {
   dataTimeshareList: "",
 };
 
+export const confirmTimeshareByAdmin = createAsyncThunk(
+  "timeshare/confirmTimeshareByAdmin",
+  async (timeshare_id, thunkAPI) => {
+    try {
+      const instance = getInstanceWithToken();
+
+      const response = await instance.patch(`/api/timeshares/confirmTimeshare/${timeshare_id}`);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 export const getTimeshareForGuest = createAsyncThunk(
   "timeshare/getTimeshareForGuest",
   async (_, thunkAPI) => {
@@ -189,6 +203,20 @@ export const timeshareSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    //confirmTimeshareByAdmin
+    builder.addCase(confirmTimeshareByAdmin.pending, (state) => {
+      state.loadingTimeshare = true;
+      state.error = "";
+    });
+    builder.addCase(confirmTimeshareByAdmin.fulfilled, (state, action) => {
+      state.loadingTimeshare = false;
+      state.dataTimeshareList = action.payload;
+      state.error = "";
+    });
+    builder.addCase(confirmTimeshareByAdmin.rejected, (state, action) => {
+      state.loadingTimeshare = false;
+      state.error = action.payload;
+    });
     //getTimeshareForGuest
     builder.addCase(getTimeshareForGuest.pending, (state) => {
       state.loadingTimeshare = true;
