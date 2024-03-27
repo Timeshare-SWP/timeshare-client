@@ -10,7 +10,8 @@ export const DROPDOWN_HEADER_INVESTOR = [
   { label: "Trang cá nhân", link: "/my_account" },
   { label: "Thống kê", link: "/investor-statistics" },
   { label: "Dự án cá nhân", link: "/personal-projects" },
-  { label: "Quản lý mua bán", link: "/management-transaction" },
+  { label: "Quản lý yêu cầu", link: "/management-request" },
+  { label: "Quản lý giao dịch", link: "/management-transaction" },
 ];
 
 export const DROPDOWN_HEADER_STAFF = [

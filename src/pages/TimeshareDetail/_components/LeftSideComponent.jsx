@@ -1,15 +1,17 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { convertToNumberFormat, truncateString } from '../../../utils/handleFunction';
 import { UTILITIES_LIST } from '../../../constants/utilities';
 import GoogleMapLocation from './GoogleMapLocation';
 import toast from 'react-hot-toast';
 import JSZip from 'jszip';
+import { useDispatch } from 'react-redux';
+import { countQuantifyOfBuyer } from '../../../redux/features/transactionSlice';
 
 export const LeftSideComponent = (props) => {
-    console.log('data', props)
     const { item } = props
-    const img_tmp = "https://photo.rever.vn/v3/get/m8sgt22ufK23zAKaupTzeH+7CNCkH1fORnYxoVSNMIE=/450x300/image.jpg"
     const avatar_tmp = "https://cdn.popsww.com/blog/sites/2/2021/03/doraemon-tap-97.jpg"
+
+    const dispatch = useDispatch();
 
     const renderStatus = (status, statuses) => {
         let classNames = "";
@@ -32,8 +34,21 @@ export const LeftSideComponent = (props) => {
     };
 
     const handleDownloadAllFiles = async () => {
-       toast.error('Chưa hỗ trợ')
+        toast.error('Chưa hỗ trợ')
     };
+
+    // count số lượng đã bán của timeshare
+    const [countQuantityOfBuyer, setCountQuantityOfBuyer] = useState(0);
+    useEffect(() => {
+        dispatch(countQuantifyOfBuyer(item?._id)).then((resCount) => {
+            console.log("resCount", resCount);
+            const selectedObj = resCount.payload.find(obj => obj.key === 'Selected');
+            if (selectedObj) {
+                setCountQuantityOfBuyer(selectedObj.value);
+            }
+        });
+    }, []);
+
 
     return (
         <div className='col-8 container-left'>
@@ -43,8 +58,17 @@ export const LeftSideComponent = (props) => {
                     {renderStatus(item?.sell_timeshare_status, ["Chưa được bán", "Đang mở bán", "Đã bán"])}
                     {renderStatus(item?.timeshare_status, ["Sắp triển khai", "Đang triển khai", "Đã triển khai"])}
                 </div>
-                <div className='location'>
-                    <p >{item?.timeshare_address}</p>
+
+                <div className='d-flex flex-row align-items-center mb-3 mt-2'>
+                    <div className='location'>
+                        <p>{item?.timeshare_address}</p>
+                    </div>
+
+                    <div style={{margin: '0px 10px'}}>|</div>
+
+                    <p>
+                        <>{countQuantityOfBuyer}</> Đã Bán
+                    </p>
                 </div>
 
                 <div className='timeshare-img'>

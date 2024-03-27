@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import GeneralInvestorLayout from '../layout/GeneralInvestorLayout';
-import { viewAllTransaction, viewRejectedSelectedTransaction } from '../../../redux/features/transactionSlice';
+import { viewAllTransaction, viewWaitingTransaction } from '../../../redux/features/transactionSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import SimpleLoading from '../../../components/shared/SimpleLoading';
-import { TRANSACTION_TABLE_HEADER_NAME } from '../../../constants/header';
-import TableLayout from '../_components/ManagementTransaction/TableLayout';
+import { REQUEST_TRANSACTION_TABLE_HEADER_NAME } from '../../../constants/header';
+import TableLayout from '../_components/ManagementRequest/TableLayout';
 
-const ManagementTransaction = () => {
+const ManagementRequest = () => {
     const [transactionList, setTransactionList] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const { loadingTransaction } = useSelector((state) => state.transaction);
@@ -14,7 +14,9 @@ const ManagementTransaction = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(viewRejectedSelectedTransaction()).then((result) => {
+
+        dispatch(viewWaitingTransaction()).then((result) => {
+            console.log("result all", result)
             const groupedTransactions = {};
             result.payload.forEach(transaction => {
                 const timeshareName = transaction?.timeshare_id?.timeshare_name;
@@ -41,10 +43,10 @@ const ManagementTransaction = () => {
     };
 
     const filteredTransactions = transactionList.filter(transaction => {
-        const timeshareName = transaction?.timeshare_id?.timeshare_name.toLowerCase();
-        return timeshareName?.includes(searchTerm.toLowerCase());
+        const timeshareName = transaction.timeshare_id.timeshare_name.toLowerCase();
+        return timeshareName.includes(searchTerm.toLowerCase());
     });
-    
+
 
     if (loadingTransaction) {
         return (
@@ -60,7 +62,7 @@ const ManagementTransaction = () => {
 
     return (
         <GeneralInvestorLayout>
-            <div className='investor-transaction-container'>
+            <div className='investor-request-container'>
                 <div className="d-flex justify-content-between align-items-center px-3 my-3 header-function">
                     <div className='d-flex'>
                         <div className="group">
@@ -83,7 +85,7 @@ const ManagementTransaction = () => {
                 </div>
 
                 <TableLayout
-                    tableHeaderName={TRANSACTION_TABLE_HEADER_NAME}
+                    tableHeaderName={REQUEST_TRANSACTION_TABLE_HEADER_NAME}
                     transactionList={filteredTransactions}
                     setTransactionList={setTransactionList}
                 />
@@ -92,4 +94,4 @@ const ManagementTransaction = () => {
     );
 };
 
-export default ManagementTransaction;
+export default ManagementRequest;

@@ -112,8 +112,8 @@ const UserHeader = () => {
                 open={modalLoginOpen}
                 onClose={handleCloseAuthentication}
                 swapToRegisterState={swapToRegisterState}
-                actionSwapToRegister={handleSwapToRegister}
-                actionSwapToLogin={handleSwapToLogin}
+                actionSwapToRegister={() => setSwapToRegisterState(true)}
+                actionSwapToLogin={() => setSwapToRegisterState(false)}
               />
 
               <div
@@ -135,7 +135,14 @@ const UserHeader = () => {
               >
                 Đăng nhập
               </button>
-              <Login open={modalLoginOpen} onClose={() => setModalLoginOpen(false)} />
+
+              <Authentication
+                open={modalLoginOpen}
+                onClose={handleCloseAuthentication}
+                swapToRegisterState={swapToRegisterState}
+                actionSwapToRegister={() => setSwapToRegisterState(true)}
+                actionSwapToLogin={() => setSwapToRegisterState(false)}
+              />
 
               <div
                 className="btn btn-danger fw-semibold"

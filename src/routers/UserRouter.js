@@ -15,6 +15,7 @@ import ManagementTransaction from "../pages/Investor/_sub-page/ManagementTransac
 
 import CustomerTransaction from "../pages/Customer/_sub-page/CustomerTransaction";
 import ReservedPlaceManagement from "../pages/Customer/_sub-page/ReservedPlaceManagement";
+import ManagementRequest from "../pages/Investor/_sub-page/ManagementRequest";
 
 const UserRouter = () => {
   return (
@@ -34,6 +35,10 @@ const UserRouter = () => {
         <Route
           path="/management-transaction"
           element={<ManagementTransaction />}
+        />
+        <Route
+          path="/management-request"
+          element={<ManagementRequest />}
         />
         <Route
           path="/personal-projects"

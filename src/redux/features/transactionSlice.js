@@ -76,6 +76,54 @@ export const viewAllTransaction = createAsyncThunk(
   }
 );
 
+export const countQuantifyOfBuyer = createAsyncThunk(
+  "transaction/countQuantifyOfBuyer",
+  async (timeshare_id, thunkAPI) => {
+    try {
+      const instance = getInstanceWithToken();
+
+      const response = await instance.get(`/api/transactions/countQuantifyOfBuyer/${timeshare_id}`);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+// này là lấy những transaction đang được yêu cầu xác nhận
+export const viewWaitingTransaction = createAsyncThunk(
+  "transaction/viewWaitingTransaction",
+  async (_, thunkAPI) => {
+    try {
+      const instance = getInstanceWithToken();
+
+      const response = await instance.get(`/api/transactions/waitingTransaction`);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+// này là lấy những transaction đã được từ chối hoặc đồng ý
+// tức là qua giai đoạn quản lý mua bán hợp đồng các thứ
+export const viewRejectedSelectedTransaction = createAsyncThunk(
+  "transaction/viewRejectedSelectedTransaction",
+  async (_, thunkAPI) => {
+    try {
+      const instance = getInstanceWithToken();
+
+      const response = await instance.get(`/api/transactions/selected&RejectedTransaction`);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 export const transactionSlice = createSlice({
   name: "transaction",
   initialState,
@@ -128,6 +176,51 @@ export const transactionSlice = createSlice({
       state.error = "";
     });
     builder.addCase(viewAllTransaction.rejected, (state, action) => {
+      state.loadingTransaction = false;
+      state.error = action.payload;
+    });
+
+    //countQuantifyOfBuyer
+    builder.addCase(countQuantifyOfBuyer.pending, (state) => {
+      state.error = "";
+      state.loadingTransaction = true;
+    });
+    builder.addCase(countQuantifyOfBuyer.fulfilled, (state, action) => {
+      state.loadingTransaction = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(countQuantifyOfBuyer.rejected, (state, action) => {
+      state.loadingTransaction = false;
+      state.error = action.payload;
+    });
+
+    //viewRejectedSelectedTransaction
+    builder.addCase(viewRejectedSelectedTransaction.pending, (state) => {
+      state.error = "";
+      state.loadingTransaction = true;
+    });
+    builder.addCase(viewRejectedSelectedTransaction.fulfilled, (state, action) => {
+      state.loadingTransaction = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(viewRejectedSelectedTransaction.rejected, (state, action) => {
+      state.loadingTransaction = false;
+      state.error = action.payload;
+    });
+    
+    //viewWaitingTransaction
+    builder.addCase(viewWaitingTransaction.pending, (state) => {
+      state.error = "";
+      state.loadingTransaction = true;
+    });
+    builder.addCase(viewWaitingTransaction.fulfilled, (state, action) => {
+      state.loadingTransaction = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(viewWaitingTransaction.rejected, (state, action) => {
       state.loadingTransaction = false;
       state.error = action.payload;
     });

@@ -21,6 +21,7 @@ const RightSideComponent = (props) => {
     const { item } = props
     const navigate = useNavigate();
 
+    const [openModalWarning, setOpenModalWarning] = useState(false);
     const [openModalReservedPlace, setOpenModalReservedPlace] = useState(false);
     const [openModalConfirmBuy, setOpenModalConfirmBuy] = useState(false);
     const [isLoadingBuy, setIsLoadingBuy] = useState(false);
@@ -32,6 +33,11 @@ const RightSideComponent = (props) => {
     const [error, setError] = useState('')
 
     const handleActionTransition = () => {
+        if (userDecode === null) {
+            setOpenModalWarning(true)
+            return;
+        }
+
         if (item?.sell_timeshare_status === "Chưa được bán" && !isReserved) {
             setOpenModalReservedPlace(true)
         } else if (item?.sell_timeshare_status === "Đang mở bán") {
@@ -106,7 +112,6 @@ const RightSideComponent = (props) => {
 
     useEffect(() => {
         dispatch(checkReservingTimeshare(item?._id)).then((result) => {
-            console.log(result.payload)
             if (checkReservingTimeshare.fulfilled.match(result)) {
                 setIsReserved(result.payload)
             }
@@ -152,7 +157,7 @@ const RightSideComponent = (props) => {
         const seconds = countdown % 60;
 
         return (
-            <div className="countdown" style={{width: 'fit-content', top: '400px', left: '15%'}}>
+            <div className="countdown" style={{ width: 'fit-content', top: '400px', left: '15%' }}>
                 {minutes.toString().padStart(2, '0')}:{seconds.toString().padStart(2, '0')}
             </div>
         );
@@ -188,29 +193,32 @@ const RightSideComponent = (props) => {
                         </div>
                     </>
                     :
-                    <>
-                        <div
-                            className={`btn ${item?.sell_timeshare_status === 'Đã bán' ? 'btn-outline-secondary' : 'btn-danger'}`}
-                            onClick={handleActionTransition}
-                            disabled={item?.sell_timeshare_status === "Đã bán" || (item?.sell_timeshare_status !== "Chưa được bán" && isReserved)}
-                            style={{ opacity: item?.sell_timeshare_status === 'Đã bán' ? 0.5 : 1 }}
-                        >
-                            {item?.sell_timeshare_status === "Chưa được bán" && isReserved && "Bạn đã đặt giữ chỗ timeshare này"}
-                            {item?.sell_timeshare_status === "Chưa được bán" && !isReserved && "ĐẶT GIỮ CHỖ NGAY"}
-                            {item?.sell_timeshare_status === "Đang mở bán" && "MUA NGAY"}
-                            {item?.sell_timeshare_status === "Đã bán" && "MUA NGAY"}
-                        </div>
-                        <div className='other-text text-center'>hoặc</div>
-                        <hr style={{ position: 'relative', top: '-20px', zIndex: '-10', opacity: '0.2' }}></hr>
-                        <div className='btn btn-outline-secondary'>Tham quan nhà mẫu</div>
-                        <div className='btn btn-outline-secondary'>Đăng ký tư vấn</div>
-                    </>
+                    userDecode?.role_id?.roleName !== "Investor"
+                        && userDecode?.role_id?.roleName !== "Staff"
+                        && userDecode?.role_id?.roleName !== "Admin" ?
+                        <>
+                            <div
+                                className={`btn ${item?.sell_timeshare_status === 'Đã bán' ? 'btn-outline-secondary' : 'btn-danger'}`}
+                                onClick={handleActionTransition}
+                                disabled={item?.sell_timeshare_status === "Đã bán" || (item?.sell_timeshare_status !== "Chưa được bán" && isReserved)}
+                                style={{ opacity: item?.sell_timeshare_status === 'Đã bán' ? 0.5 : 1 }}
+                            >
+                                {item?.sell_timeshare_status === "Chưa được bán" && isReserved && "Bạn đã đặt giữ chỗ timeshare này"}
+                                {item?.sell_timeshare_status === "Chưa được bán" && !isReserved && "ĐẶT GIỮ CHỖ NGAY"}
+                                {item?.sell_timeshare_status === "Đang mở bán" && "MUA NGAY"}
+                                {item?.sell_timeshare_status === "Đã bán" && "MUA NGAY"}
+                            </div>
+                            <div className='other-text text-center'>hoặc</div>
+                            <hr style={{ position: 'relative', top: '-20px', zIndex: '-10', opacity: '0.2' }}></hr>
+                            <div className='btn btn-outline-secondary'>Tham quan nhà mẫu</div>
+                            <div className='btn btn-outline-secondary'>Đăng ký tư vấn</div>
+                        </>
+                        : null
                 }
 
             </div>
 
             {item?._id === timeshareIdInLocal && (showCountdown && renderCountdown())}
-
 
             {openModalReservedPlace &&
                 <ModalReservedPlace
@@ -233,6 +241,15 @@ const RightSideComponent = (props) => {
                     handleAccept={handleCallApiToBuyTimeshare}
                     title={''}
                     body={<h5>Bạn có chắc chắn muốn mua Timeshare này?</h5>}
+                />
+            }
+
+            {openModalWarning &&
+                <ModalConfirm
+                    show={openModalWarning}
+                    handleAccept={() => setOpenModalWarning(false)}
+                    title={''}
+                    body={<h5>Vui lòng đăng nhập trước khi mua!</h5>}
                 />
             }
 
