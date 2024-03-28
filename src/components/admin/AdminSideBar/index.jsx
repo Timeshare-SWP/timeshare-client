@@ -23,14 +23,14 @@ const index = () => {
                 Thống kê
               </Link>
             </li>
-            <li>
-              {/* <Link to="/notification" className='nav-link'>
+            {/* <li>
+              <Link to="/notification" className='nav-link'>
                 <FaRegBell className='mx-2' />
                 <Badge count={6} offset={[10, 0]}>
                   Thông báo
                 </Badge>
-              </Link> */}
-            </li>
+              </Link>
+            </li> */}
           </ul>
         </div>
         <div >
