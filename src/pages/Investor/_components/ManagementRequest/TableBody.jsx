@@ -46,9 +46,14 @@ const TableBody = ({ transactionList, setTransactionList }) => {
         dispatch(confirmSellTimeshare({ transaction_id: selectedTransaction._id, transaction_status: actionType, note_rejected: noteRejected })).then((resConfirm) => {
             if (confirmSellTimeshare.fulfilled.match(resConfirm)) {
                 toast.success('Phản hồi thành công!')
+                console.log("selectedTransaction", selectedTransaction)
+                console.log("transactionList", transactionList)
+                const updatedTransactionList = transactionList.filter(transaction => transaction._id !== selectedTransaction._id);
+                setTransactionList(updatedTransactionList);
 
                 setNoteRejected("")
                 setErrorNoteRejected("");
+
 
                 //xử lý change UI
                 if (actionType === "Rejected") {
@@ -293,17 +298,18 @@ const TableBody = ({ transactionList, setTransactionList }) => {
                                                     </span>
                                                 )}
                                             </td>
-
+                                            <td className='cell100 column7' >
+                                                {item?.timeshare_id?.sell_number ? item?.timeshare_id?.sell_number : '1'}
+                                            </td>
                                             <td className='cell100 column8'
                                             >
-                                                {item?.transaction_status === "Selected"
-                                                    &&
-                                                    <MoreAction
-                                                        item={item}
-                                                        transactionList={transactionList}
-                                                        setTransactionList={setTransactionList}
-                                                        userDecode={userDecode} />
-                                                }
+
+                                                <MoreAction
+                                                    item={item}
+                                                    transactionList={transactionList}
+                                                    setTransactionList={setTransactionList}
+                                                    userDecode={userDecode} />
+
                                             </td>
 
                                             {item?.timeshare_id._id === timeshareIdInLocal && (showCountdown && renderCountdown())}
@@ -351,7 +357,10 @@ const TableBody = ({ transactionList, setTransactionList }) => {
                                                         {item?.transaction_status === "Selected" ? "Đã đồng ý bán" : "Đã từ chối bán"}
                                                     </span>
                                                 )}
-                                            </td>                                        
+                                            </td>
+                                            <td className='cell100 column7' >
+                                                {item?.timeshare_id?.sell_number ? item?.timeshare_id?.sell_number : '1'}
+                                            </td>
                                             <td className='cell100 column8'
                                             >
                                                 {item?.transaction_status === "Selected"

@@ -4,21 +4,23 @@ import ModalReservedPlace from './ModalReservedPlace';
 import ModalConfirm from '../../../components/shared/ModalConfirm'
 import { useDispatch } from 'react-redux';
 import { viewAllReservedPlace, checkReservingTimeshare } from '../../../redux/features/reservedPlaceSlice';
-import { buyTimeshare } from '../../../redux/features/timeshareSlice';
+import { buyTimeshare, deleteTimeshare } from '../../../redux/features/timeshareSlice';
 import toast from 'react-hot-toast';
 import SpinnerLoading from '../../../components/shared/SpinnerLoading'
 import { AuthContext } from '../../../contexts/authContext';
 import { createNotification } from '../../../redux/features/notificationSlice';
-import { CiEdit } from "react-icons/ci";
-import { MdDeleteOutline } from "react-icons/md";
+import { CiEdit, CiStop1 } from "react-icons/ci";
+import { MdCancel, MdDeleteOutline } from "react-icons/md";
 import { LiaCitySolid } from "react-icons/lia";
 import { MdAttachMoney } from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
-
+import SimpleLoading from '../../../components/shared/SimpleLoading';
+import { FcCancel } from "react-icons/fc";
 
 const RightSideComponent = (props) => {
 
-    const { item } = props
+    const { item, handleEditModeChange, setTimeShareList, timeshareList, handleClose, isEditMode } = props
+
     const navigate = useNavigate();
 
     const [openModalWarning, setOpenModalWarning] = useState(false);
@@ -108,6 +110,34 @@ const RightSideComponent = (props) => {
         });
     }
 
+    // xoá timeshare
+    const [openModalDelete, setOpenModalDelete] = useState(false);
+
+    const handleCallApiDeleteTimeshare = () => {
+        dispatch(deleteTimeshare(item._id)).then((resDelete) => {
+            if (deleteTimeshare.fulfilled.match(resDelete)) {
+                toast.success(`Xóa timeshare thành công!`);
+
+                if (timeshareList) {
+                    const updatedList = timeshareList.filter(timeshare => timeshare._id !== item._id);
+                    setTimeShareList(updatedList);
+                    handleClose();
+                }
+
+                navigate("/personal-projects")
+            } else {
+                console.log("resDelete.payload", resDelete)
+                toast.error(`${resDelete.payload}`);
+            }
+            setOpenModalDelete(false);
+        });
+    }
+
+    //edit timeshare
+    const handleEditButtonClick = () => {
+        handleEditModeChange();
+    };
+
     const [isReserved, setIsReserved] = useState(false)
 
     useEffect(() => {
@@ -166,32 +196,45 @@ const RightSideComponent = (props) => {
     return (
         <>
             <div className='col-4 container-right'>
-                <div className='text-price'>
-                    <div className='d-flex justify-content-center align-items-center gap-2'>
-                        <MdAttachMoney />
-                        Khoảng giá:
-                    </div>
-                    <span className='detail'>{convertRangePriceToVNDFormat(item?.price, item?.max_price)} VNĐ/m&#178;</span>
-                </div>
-
-                <div className='text-price'>
-                    <div className='d-flex justify-content-center align-items-center gap-2'>
-                        <LiaCitySolid />
-                        Chủ đầu tư:
-                    </div>
-                    <span className='fw-bold'>{item?.investor_id?.fullName}</span>
-                </div>
-                <hr></hr>
-                {userDecode?._id === item?.investor_id?._id
+                {!isEditMode
                     ?
-                    <>
-                        <div className='btn btn-outline-secondary d-flex justify-content-center align-items-center gap-2'>
-                            <CiEdit />Chỉnh sửa timeshare
+                    <><div className='text-price'>
+                        <div className='d-flex justify-content-center align-items-center gap-2'>
+                            <MdAttachMoney />
+                            Khoảng giá:
                         </div>
-                        <div className='btn btn-outline-secondary d-flex justify-content-center align-items-center gap-2'>
-                            <MdDeleteOutline />Xóa timeshare
+                        <span className='detail'>{convertRangePriceToVNDFormat(item?.price, item?.max_price)} VNĐ/m&#178;</span>
+                    </div>
+
+                        <div className='text-price'>
+                            <div className='d-flex justify-content-center align-items-center gap-2'>
+                                <LiaCitySolid />
+                                Chủ đầu tư:
+                            </div>
+                            <span className='fw-bold'>{item?.investor_id?.fullName}</span>
                         </div>
-                    </>
+                        <hr></hr></>
+                    :
+                    <></>
+                }
+
+                {userDecode?._id === item?.investor_id?._id || userDecode?._id === item?.investor_id
+                    ?
+                    item?.sell_timeshare_status !== "Đang mở bán" && item?.sell_timeshare_status !== "Đã bán" ?
+                        <>
+                            <div className='btn btn-outline-secondary d-flex justify-content-center align-items-center gap-2'
+                                onClick={handleEditButtonClick}
+                            >
+                                {!isEditMode ? <> <CiEdit />Chỉnh sửa timeshare</> : <> <FcCancel />Huỷ thay đổi</>}
+
+                            </div>
+                            <div
+                                className='btn btn-outline-secondary d-flex justify-content-center align-items-center gap-2'
+                                onClick={() => setOpenModalDelete(true)}
+                            >
+                                <MdDeleteOutline />Xóa timeshare
+                            </div>
+                        </> : ""
                     :
                     userDecode?.role_id?.roleName !== "Investor"
                         && userDecode?.role_id?.roleName !== "Staff"
@@ -253,7 +296,20 @@ const RightSideComponent = (props) => {
                 />
             }
 
-            {isLoadingBuy && <SpinnerLoading />}
+            {openModalDelete
+                &&
+                <ModalConfirm show={openModalDelete}
+                    handleClose={() => setOpenModalDelete(false)}
+                    handleAccept={handleCallApiDeleteTimeshare}
+                    title={'Xác nhận hành động'}
+                    body={
+                        <div className="confirmation-message">
+                            <p>Bạn có chắc vẫn muốn tiếp tục xóa timeshare này?</p>
+                        </div>
+                    } />
+            }
+
+            {isLoadingBuy && <SimpleLoading />}
         </>
 
     )

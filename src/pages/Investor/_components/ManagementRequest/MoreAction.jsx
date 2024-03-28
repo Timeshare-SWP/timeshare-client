@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { BsThreeDots } from "react-icons/bs";
-import { TRANSACTION_LIST_ACTION_INVESTOR } from "../../../../constants/action"
+import { REQUEST_LIST_ACTION_INVESTOR, TRANSACTION_LIST_ACTION_INVESTOR } from "../../../../constants/action"
 import { useDispatch, useSelector } from 'react-redux';
 import ModalContract from '../../../../components/shared/ModalContract';
 import ModalConfirm from '../../../../components/shared/ModalConfirm';
@@ -14,52 +14,23 @@ import { storage } from '../../../../utils/configFirebase';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { createNotification } from '../../../../redux/features/notificationSlice';
 import DrawerPaymentProgress from '../../../../components/shared/DrawerPaymentProgress';
+import ModalDetailTransaction from '../../../../components/shared/ModalDetailTransaction';
 
 const MoreAction = ({ item, transactionList, setTransactionList, userDecode }) => {
 
     const [isLoadingHandleApi, setIsLoadingHandleApi] = useState(false);
 
-    const [formErrors, setFormErrors] = useState({
-        images_contract: false,
-        file_contract: false
-    })
-
     const dispatch = useDispatch();
 
-    //phases state
-    const [phases, setPhases] = useState([{ deadline: "", percent: "" }]);
-    const [minDates, setMinDates] = useState([new Date()]);
-    const [phaseError, setPhaseError] = useState({
-        percent: '',
-        deadline: ''
-    })
-
-    //final price, giá chốt sổ
-    const [finalPrice, setFinalPrice] = useState('');
-    const [finalPriceError, setFinalPriceError] = useState('');
-
     //modal state
-    const [openModalContract, setOpenModalContract] = useState(false)
-    const [openModalConfirm, setOpenModalConfirm] = useState(false);
-    const [openModalPaymentProgress, setOpenModalPaymentProgress] = useState(false);
+    const [openModalTransactionDetail, setOpenModalTransactionDetail] = useState(false)
 
-    //xử lý ẢNH hợp đồng
-    const [imagesContract, setImagesContract] = useState([]); //list ảnh này là để preview trên UI
-    const [imagesContractOrigin, setImagesContractOrigin] = useState([]) //list ảnh này là file gốc khi vừa mới drop lên
-
-    //xử lý FILE hợp đồng
-    const [fileContract, setFileContract] = useState([]); //list file này là để preview trên UI
-    const [fileContractOrigin, setFileContractOrigin] = useState([]) //list ảnh này là file gốc khi vừa mới drop lên
 
     const handleItemClick = (id) => {
         switch (id) {
             case 1:
-                //hợp đồng
-                setOpenModalContract(true)
-                break;
-            case 2:
-                //tiến độ thanh toán
-                setOpenModalPaymentProgress(true)
+                //Chi tiết dự án
+                setOpenModalTransactionDetail(true)
                 break;
             default:
                 alert('Hmmmm, something wrong!')
@@ -68,11 +39,7 @@ const MoreAction = ({ item, transactionList, setTransactionList, userDecode }) =
 
     const renderDropDownMenuItem = () => {
 
-        let actionsToShow = TRANSACTION_LIST_ACTION_INVESTOR;
-
-        if (item?.transaction_status === "Waiting") {
-            actionsToShow = actionsToShow.filter(item => item.id !== 2);
-        }
+        let actionsToShow = REQUEST_LIST_ACTION_INVESTOR;
 
         return actionsToShow.map((item, index) => (
             <Dropdown.Item
@@ -86,208 +53,8 @@ const MoreAction = ({ item, transactionList, setTransactionList, userDecode }) =
         ));
     }
 
-    const handleOpenModalConfirmToCreateContract = () => {
-
-        const totalPercent = phases.reduce((acc, curr) => acc + parseInt(curr.percent || 0), 0);
-        const hasEmptyValues = phases.some(phase => phase.deadline === "" || phase.percent === "");
-
-        const isValidImagesContract = imagesContract.length >= 1;
-        const isValidFileContract = fileContract.length >= 1;
-
-        if (totalPercent < 100) {
-            setPhaseError(prevErrors => ({
-                ...prevErrors,
-                percent: 'Tổng số phần trăm thanh toán chưa đủ 100%'
-            }));
-        }
-
-        if (totalPercent > 100) {
-            setPhaseError(prevErrors => ({
-                ...prevErrors,
-                percent: 'Tổng số phần trăm thanh toán đã vượt quá 100%'
-            }));
-        }
-
-        if (hasEmptyValues) {
-            setPhaseError(prevErrors => ({
-                ...prevErrors,
-                percent: 'Vui lòng điền đầy đủ thông tin cho tất cả các giai đoạn'
-            }));
-        }
-
-        if (isValidImagesContract && isValidFileContract && totalPercent === 100) {
-            setPhaseError(prevErrors => ({
-                ...prevErrors,
-                percent: ''
-            }));
-            setOpenModalConfirm(true)
-            setOpenModalContract(false)
-        } else {
-            setFormErrors(prevErrors => ({
-                ...prevErrors,
-                images_contract: !isValidImagesContract
-            }));
-            setFormErrors(prevErrors => ({
-                ...prevErrors,
-                file_contract: !isValidFileContract
-            }));
-        }
-    };
-
-    const handleCloseModalContract = () => {
-        setOpenModalContract(false)
-        setPhases([{ deadline: "", percent: "" }])
-        setPhaseError({
-            percent: '',
-            deadline: ''
-        })
-        setFormErrors({
-            images_contract: false,
-            file_contract: false
-        })
-    }
-
-    const handleCloseModalConfirm = () => {
-        setOpenModalConfirm(false)
-        setOpenModalContract(true)
-    }
 
     // xử lý API
-    const handleCallApiForCreateContract = async () => {
-
-        setIsLoadingHandleApi(true)
-
-        //xử lý up ảnh lên firebase
-        toast('Quá trình diễn ra sẽ hơi lâu, vui lòng chờ trong giây lát!', { icon: '⚠' })
-
-        const uploadPromises = [];
-        const uploadedFiles = [];
-
-        // Tải lên ảnh từ imagesContractOrigin
-        const imagesContractOriginDownload = imagesContractOrigin.map((file) => {
-            const randomFileName = generateRandomString();
-            const storageRef = ref(storage, `timeshare-images/${randomFileName}`);
-            const uploadTask = uploadBytes(storageRef, file);
-            uploadPromises.push(uploadTask);
-            uploadedFiles.push({ path: `timeshare-images/${randomFileName}`, file });
-            return uploadTask.then(() => getDownloadURL(storageRef));
-        });
-
-        // Tải lên ảnh từ fileContractOrigin
-        const fileContractOriginDownload = fileContractOrigin.map((file) => {
-            const randomFileName = generateRandomString();
-            const storageRef = ref(storage, `timeshare-images/${randomFileName}`);
-            const uploadTask = uploadBytes(storageRef, file);
-            uploadPromises.push(uploadTask);
-            uploadedFiles.push({ path: `timeshare-images/${randomFileName}`, file });
-            return uploadTask.then(() => getDownloadURL(storageRef));
-        });
-
-        await Promise.all(uploadPromises);
-        const imagesContractOriginURLs = await Promise.all(imagesContractOriginDownload);
-        const fileContractOriginURLs = await Promise.all(fileContractOriginDownload);
-
-        const compileAllImages = [
-            ...imagesContractOriginURLs.map((url) => ({ contract_img_description: "Ảnh hợp đồng", contract_url: url })),
-        ];
-
-        const contract_related_link = fileContractOriginURLs.map((url) => url);
-
-        let contract_image = [];
-
-        const dispatchPromises = compileAllImages.map((data) => {
-            return dispatch(createContractImage(data)).then((result) => {
-                if (createContractImage.fulfilled.match(result)) {
-                    contract_image.push(result.payload._id);
-                }
-            });
-        });
-
-        Promise.all(dispatchPromises).then(() => {
-
-            console.log('item', item);
-
-            const dataCreateContract = {
-                transaction_id: item._id,
-                contract_image: contract_image,
-                contract_related_link: contract_related_link,
-                final_price: parseInt(removeCommas(finalPrice))
-            }
-
-            console.log('dataCreateContract', dataCreateContract)
-
-            dispatch(createContract(dataCreateContract)).then((resContract) => {
-                console.log("resContract", resContract)
-                if (createContract.fulfilled.match(resContract)) {
-
-                    // tạo phases
-                    for (let i = 0; i < phases.length; i++) {
-                        const eachPhase = phases[i];
-                        const dataPhases = {
-                            contract_id: resContract.payload._id,
-                            phase_price_percent: parseInt(eachPhase.percent),
-                            remittance_deadline: eachPhase.deadline,
-                            phase_no: i + 1 
-                        }
-
-                        dispatch(createPhase(dataPhases)).then((resPhase) => {
-                            if (createPhase.fulfilled.match(resPhase)) {
-                                toast.success(`Tạo giai đoạn thanh toán ${resPhase.payload.phase_no} thành công cho dự án ${item?.timeshare_id.timeshare_name}!`)
-                            } else {
-                                toast.error(`${resPhase.payload}`)
-                            }
-                        });
-                    }
-
-                    // tạo noti
-                    for (const user of item.customers) {
-                        const dataBodyNoti = {
-                            user_id: user._id,
-                            notification_content: `${userDecode?.fullName} đã đăng hợp đồng cho ${item.timeshare_id?.timeshare_name} mà bạn đã mua. Vui lòng vào xác nhận!`,
-                            notification_title: `REQUEST_CONFIRM_CONTRACT_TO_CUSTOMER`,
-                            notification_type: `REQUEST_CONFIRM_CONTRACT_TO_CUSTOMER`,
-                        };
-
-                        dispatch(createNotification(dataBodyNoti)).then((resNoti) => {
-                            console.log("resNoti", resNoti)
-                        })
-                    }
-
-                    //change is_contract trong transactionList
-                    const updatedTransactionList = transactionList.map(transaction => {
-                        if (transaction._id === item._id) {
-                            return {
-                                ...transaction,
-                                is_contract: true
-                            };
-                        } else {
-                            return transaction;
-                        }
-                    });
-
-                    setTransactionList(updatedTransactionList);
-
-                    toast.success('Đăng hợp đồng thành công!')
-                } else {
-                    toast.error(`${resContract.payload}`)
-                }
-
-                setOpenModalConfirm(false)
-            })
-
-            setIsLoadingHandleApi(false);
-        });
-
-        // const resCreateContractImage = await dispatch(createContractImage(dataContractImage))
-
-        // const dataPhases = {
-        //     contract_id: ,
-        //     phase_price_percent:,
-        //     remittance_deadline
-        // }
-
-        // dispatch(createPhase)
-    }
 
     return (
         <Dropdown className='notification-container'>
@@ -299,57 +66,12 @@ const MoreAction = ({ item, transactionList, setTransactionList, userDecode }) =
                 {renderDropDownMenuItem()}
             </Dropdown.Menu>
 
-            {openModalContract
-                &&
-                <ModalContract
-                    show={openModalContract}
-                    transactionSelected={item}
-                    transactionList={transactionList}
-                    setTransactionList={setTransactionList}
-                    handleClose={handleCloseModalContract}
-                    handleAccept={() => setOpenModalContract(true)}
-                    handleOpenModalConfirmToCreateContract={handleOpenModalConfirmToCreateContract}
-                    imagesContract={imagesContract}
-                    setImagesContract={setImagesContract}
-                    imagesContractOrigin={imagesContractOrigin}
-                    setImagesContractOrigin={setImagesContractOrigin}
-                    fileContract={fileContract}
-                    setFileContract={setFileContract}
-                    fileContractOrigin={fileContractOrigin}
-                    setFileContractOrigin={setFileContractOrigin}
-                    formErrors={formErrors}
-                    setFormErrors={setFormErrors}
-                    phases={phases}
-                    setPhases={setPhases}
-                    minDates={minDates}
-                    setMinDates={setMinDates}
-                    phaseError={phaseError}
-                    setPhaseError={setPhaseError}
-                    finalPrice={finalPrice}
-                    setFinalPrice={setFinalPrice}
-                    finalPriceError={finalPriceError}
-                    setFinalPriceError={setFinalPriceError}
-                />
-            }
-
-            {openModalConfirm
-                &&
-                <ModalConfirm
-                    show={openModalConfirm}
-                    handleClose={handleCloseModalConfirm}
-                    handleAccept={handleCallApiForCreateContract}
-                    nameBtnCLose={'Quay lại'}
-                    body={<h5>Bạn có chắc muốn thêm hợp đồng này?</h5>} />
-            }
-
-            {openModalPaymentProgress
-                &&
-                <DrawerPaymentProgress
-                    show={openModalPaymentProgress}
-                    handleClose={() => setOpenModalPaymentProgress(false)}
-                    transactionSelected={item}
-                    transactionList={transactionList}
-                    setTransactionList={setTransactionList}
+            {openModalTransactionDetail
+                && <ModalDetailTransaction
+                    show={openModalTransactionDetail}
+                    handleClose={() => setOpenModalTransactionDetail(false)}
+                    handleAccept={() => setOpenModalTransactionDetail(false)}
+                    dataTransaction={item}
                 />
             }
 

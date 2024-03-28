@@ -124,6 +124,22 @@ export const viewRejectedSelectedTransaction = createAsyncThunk(
   }
 );
 
+export const countTransactionForCustomer = createAsyncThunk(
+  "transaction/countTransactionForCustomer",
+  async (customer_id, thunkAPI) => {
+    try {
+      const instance = getInstanceWithToken();
+
+      const response = await instance.get(`/api/transactions/countTransactionSelectedForCustomer/${customer_id}`);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+
 export const transactionSlice = createSlice({
   name: "transaction",
   initialState,
@@ -221,6 +237,21 @@ export const transactionSlice = createSlice({
       state.error = "";
     });
     builder.addCase(viewWaitingTransaction.rejected, (state, action) => {
+      state.loadingTransaction = false;
+      state.error = action.payload;
+    });
+
+    //countTransactionForCustomer
+    builder.addCase(countTransactionForCustomer.pending, (state) => {
+      state.error = "";
+      state.loadingTransaction = true;
+    });
+    builder.addCase(countTransactionForCustomer.fulfilled, (state, action) => {
+      state.loadingTransaction = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(countTransactionForCustomer.rejected, (state, action) => {
       state.loadingTransaction = false;
       state.error = action.payload;
     });

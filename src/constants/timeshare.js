@@ -50,3 +50,4 @@ export const APARTMENT_ERRORS = {
   condition: 'Vui lòng mô tả tình trạng căn hộ!',
   interior: 'Vui lòng mô tả tình trạng nội thất!'
 };
+

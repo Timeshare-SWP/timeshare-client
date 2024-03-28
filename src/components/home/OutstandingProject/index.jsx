@@ -39,7 +39,7 @@ const OutstandingProject = () => {
     useEffect(() => {
         if (dataTimeshareList && Array.isArray(dataTimeshareList)) {
             const filteredList = dataTimeshareList.filter(
-                timeshare => timeshare.is_confirm === true && timeshare.sell_timeshare_status !== "Đã bán"
+                timeshare => timeshare.confirm_status === "Accepted" && timeshare.sell_timeshare_status !== "Đã bán"
             );
             const sortedList = [...filteredList].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setSortedData(sortedList);
@@ -48,6 +48,17 @@ const OutstandingProject = () => {
 
     if (loadingTimeshare) {
         return (<LoadingProject />)
+    }
+
+    if (Array.isArray(sortedData) && sortedData.length === 0) {
+        return (
+            <div className='outstanding-project-section py-5'>
+                <h4>Dự án mới nổi bật</h4>
+                <div className="text-center py-4">
+                    Chưa có dự án nào được đăng!
+                </div>
+            </div>
+        );
     }
 
     return (

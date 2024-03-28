@@ -10,11 +10,14 @@ const initialState = {
 
 export const confirmTimeshareByAdmin = createAsyncThunk(
   "timeshare/confirmTimeshareByAdmin",
-  async (timeshare_id, thunkAPI) => {
+  async (data, thunkAPI) => {
     try {
       const instance = getInstanceWithToken();
 
-      const response = await instance.patch(`/api/timeshares/confirmTimeshare/${timeshare_id}`);
+      const response = await instance.patch(
+        `/api/timeshares/confirmTimeshare`,
+        data
+      );
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error?.response?.data);
@@ -138,6 +141,24 @@ export const deleteTimeshare = createAsyncThunk(
       const instance = getInstanceWithToken();
 
       const response = await instance.delete(`/api/timeshares/${timeshare_id}`);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+export const updateTimeshare = createAsyncThunk(
+  "timeshare/updateTimeshare",
+  async (data, thunkAPI) => {
+    try {
+      const { timeshare_id, dataBody } = data;
+
+      const instance = getInstanceWithToken();
+      const response = await instance.put(`/api/timeshares/${timeshare_id}`, {
+        dataBody,
+      });
 
       return response.data;
     } catch (error) {
@@ -378,6 +399,21 @@ export const timeshareSlice = createSlice({
       state.error = "";
     });
     builder.addCase(searchTimeshareByName.rejected, (state, action) => {
+      state.loadingUpdate = false;
+      state.error = action.payload;
+    });
+
+    //updateTimeshare
+    builder.addCase(updateTimeshare.pending, (state) => {
+      state.loadingUpdate = true;
+      state.error = "";
+    });
+    builder.addCase(updateTimeshare.fulfilled, (state, action) => {
+      state.loadingUpdate = false;
+      // state.dataTimeshareList = action.payload;
+      state.error = "";
+    });
+    builder.addCase(updateTimeshare.rejected, (state, action) => {
       state.loadingUpdate = false;
       state.error = action.payload;
     });

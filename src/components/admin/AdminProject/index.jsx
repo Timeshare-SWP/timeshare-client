@@ -60,7 +60,7 @@ const App = () => {
             width: 20,
             //render: () => <a>Delete</a>
             render: (text, record) => (
-                record.confirm === "Chưa xác nhận" && (
+                record.confirm === "Pending" && (
                     <Popconfirm
                         title="Bạn có chắc muốn đăng bán timeshare này?"
                         onConfirm={() => handleConfirm(record)}
@@ -76,11 +76,13 @@ const App = () => {
 
     const handleConfirm = (record) => {
         setLoadingData(true)
-        dispatch(confirmTimeshareByAdmin(record.key)).then((res) => {
+
+        dispatch(confirmTimeshareByAdmin({ timeshare_id: record.key, confirm_status: 'Accepted', reason_rejected: "" })).then((res) => {
+
             if (confirmTimeshareByAdmin.fulfilled.match(res)) {
                 const updatedTimeshareList = timeshareList.map(timeshare => {
                     if (timeshare._id === record.key) {
-                        return { ...timeshare, is_confirm: true };
+                        return { ...timeshare, confirm_status: 'Accepted ' };
                     }
                     return timeshare;
                 });
@@ -119,7 +121,7 @@ const App = () => {
                         timeshare_status: `${timeshare.timeshare_status}`,
                         createdAt: `${convertToVnTime(timeshare.createdAt)}`,
                         price: `${convertToVNDFormat(timeshare.price)}`,
-                        confirm: `${timeshare.is_confirm ? 'Đã xác nhận' : 'Chưa xác nhận'}`
+                        confirm: `${timeshare.confirm_status}`
                     };
                     data.push(timeshareListData);
                     return null;

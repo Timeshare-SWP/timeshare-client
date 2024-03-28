@@ -23,6 +23,10 @@ export const TRANSACTION_LIST_ACTION_INVESTOR = [
   { id: 2, name: "Tiến độ thanh toán", icon: <MdOutlinePayment   /> },
 ];
 
+export const REQUEST_LIST_ACTION_INVESTOR = [
+  { id: 1, name: "Xem thông tin chi tiết", icon: <IoNewspaperOutline   /> },
+];
+
 export const TRANSACTION_LIST_ACTION_CUSTOMER = [
   {
     id: 1,

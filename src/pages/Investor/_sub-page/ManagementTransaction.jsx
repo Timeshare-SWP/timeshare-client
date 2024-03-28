@@ -14,25 +14,28 @@ const ManagementTransaction = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(viewRejectedSelectedTransaction()).then((result) => {
+        dispatch(viewRejectedSelectedTransaction()).then((resultViewSelected) => {
             const groupedTransactions = {};
-            result.payload.forEach(transaction => {
-                const timeshareName = transaction?.timeshare_id?.timeshare_name;
-                if (!groupedTransactions[timeshareName]) {
-                    groupedTransactions[timeshareName] = [];
-                }
-                groupedTransactions[timeshareName].push(transaction);
-            });
+            console.log("resultViewSelected", resultViewSelected)
+            if (viewRejectedSelectedTransaction.fulfilled.match(resultViewSelected)) {
+                resultViewSelected?.payload?.forEach(transaction => {
+                    const timeshareName = transaction?.timeshare_id?.timeshare_name;
+                    if (!groupedTransactions[timeshareName]) {
+                        groupedTransactions[timeshareName] = [];
+                    }
+                    groupedTransactions[timeshareName].push(transaction);
+                });
 
-            const sortedTransactionList = [];
-            Object.values(groupedTransactions).forEach(group => {
-                const sortedGroup = group.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                sortedTransactionList.push(...sortedGroup);
-            });
+                const sortedTransactionList = [];
+                Object.values(groupedTransactions).forEach(group => {
+                    const sortedGroup = group.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    sortedTransactionList.push(...sortedGroup);
+                });
 
-            sortedTransactionList.reverse();
+                sortedTransactionList.reverse();
 
-            setTransactionList(sortedTransactionList);
+                setTransactionList(sortedTransactionList);
+            }
         });
     }, []);
 
@@ -44,7 +47,7 @@ const ManagementTransaction = () => {
         const timeshareName = transaction?.timeshare_id?.timeshare_name.toLowerCase();
         return timeshareName?.includes(searchTerm.toLowerCase());
     });
-    
+
 
     if (loadingTransaction) {
         return (

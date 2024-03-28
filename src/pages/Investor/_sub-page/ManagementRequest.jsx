@@ -5,36 +5,43 @@ import { useDispatch, useSelector } from 'react-redux';
 import SimpleLoading from '../../../components/shared/SimpleLoading';
 import { REQUEST_TRANSACTION_TABLE_HEADER_NAME } from '../../../constants/header';
 import TableLayout from '../_components/ManagementRequest/TableLayout';
+import toast from 'react-hot-toast';
 
 const ManagementRequest = () => {
     const [transactionList, setTransactionList] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const { loadingTransaction } = useSelector((state) => state.transaction);
+    const [loadingTransaction, setLoadingTransaction] = useState(true);
 
     const dispatch = useDispatch();
 
     useEffect(() => {
 
         dispatch(viewWaitingTransaction()).then((result) => {
-            console.log("result all", result)
             const groupedTransactions = {};
-            result.payload.forEach(transaction => {
-                const timeshareName = transaction?.timeshare_id?.timeshare_name;
-                if (!groupedTransactions[timeshareName]) {
-                    groupedTransactions[timeshareName] = [];
-                }
-                groupedTransactions[timeshareName].push(transaction);
-            });
+            console.log("resultWaiting", result)
 
-            const sortedTransactionList = [];
-            Object.values(groupedTransactions).forEach(group => {
-                const sortedGroup = group.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                sortedTransactionList.push(...sortedGroup);
-            });
+            if (viewWaitingTransaction.fulfilled.match(result)) {
+                result?.payload?.forEach(transaction => {
+                    const timeshareName = transaction?.timeshare_id?.timeshare_name;
+                    if (!groupedTransactions[timeshareName]) {
+                        groupedTransactions[timeshareName] = [];
+                    }
+                    groupedTransactions[timeshareName].push(transaction);
+                });
 
-            sortedTransactionList.reverse();
+                const sortedTransactionList = [];
+                Object.values(groupedTransactions).forEach(group => {
+                    const sortedGroup = group.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    sortedTransactionList.push(...sortedGroup);
+                });
 
-            setTransactionList(sortedTransactionList);
+                sortedTransactionList.reverse();
+
+                setTransactionList(sortedTransactionList);
+                setLoadingTransaction(false)
+            }else {
+                toast.error("Có lỗi xảy ra khi load dữ liệu!")
+            }
         });
     }, []);
 
@@ -47,7 +54,6 @@ const ManagementRequest = () => {
         return timeshareName.includes(searchTerm.toLowerCase());
     });
 
-
     if (loadingTransaction) {
         return (
             <GeneralInvestorLayout>
@@ -59,6 +65,8 @@ const ManagementRequest = () => {
             </GeneralInvestorLayout>
         );
     }
+
+
 
     return (
         <GeneralInvestorLayout>

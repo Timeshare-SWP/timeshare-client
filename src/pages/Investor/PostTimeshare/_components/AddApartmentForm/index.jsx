@@ -1,7 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useDropzone } from 'react-dropzone';
+import { MdDeleteOutline } from 'react-icons/md';
 
 const AddApartmentForm = (props) => {
-    const { sell_number, onChange, values, errors } = props
+    const { sell_number, onChange, values, errors, apartmentImages, setApartmentImages, apartmentImagesOrigin,
+        setApartmentImagesOrigin, errorApartmentImages, setErrorApartmentImages } = props
 
     const handleInputChange = (index, propertyName, value) => {
         if (propertyName === 'area') {
@@ -14,14 +17,66 @@ const AddApartmentForm = (props) => {
         onChange(index, newData);
     };
 
-    console.log("values", values)
+    // console.log("values", values)
+
+    // console.log("apartmentImages", apartmentImages)
+
+    const handleOnDropApartment = (acceptedFiles) => {
+        setApartmentImagesOrigin([...apartmentImages, ...acceptedFiles]);
+        setApartmentImages([...apartmentImages, ...acceptedFiles]);
+
+        acceptedFiles?.forEach((file) => {
+            previewApartmentImage(file);
+        });
+
+        const isValidImage = [...apartmentImages, ...acceptedFiles].length >= 5;
+        if (isValidImage) {
+            setErrorApartmentImages("");
+        }
+    };
+
+    const previewApartmentImage = (file) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (e) => {
+            const imageUrl = e.target.result;
+
+            setApartmentImages((prevFiles) =>
+                prevFiles.map((prevFile) =>
+                    prevFile.name === file.name ? { ...prevFile, previewUrl: imageUrl, type: file.type } : prevFile
+                )
+            );
+        };
+    };
+
+    const {
+        getRootProps: getRootPropsApartment,
+        getInputProps: getInputPropsApartment,
+        isFocused: isFocusedApartment,
+        isDragAccept: isDragAcceptApartment,
+        isDragReject: isDragRejectApartment,
+        acceptedFiles: acceptedFilesApartment,
+        fileRejections: fileRejectionsApartment,
+    } = useDropzone({
+        accept: {
+            'image/*': ['.jpeg', '.png']
+        },
+        onDrop: handleOnDropApartment,
+    });
+
+
+    const removeApartmentImage = (path) => {
+        setApartmentImages((prevFiles) => prevFiles.filter((file) => file.path !== path));
+        setApartmentImagesOrigin((prevFiles) => prevFiles.filter((file) => file.path !== path));
+    };
 
     const renderApartmentInputs = () => {
         const inputs = [];
         for (let i = 0; i < sell_number; i++) {
+
             inputs.push(
                 <>
-                    <p className='fw-bold'>Thông tin căn hộ số {i + 1}</p>
+                    <p className='fw-bold mt-4'>Thông tin căn hộ số {i + 1}</p>
                     <div className='d-flex flex-row gap-2'>
                         <div style={{ width: "33%" }}>
                             <div className="form-group-material" style={{ width: '100%' }}>
@@ -102,33 +157,6 @@ const AddApartmentForm = (props) => {
                     {errors[i]?.note && <span className="error-message">{errors[i].note}</span>}
 
                     {/* ảnh về apartment */}
-                    <div className="form-group mt-4">
-                        <div className="d-flex justify-content-between mb-1">
-                            <label htmlFor="" className="mb-0"
-                            >
-                                Hình ảnh về căn hộ
-                                <span className="text-danger">*</span>
-                            </label>
-                        </div>
-
-                        <label htmlFor="select_photos" className="photo-upload mb-2" >
-                            <img
-                                src="https://s3-cdn.rever.vn/p/v2.48.39/images/icon/upload.svg"
-                                title="Tải ảnh lên"
-                                alt="timeshare"
-                                style={{ cursor: 'pointer' }}
-                            />
-                            <h5 className="photo-upload-title">
-                                Kéo thả hình ảnh nhà đất hoặc{" "}
-                                <span className="label-file">
-                                    bấm vào đây để tải lên
-                                </span>
-                            </h5>
-                            <p>Yêu cầu tối thiểu 1 hình ảnh</p>
-                        </label>
-
-                    </div>
-
                     {errors[i]?.apartment_image && <span className="error-message">{errors[i].apartment_image}</span>}
 
                 </>
@@ -139,8 +167,55 @@ const AddApartmentForm = (props) => {
 
     return (
         <div className="section-form">
-            <h2 className="form-title">Thông tin các căn hộ muốn đăng bán</h2>
+            <h2 className="form-title">Ảnh mẫu chung về căn hộ</h2>
+            <div className="form-group mt-4">
 
+                <label htmlFor="select_photos" className="photo-upload mb-2" {...getRootPropsApartment(isFocusedApartment, isDragAcceptApartment, isDragRejectApartment)}>
+                    <input {...getInputPropsApartment()} />
+                    <img
+                        src="https://s3-cdn.rever.vn/p/v2.48.39/images/icon/upload.svg"
+                        title="Tải ảnh lên"
+                        alt="timeshare"
+                        style={{ cursor: 'pointer' }}
+                    />
+                    <h5 className="photo-upload-title">
+                        Kéo thả hình ảnh nhà đất hoặc{" "}
+                        <span className="label-file">
+                            bấm vào đây để tải lên
+                        </span>
+                    </h5>
+                    <p>Yêu cầu tối thiểu 5 hình ảnh</p>
+                </label>
+
+                {apartmentImages?.length > 0 && (
+                    <div className="form-group mb-0" >
+                        <div className="photo-uploaded">
+                            <h4>Ảnh căn hộ đã tải</h4>
+
+                            <ul className="list-photo">
+                                {apartmentImages?.map((file) => (
+                                    <li key={file.path}>
+                                        <div className='photo-item'>
+                                            {file.previewUrl ? (
+                                                <img src={file.previewUrl} alt={file.path} />
+                                            ) : (
+                                                <p>Loading...</p>
+                                            )}
+                                            <div className='delete-item'>
+                                                <MdDeleteOutline onClick={() => removeApartmentImage(file.path)} />
+                                            </div>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {errorApartmentImages && <span className="error-message">{errorApartmentImages}</span>}
+
+            <h2 className="form-title mt-5">Thông tin cụ thể của các căn hộ muốn đăng bán</h2>
             {renderApartmentInputs()}
 
         </div>

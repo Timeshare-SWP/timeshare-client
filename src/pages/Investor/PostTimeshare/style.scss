@@ -3,6 +3,16 @@
   flex-direction: row;
   height: calc(100vh - 74px);
 
+  .select_option {
+    position: relative;
+    width: 400px;
+
+    .css-1nmdiq5-menu {
+      position: absolute;
+      z-index: 999;
+    }
+  }
+
   li:hover {
     text-decoration: none;
     background-color: transparent;
@@ -103,7 +113,6 @@
         transition: all 0.2s linear;
 
         .form-title {
-          margin-bottom: 24px !important;
           font-size: 20px;
           line-height: 24px;
           color: #30333a;

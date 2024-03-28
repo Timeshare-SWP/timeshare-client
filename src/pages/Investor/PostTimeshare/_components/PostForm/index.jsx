@@ -16,15 +16,64 @@ import Hint from '../../../../../components/shared/Hint'
 import { IoIosInformation } from 'react-icons/io';
 import AddApartmentForm from '../AddApartmentForm';
 import { APARTMENT_ERRORS } from '../../../../../constants/timeshare';
+import { getPublicDistrict, getPublicProvinces, getPublicWard } from '../../../../../redux/features/provinceSlice';
+import Select from 'react-select'
+import { createApartment } from '../../../../../redux/features/apartmentSlice';
 
 const PostForm = () => {
 
     const [openModalContinuePostState, setOpenModalContinuePostState] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    // api chọn tỉnh thành phố
+    const [provincesList, setProvincesList] = useState([{
+        province_id: "79",
+        province_name: "Thành phố Hồ Chí Minh",
+        province_type: "Thành phố Trung ương"
+    }]);
+    const [districtsList, setDistrictsList] = useState([]);
+    const [wardsList, setWardsList] = useState([])
+    const [selectedProvince, setSelectedProvince] = useState("");
+    const [selectedDistrict, setSelectedDistrict] = useState("");
+    const [selectedWard, setSelectedWard] = useState("");
+    const [resultFinalProvinces, setResultFinalProvinces] = useState("");
+
+    const handleProvinceChange = (selectedOption) => {
+        setSelectedProvince(selectedOption?.value)
+        dispatch(getPublicDistrict(selectedOption?.key)).then((resDistrict) => {
+            setDistrictsList(resDistrict.payload)
+        })
+    }
+
+    const handleDistrictChange = (selectedOption) => {
+        setSelectedDistrict(selectedOption?.value)
+        dispatch(getPublicWard(selectedOption?.key)).then((resWard) => {
+            setWardsList(resWard.payload)
+        })
+    }
+
+    const handleWardChange = (selectedOption) => {
+        setSelectedWard(selectedOption?.value)
+        setResultFinalProvinces(selectedOption?.value + ", " + selectedDistrict + ", " + selectedProvince)
+    }
+
+    const removeKeywords = (str) => {
+        const keywords = ["Thành phố", "Tỉnh", "Huyện", "Xã"];
+
+        const regex = new RegExp(keywords.join("|"), "gi");
+        const result = str?.replace(regex, "");
+
+        return result?.trim();
+    }
+
 
     //xử lý dữ liệu khi tạo apartment nếu timeshare_type là chung cư
     const [listApartmentData, setListApartmentData] = useState([])
     const [errorApartmentData, setErrorApartmentData] = useState([])
+    const [apartmentImages, setApartmentImages] = useState([])
+    const [apartmentImagesOrigin, setApartmentImagesOrigin] = useState([])
+    const [errorApartmentImages, setErrorApartmentImages] = useState([])
 
     const handleApartmentDataChange = (index, newData) => {
         const updatedList = [...listApartmentData];
@@ -46,23 +95,32 @@ const PostForm = () => {
     };
 
 
-    const handleSubmitApartment = () => {
+    const handleValidateApartmentForm = () => {
+        let hasError = false;
         const newErrors = {};
 
-        listApartmentData.forEach((apartment, index) => {
-            Object.entries(apartment).forEach(([key, value]) => {
-                if (!value || value.trim() === '') {
-                    newErrors[index] = { ...newErrors[index], [key]: APARTMENT_ERRORS[key] };
-                }
+        if (formData.timeshare_type === 'Chung cư') {
+            listApartmentData.forEach((apartment, index) => {
+                Object.entries(apartment).forEach(([key, value]) => {
+                    if (key !== 'apartment_image' && (!value || value.trim() === '')) {
+                        newErrors[index] = { ...newErrors[index], [key]: APARTMENT_ERRORS[key] };
+                    }
+                });
             });
-        });
 
-        if (Object.keys(newErrors).length > 0) {
-            setErrorApartmentData(newErrors);
-            return newErrors;
+            if (apartmentImages?.length === 0) {
+                setErrorApartmentImages('Vui lòng đăng ít nhất 5 tấm ảnh về căn hộ!')
+                hasError = true;
+            }
+
+            if (Object.keys(newErrors).length > 0) {
+                setErrorApartmentData(newErrors);
+                hasError = true;
+                return newErrors;
+            }
         }
 
-        console.log('OK');
+        return !hasError;
     }
 
     //xử lý dữ liệu trong post form
@@ -349,6 +407,7 @@ const PostForm = () => {
 
     const handleOpenModalContinuePost = () => {
         const isValidForm = validateForm();
+        const isValidApartmentForm = handleValidateApartmentForm();
         const isValidGeneralImage = imageSelectedTimeshare.length >= 5;
         const isValidFloorImage = floorPlanImages.length >= 1
 
@@ -366,7 +425,7 @@ const PostForm = () => {
             setErrorRangePrice('Chênh lệch giá không thỏa mãn điều kiện! Không được quá 40% và không nhỏ hơn 20% so với mức hạn dưới của khoảng giá')
         }
 
-        if (isValidForm && isValidGeneralImage && isValidFloorImage && isPriceDifferenceValid) {
+        if (isValidForm && isValidApartmentForm && isValidGeneralImage && isValidFloorImage && isPriceDifferenceValid) {
             setOpenModalContinuePostState(true);
         } else {
             setFormImageErrors(prevErrors => ({
@@ -395,8 +454,6 @@ const PostForm = () => {
 
     // xử lý luồng post timeshare
     const [openModalConfirmState, setOpenModalConfirmState] = useState(false)
-
-    const dispatch = useDispatch();
 
     const handleOpenConfirmModal = () => {
 
@@ -428,6 +485,7 @@ const PostForm = () => {
     // gọi api xử lý
 
     const [isLoading, setIsLoading] = useState(false)
+
     const handleConfirmPostTimeshare = async () => {
 
         //xử lý ảnh up lên firebase
@@ -467,12 +525,25 @@ const PostForm = () => {
             return uploadTask.then(() => getDownloadURL(storageRef));
         });
 
+        //Tải file ảnh căn hộ từ apartmentImagesOrigin
+        const apartmentFilesDownload = apartmentImagesOrigin.map((file) => {
+            const randomFileName = generateRandomString();
+            const storageRef = ref(storage, `timeshare-images/${randomFileName}`);
+            const uploadTask = uploadBytes(storageRef, file);
+            uploadPromises.push(uploadTask);
+            uploadedFiles.push({ path: `timeshare-images/${randomFileName}`, file });
+            return uploadTask.then(() => getDownloadURL(storageRef));
+        });
+
 
         await Promise.all(uploadPromises);
 
         const imageSelectedTimeshareURLs = await Promise.all(imageSelectedTimeshareDownload);
         const floorPlanImagesURLs = await Promise.all(floorPlanImagesDownload);
         const juridicalFilesURLs = await Promise.all(juridicalFilesDownload);
+        const apartmentFilesURLs = await Promise.all(apartmentFilesDownload);
+
+        // console.log("apartmentFilesURLs", apartmentFilesURLs)
 
         // Tạo mảng compileAllImages
         const compileAllImages = [
@@ -491,11 +562,9 @@ const PostForm = () => {
         });
 
         Promise.all(dispatchPromises).then(() => {
-
             const data = {
                 ...formData, ...anotherInfo,
-                // trước mắt là auto sell_number là 1
-                sell_number: removeCommas(formData?.sell_number || 1),
+                sell_number: formData?.sell_number && formData.sell_number !== null ? removeCommas(formData.sell_number) : 1,
                 land_area: removeCommas(formData.land_area),
                 timeshare_utilities: anotherInfo.timeshare_utilities.map(item => item.value),
                 year_of_commencement: anotherInfo?.year_of_commencement ? anotherInfo?.year_of_commencement.getFullYear() : null,
@@ -507,30 +576,61 @@ const PostForm = () => {
                 deposit_price: removeCommas(depositPrice),
                 price: rangePrice[0] * 1000,
                 max_price: rangePrice[1] * 1000,
+                timeshare_address: formData.timeshare_address + ", " + resultFinalProvinces
             }
 
             dispatch(createTimeshare(data)).then((result) => {
                 if (createTimeshare.fulfilled.match(result)) {
-                    toast.success('Đăng timeshare thành công!')
-                    navigate('/personal-projects')
-                    setFormData("");
-                    setAnotherInfo("");
-                    setSelectedTimeshareStatus("");
-                    setSelectedJuridicalFiles("");
-                    setPriorityLevel("");
-                    setImageSelectedTimeshare("");
-                    setImageSelectedTimeshareOrigin("");
-                    setFloorPlanImages("");
-                    setFloorPlanImagesOrigin("");
+                    if (formData.timeshare_type === 'Chung cư') {
+                        const timeshareId = result.payload._id;
+                        const createApartmentPromises = listApartmentData.map(apartment => {
+                            if (!apartment.hasOwnProperty('timeshare_id')) {
+                                apartment.timeshare_id = timeshareId;
+                            }
+                            apartment.apartment_image = apartmentFilesURLs;
+                            return dispatch(createApartment(apartment)).then((resCreateApart) => {
+                                if (createApartment.rejected.match(resCreateApart)) {
+                                    toast.error("Có lỗi khi thêm căn hộ");
+                                    toast.error(`${resCreateApart.payload}`);
+                                }
+                                console.log("resCreateApart", resCreateApart)
+                            });
+                        });
+
+                        Promise.all(createApartmentPromises).then(() => {
+                            handleSuccessActions();
+                        });
+                    } else {
+                        handleSuccessActions();
+                    }
                 } else {
                     console.log("result", result)
                     toast.error(`${result.payload}`)
+                    setIsLoading(false);
                 }
-            })
+            });
 
             setIsLoading(false);
 
         });
+
+
+    }
+
+    const handleSuccessActions = () => {
+        toast.success('Đăng timeshare thành công!');
+        navigate('/personal-projects');
+        setFormData("");
+        setAnotherInfo("");
+        setSelectedTimeshareStatus("");
+        setSelectedJuridicalFiles("");
+        setPriorityLevel("");
+        setImageSelectedTimeshare("");
+        setImageSelectedTimeshareOrigin("");
+        setFloorPlanImages("");
+        setFloorPlanImagesOrigin("");
+        setApartmentImagesOrigin("");
+        setIsLoading(false);
     }
 
     const SUB_MIN = 100;
@@ -707,20 +807,46 @@ const PostForm = () => {
                             {errorRangePrice && <span className="error-message">{errorRangePrice}</span>}
                         </div>
                     </div>
+
+                    {/* chọn tỉnh thành phố */}
                     <div className="form-group">
-                        <p className="mb-2 mt-3">Tỉnh/Thành phố <span className="text-danger">*</span></p> <div className="row flex-column">
-                            <div className="form-check">
-                                <input id="city_Tp.Hồ Chí Minh" type="radio" className="radio" value="Tp.Hồ Chí Minh" defaultChecked />
-                                <label htmlFor="city_Tp.Hồ Chí Minh">Tp.Hồ Chí Minh</label>
+                        <div className="d-flex flex-column gap-4 justify-content-center">
+                            <div className="d-flex align-items-center gap-4">
+                                <Select
+                                    isClearable
+                                    placeholder='Tỉnh/Thành Phố'
+                                    className='select_option'
+                                    onChange={handleProvinceChange}
+                                    options={provincesList?.map(province => ({ key: province.province_id, value: (province.province_name), label: removeKeywords(province.province_name) }))}
+                                />
+
+                                <Select
+                                    isClearable
+                                    placeholder='Quận/Huyện'
+                                    className={`select_option`}
+                                    onChange={handleDistrictChange}
+                                    options={districtsList?.map(district => ({ key: district.district_id, value: (district.district_name), label: removeKeywords(district.district_name) }))}
+                                    isDisabled={!selectedProvince}
+                                />
+
+                                <Select
+                                    isClearable
+                                    placeholder='Phường/Xã'
+                                    className={`select_option `}
+                                    onChange={handleWardChange}
+                                    options={wardsList?.map(ward => ({ key: ward.ward_id, value: (ward.ward_name), label: removeKeywords(ward.ward_name) }))}
+                                    isDisabled={!selectedProvince || !selectedDistrict}
+                                />
                             </div>
                         </div>
                     </div>
+
                     <div className="form-group-material mb-0">
                         <input type="text" required="required" className="form-control"
                             value={formData.timeshare_address}
                             onChange={(e) => handleInputChange(e, 'timeshare_address')}
                         />
-                        <label ref={errorRefs.timeshareAddressError}>Địa chỉ <span className="text-danger">*</span></label>
+                        <label ref={errorRefs.timeshareAddressError}>Địa chỉ cụ thể<span className="text-danger">*</span></label>
                     </div>
                     {formErrors.timeshare_address && <span className="error-message">Vui lòng nhập địa chỉ!</span>}
 
@@ -733,6 +859,12 @@ const PostForm = () => {
                         sell_number={formData?.sell_number}
                         errors={errorApartmentData}
                         values={listApartmentData}
+                        apartmentImages={apartmentImages}
+                        setApartmentImages={setApartmentImages}
+                        apartmentImagesOrigin={apartmentImagesOrigin}
+                        setApartmentImagesOrigin={setApartmentImagesOrigin}
+                        errorApartmentImages={errorApartmentImages}
+                        setErrorApartmentImages={setErrorApartmentImages}
                     />
                 }
 
@@ -829,7 +961,7 @@ const PostForm = () => {
                     {fileRejections.length > 0 && (
                         <div className="form-group mb-0" >
                             <div className="photo-uploaded">
-                                <h4>File bị từ chối</h4>
+                                <h4 className='text-danger'>File bị từ chối</h4>
 
                                 <ul className="list-photo">
                                     {fileRejections.map((file, index) => (
@@ -901,7 +1033,7 @@ const PostForm = () => {
 
                         {fileRejectionsFloorPlan.length > 0 && (
                             <div className="photo-uploaded">
-                                <h4>File mặt bằng bị từ chối</h4>
+                                <h4 className='text-danger'>File mặt bằng bị từ chối</h4>
                                 <ul className="list-photo">
                                     {fileRejectionsFloorPlan.map((file, index) => (
                                         <li key={index}>
@@ -926,8 +1058,8 @@ const PostForm = () => {
                         Đăng kê với Timeshare để bán nhanh gấp 2 lần thị trường và tiết kiệm nhiều hơn với những dịch vụ đi kèm chất lượng cao. Đăng thông tin ngay, chúng tôi sẽ liên hệ tư vấn và hẹn gặp sau ít phút!
                     </p>
                     <button className='btn btn-danger'
-                        // onClick={handleOpenModalContinuePost}
-                        onClick={handleSubmitApartment}
+                        onClick={handleOpenModalContinuePost}
+                    // onClick={handleSubmitApartment}
                     >Tiếp tục</button>
                 </div>
 
