@@ -69,7 +69,7 @@ export default function AuthContextProvider({ children }) {
       setIsLoadingEvent(false);
 
       if (["Admin"].includes(user.user.roleName)) {
-        navigate("/admin-dashboard");
+        navigate("/statistics");
       } else {
         navigate("/");
       }

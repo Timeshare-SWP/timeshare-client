@@ -16,7 +16,7 @@ const AdminRouter = () => {
   return (
     <Routes>
       <Route element={<LayoutAdmin />}>
-        <Route path="/admin-dashboard" element={<Dashboard />} />
+        <Route path="/statistics" element={<AdminStatistics />} />
         <Route path="/statistics" Component={AdminStatistics}/>
         <Route path="/notification" Component={AdminNotification}/>
         <Route path="/user" Component={AdminUser}/>
