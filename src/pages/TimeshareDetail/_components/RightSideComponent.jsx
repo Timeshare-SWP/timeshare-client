@@ -672,10 +672,10 @@ const RightSideComponent = (props) => {
                                     {item?.sell_timeshare_status === "Đang mở bán" && "MUA NGAY"}
                                     {item?.sell_timeshare_status === "Đã bán" && "MUA NGAY"}
                                 </div>
-                                <div className='other-text text-center'>hoặc</div>
+                                {/* <div className='other-text text-center'>hoặc</div>
                                 <hr style={{ position: 'relative', top: '-20px', zIndex: '-10', opacity: '0.2' }}></hr>
                                 <div className='btn btn-outline-secondary'>Tham quan nhà mẫu</div>
-                                <div className='btn btn-outline-secondary'>Đăng ký tư vấn</div>
+                                <div className='btn btn-outline-secondary'>Đăng ký tư vấn</div> */}
                             </>
                             : null
                     }
