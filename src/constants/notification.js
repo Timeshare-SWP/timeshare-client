@@ -55,4 +55,12 @@ export const NOTIFICATION_TYPE = [
         id: 14,
         type: "NOTI_FEEDBACK_TO_STAFF"
     },
+    {
+        id: 15,
+        type: "ADMIN_ACCEPT_TIMESHARE_TO_CUSTOMER"
+    },
+    {
+        id: 16,
+        type: "ADMIN_REJECT_TIMESHARE_TO_CUSTOMER"
+    },
 ]

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Container, Modal } from 'react-bootstrap'
 import Stage_1 from '../StageReservedPlace/Stage_1';
 import Stage_2 from '../StageReservedPlace/Stage_2';
@@ -11,12 +11,13 @@ import { createNotification } from '../../../../redux/features/notificationSlice
 import { getTimeshareById } from '../../../../redux/features/timeshareSlice';
 import { AuthContext } from '../../../../contexts/authContext';
 import SpinnerLoading from '../../../../components/shared/SpinnerLoading'
+import SimpleLoading from '../../../../components/shared/SimpleLoading'
 import { useNavigate } from 'react-router-dom';
+import { getAllApartmentOfTimeshare } from '../../../../redux/features/apartmentSlice';
 
 const ModalReservedPlace = (props) => {
     const { item, show, handleClose, handleAccept, error, setError,
-        memberList, setMemberList, optionTypeReservedPlace,
-        setOptionTypeReservedPlace } = props
+        memberList, setMemberList } = props
 
     const { userDecode } = useContext(AuthContext)
     const { loadingReservedPlace } = useSelector((state) => state.reservedPlace)
@@ -30,6 +31,10 @@ const ModalReservedPlace = (props) => {
         2: false,
     })
 
+    const [loadingApartment, setLoadingApartment] = useState(false);
+    const [apartmentData, setApartmentData] = useState([]);
+    const [selectedIdApartmentData, setSelectedIdApartmentData] = useState("");
+
     const handleStageClick = (stage) => {
         setCurrentStage(stage);
     };
@@ -39,58 +44,74 @@ const ModalReservedPlace = (props) => {
     };
 
     const handleContinueStage = () => {
-        if (currentStage === 1 && (!optionTypeReservedPlace || optionTypeReservedPlace === null)) {
-            toast.error("Vui lòng chọn một trước khi qua giai đoạn tiếp theo!");
-            return;
-        }
-
-        if (currentStage === 1 && optionTypeReservedPlace === 'group' && memberList.length === 0) {
-            setError('Vui lòng mời ai đó trước khi tiếp tục!');
-            return;
-        }
+        console.log(apartmentData)
+        console.log("selectedIdApartmentData", selectedIdApartmentData)
 
 
-        setStageEnabled(prevState => ({
+        setStageEnabled((prevState) => ({
             ...prevState,
-            [currentStage + 1]: true
+            [currentStage + 1]: true,
         }));
 
-        setCurrentStage(currentStage + 1);
+        setCurrentStage((prevStage) => prevStage + 1);
     };
+
 
     const getStageName = (stage) => {
-        switch (stage) {
-            case 1:
-                return "Bạn đặt chỗ cho?";
-            case 2:
-                return "Thanh toán đặt cọc";
-            default:
-                return "";
-        }
-    };
+        if (item.timeshare_type !== "Chung cư") {
+            switch (stage) {
+                case 1:
+                    return "Thanh toán đặt cọc";
+                default:
+                    return "";
+            }
+        } else {
+            switch (stage) {
+                case 1:
+                    return "Chọn căn hộ bạn muốn";
+                case 2:
+                    return "Thanh toán đặt cọc";
+                default:
+                    return "";
+            }
+        };
+    }
 
     const getStageContent = (stage) => {
-        switch (stage) {
-            case 1:
-                return <Stage_1
-                    error={error}
-                    setError={setError}
-                    memberList={memberList}
-                    setMemberList={setMemberList}
-                    optionTypeReservedPlace={optionTypeReservedPlace}
-                    setOptionTypeReservedPlace={setOptionTypeReservedPlace}
-                />;
-            case 2:
-                return <Stage_2 handleCallApiReservedPlace={handleCallApiReservedPlace} />;
-            default:
-                return null;
+        if (item.timeshare_type !== "Chung cư") {
+            switch (stage) {
+                case 1:
+                    return <Stage_2 handleCallApiReservedPlace={handleCallApiReservedPlace} />;
+                default:
+                    return null;
+            }
+        } else {
+            switch (stage) {
+                case 1:
+                    return <Stage_1
+                        item={item}
+                        error={error}
+                        setError={setError}
+                        memberList={memberList}
+                        setMemberList={setMemberList}
+                        apartmentData={apartmentData}
+                        setApartmentData={setApartmentData}
+                        selectedIdApartmentData={selectedIdApartmentData}
+                        setSelectedIdApartmentData={setSelectedIdApartmentData}
+                    />;
+                case 2:
+                    return <Stage_2 handleCallApiReservedPlace={handleCallApiReservedPlace} />;
+                default:
+                    return null;
+            }
         }
     };
 
     const handleCallApiReservedPlace = async () => {
         const dataCreateReservedPlace = {
             timeshare_id: item._id,
-            reservation_price: item.deposit_price
+            reservation_price: item.deposit_price,
+            apartment_id: selectedIdApartmentData
         };
 
         try {
@@ -175,28 +196,57 @@ const ModalReservedPlace = (props) => {
         }
     };
 
+    useEffect(() => {
+        if (item?.timeshare_type === "Chung cư") {
+            setLoadingApartment(true)
+            dispatch(getAllApartmentOfTimeshare(item?._id)).then((resGetApart) => {
+                console.log("resGetApart", resGetApart.payload)
+                if (getAllApartmentOfTimeshare.fulfilled.match(resGetApart)) {
+                    setApartmentData(resGetApart.payload.reverse());
+                }
+                setLoadingApartment(false)
+            })
+        }
+    }, [item?.timeshare_type])
+
     return (
         <Modal show={show} size="lg" onHide={handleClose} centered backdrop="static" className='modal-continue-post-timeshare'>
             <Modal.Header closeButton>
                 <h4>Đặt giữ chỗ</h4>
             </Modal.Header>
-            <Modal.Body className='webkit-scrollbar-modal'>
-                <div className="stage-header">
-                    {[1, 2].map(stageNum => (
-                        <button
-                            key={stageNum}
-                            className={`stage btn ${stageEnabled[stageNum] ? '' : 'disabled'} ${currentStage === stageNum ? 'active' : ''}`}
-                            onClick={() => handleStageClick(stageNum)}
-                        >
-                            {stageNum}. {getStageName(stageNum)}
-                        </button>
-                    ))}
-                </div>
 
-                <Container className='py-4'>
-                    {getStageContent(currentStage)}
-                </Container>
-            </Modal.Body>
+            {loadingApartment
+                ?
+                <SimpleLoading />
+                :
+                <Modal.Body className='webkit-scrollbar-modal'>
+                    <div className="stage-header">
+                        {item.timeshare_type !== "Chung cư" ? (
+                            <button
+                                className={`stage btn ${stageEnabled[1] ? '' : 'disabled'} ${currentStage === 1 ? 'active' : ''}`}
+                                onClick={() => handleStageClick(1)}
+                            >
+                                {getStageName(1)}
+                            </button>
+                        ) : (
+                            [1, 2].map(stageNum => (
+                                <button
+                                    key={stageNum}
+                                    className={`stage btn ${stageEnabled[stageNum] ? '' : 'disabled'} ${currentStage === stageNum ? 'active' : ''}`}
+                                    onClick={() => handleStageClick(stageNum)}
+                                >
+                                    {getStageName(stageNum)}
+                                </button>
+                            ))
+                        )}
+                    </div>
+
+                    <Container className='py-4'>
+                        {getStageContent(currentStage)}
+                    </Container>
+                </Modal.Body>
+            }
+
             <Modal.Footer>
                 <div style={{ marginRight: "50px" }}>
                     {currentStage > 1 && (

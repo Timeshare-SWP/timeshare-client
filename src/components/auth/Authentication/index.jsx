@@ -38,6 +38,7 @@ function Authentication(props) {
                     loginGoogleAction={loginWithGoogle}
                     closeModalAction={onClose}
                     actionSwapToRegister={actionSwapToRegister}
+                    actionSwapToLogin={actionSwapToLogin}
                 />
                 : <RegisterModal actionSwapToLogin={actionSwapToLogin} loginGoogleAction={loginWithGoogle} closeModalAction={onClose} />
             }

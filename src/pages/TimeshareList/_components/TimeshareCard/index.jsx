@@ -3,7 +3,7 @@ import { GiPositionMarker } from "react-icons/gi";
 import { BsTextareaResize } from "react-icons/bs";
 import { LuClipboardType } from "react-icons/lu";
 import { useNavigate } from 'react-router';
-import { convertRangePriceToVNDFormat, convertToNumberFormat, convertToSlug, convertToVNDFormat, truncateString } from '../../../../utils/handleFunction';
+import { convertRangePriceToVNDFormat, convertToNumberFormat, convertToSlug, convertToVNDFormat, generateFallbackAvatar, truncateString } from '../../../../utils/handleFunction';
 
 const TimeshareCard = (props) => {
 
@@ -98,7 +98,7 @@ const TimeshareCard = (props) => {
 
                     <div className='d-flex investor-profile gap-3'>
                         <div className='avatar'>
-                            <img src={avatar_tmp} alt="tmp" />
+                            <img src={generateFallbackAvatar(item.investor_id.fullName)} alt="tmp" />
                         </div>
                         <div className='info'>
                             <p className='fw-bold'>{item.investor_id.fullName}</p>

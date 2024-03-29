@@ -1,6 +1,7 @@
 .general-management {
   li:hover {
-    background-color: transparent;
+    background-color: transparent !important;
+    cursor: pointer;
   }
 
   &__menu {
@@ -49,6 +50,51 @@
 
         &:hover {
           a {
+            &::after {
+              content: "";
+              display: block;
+              position: absolute;
+              bottom: -1px;
+              left: 0;
+              width: 100%;
+              height: 3px;
+              border-radius: 8px 8px 0 0;
+              background-color: #c72528;
+              transition: all 0.3s ease;
+            }
+          }
+        }
+
+        p {
+          cursor: pointer;
+          display: block;
+          padding: 12px 8px 8px;
+          font-size: 17px;
+          line-height: 20px;
+          font-weight: 500;
+          color: rgba(48, 51, 58, 0.86);
+          text-decoration: none;
+
+          &.active {
+            font-weight: bold;
+          }
+
+          &.active::after {
+            content: "";
+            display: block;
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            border-radius: 8px 8px 0 0;
+            background-color: #c72528;
+            transition: all 0.3s ease;
+          }
+        }
+
+        &:hover {
+          p {
             &::after {
               content: "";
               display: block;
@@ -179,6 +225,79 @@
       }
     }
 
+    .investor-request-container {
+      .table100.ver2 th {
+        font-size: 15px;
+      }
+
+      th,
+      td {
+        border: 1px solid rgb(192, 182, 182);
+        border-bottom: none;
+        border-top: none;
+
+        &:first-child {
+          border-left: none;
+        }
+
+        &:last-child {
+          border-right: none;
+        }
+
+        &[rowspan]:first-child {
+          border-left: none;
+        }
+
+        &[rowspan]:last-child {
+          border-right: none;
+        }
+      }
+
+      .cell100 {
+        padding-left: 10px;
+      }
+
+      .column1 {
+        width: 18%;
+      }
+
+      .column2 {
+        width: 13%;
+      }
+
+      .column3 {
+        width: 10%;
+      }
+
+      .column4 {
+        width: 13%;
+      }
+
+      .column5 {
+        width: 15%;
+      }
+
+      .column6 {
+        width: 13%;
+      }
+
+      .column7 {
+        width: 10%;
+      }
+      
+      .column8 {
+        width: 10%;
+      }
+
+      .table100.ver2 .table100-body tr {
+        border-bottom: 1px solid rgb(192, 182, 182) !important;
+      }
+
+      .table100.ver2 .table100-body tr:last-child {
+        border-bottom: none !important;
+      }
+    }
+
     //style for table
 
     .table100.ver2 {
@@ -200,7 +319,7 @@
     }
 
     .m-b-110 {
-      margin-bottom: 110px;
+      margin-bottom: 50px;
     }
 
     .table100.ver2 .table100-head {
@@ -336,7 +455,7 @@
 }
 
 .status-waiting {
-  color: orange
+  color: orange;
 }
 
 .status-rejected {

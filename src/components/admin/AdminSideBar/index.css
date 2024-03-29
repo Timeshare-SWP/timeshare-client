@@ -4,7 +4,7 @@ li {
 }
 
 li:hover {
-    background-color: #cde1f3;
+    /* background-color: #cde1f3; */
     transition: 0.7s;
     border-radius: 10px;
 }

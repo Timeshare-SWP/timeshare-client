@@ -5,6 +5,7 @@ import { AuthContext } from '../../../../contexts/authContext';
 import { checkAllTransactionHaveContract } from '../../../../redux/features/contractSlice';
 import { useDispatch } from 'react-redux';
 import Skeleton from '../../../../components/shared/Skeleton'
+import ActionForRejected from './ActionForRejected';
 
 const TableBody = ({ transactionList, setTransactionList }) => {
 
@@ -107,8 +108,15 @@ const TableBody = ({ transactionList, setTransactionList }) => {
                                 </td>
                                 <td className='cell100 column8'>
                                     {item?.transaction_status === "Selected"
-                                        &&
+                                        ?
                                         <MoreAction
+                                            transactionSelected={item}
+                                            transactionList={transactionList}
+                                            setTransactionList={setTransactionList}
+                                            userDecode={userDecode}
+                                        />
+                                        :
+                                        <ActionForRejected
                                             transactionSelected={item}
                                             transactionList={transactionList}
                                             setTransactionList={setTransactionList}

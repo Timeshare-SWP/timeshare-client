@@ -17,8 +17,7 @@ const Stage_3 = (props) => {
 
       if (intValue > 100) {
         value = '100';
-        console.log('come')
-        console.log('after', value);
+  
       }
 
       if (!isNaN(intValue)) {

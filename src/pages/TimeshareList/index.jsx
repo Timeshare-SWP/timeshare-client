@@ -36,15 +36,16 @@ const TimeshareList = () => {
     })
     .slice(indexOfFirstItem, indexOfLastItem);
 
-    const paginate = pageNumber => {
-      setCurrentPage(pageNumber);
-      window.scrollTo(0, 0); 
-    };
+  const paginate = pageNumber => {
+    setCurrentPage(pageNumber);
+    window.scrollTo(0, 0);
+  };
 
   useEffect(() => {
     dispatch(getTimeshareForGuest()).then((result) => {
       if (getTimeshareForGuest.fulfilled.match(result)) {
-        setTimeShareList(result.payload)
+        const acceptedTimeShares = result.payload.filter(timeshare => timeshare.confirm_status === "Accepted");
+        setTimeShareList(acceptedTimeShares);
       }
     })
   }, [])

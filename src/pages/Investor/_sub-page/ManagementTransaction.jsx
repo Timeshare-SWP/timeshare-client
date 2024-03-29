@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import GeneralInvestorLayout from '../layout/GeneralInvestorLayout';
-import { viewAllTransaction } from '../../../redux/features/transactionSlice';
+import { viewAllTransaction, viewRejectedSelectedTransaction } from '../../../redux/features/transactionSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import SimpleLoading from '../../../components/shared/SimpleLoading';
 import { TRANSACTION_TABLE_HEADER_NAME } from '../../../constants/header';
@@ -14,25 +14,28 @@ const ManagementTransaction = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(viewAllTransaction()).then((result) => {
+        dispatch(viewRejectedSelectedTransaction()).then((resultViewSelected) => {
             const groupedTransactions = {};
-            result.payload.forEach(transaction => {
-                const timeshareName = transaction.timeshare_id.timeshare_name;
-                if (!groupedTransactions[timeshareName]) {
-                    groupedTransactions[timeshareName] = [];
-                }
-                groupedTransactions[timeshareName].push(transaction);
-            });
+            console.log("resultViewSelected", resultViewSelected)
+            if (viewRejectedSelectedTransaction.fulfilled.match(resultViewSelected)) {
+                resultViewSelected?.payload?.forEach(transaction => {
+                    const timeshareName = transaction?.timeshare_id?.timeshare_name;
+                    if (!groupedTransactions[timeshareName]) {
+                        groupedTransactions[timeshareName] = [];
+                    }
+                    groupedTransactions[timeshareName].push(transaction);
+                });
 
-            const sortedTransactionList = [];
-            Object.values(groupedTransactions).forEach(group => {
-                const sortedGroup = group.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                sortedTransactionList.push(...sortedGroup);
-            });
+                const sortedTransactionList = [];
+                Object.values(groupedTransactions).forEach(group => {
+                    const sortedGroup = group.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    sortedTransactionList.push(...sortedGroup);
+                });
 
-            sortedTransactionList.reverse();
+                sortedTransactionList.reverse();
 
-            setTransactionList(sortedTransactionList);
+                setTransactionList(sortedTransactionList);
+            }
         });
     }, []);
 
@@ -41,16 +44,16 @@ const ManagementTransaction = () => {
     };
 
     const filteredTransactions = transactionList.filter(transaction => {
-        const timeshareName = transaction.timeshare_id.timeshare_name.toLowerCase();
-        return timeshareName.includes(searchTerm.toLowerCase());
+        const timeshareName = transaction?.timeshare_id?.timeshare_name.toLowerCase();
+        return timeshareName?.includes(searchTerm.toLowerCase());
     });
-    
+
 
     if (loadingTransaction) {
         return (
             <GeneralInvestorLayout>
                 <div className='reserved-place-container'>
-                    <div style={{ height: '50vh' }} className='d-flex justify-content-center align-items-center'>
+                    <div style={{ height: '80vh' }} className='d-flex justify-content-center align-items-center'>
                         <SimpleLoading />
                     </div>
                 </div>

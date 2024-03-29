@@ -10,6 +10,7 @@ const TableHeader = () => {
                 <th scope="col">Hình thức</th>
                 <th scope="col">Trạng thái dự án</th>
                 <th scope="col">Trạng thái bán</th>
+                <th scope="col">Phê duyệt</th>
                 <th scope="col">Ngày đăng</th>
                 <th scope="col"></th>
             </tr>

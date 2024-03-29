@@ -1,7 +1,8 @@
 import React, { useContext } from 'react'
+import React, { useContext } from 'react'
 import { Button } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import { FaRegUserCircle, FaMoneyCheckAlt , FaChartBar } from "react-icons/fa";
+import { FaRegUserCircle, FaMoneyCheckAlt, FaChartBar } from "react-icons/fa";
 import { GrGroup } from "react-icons/gr";
 import { GoProjectRoadmap } from "react-icons/go";
 import { IoIosHelpCircleOutline, IoIosNotificationsOutline, IoIosLogOut } from "react-icons/io";
@@ -15,7 +16,7 @@ const SideBar = () => {
   return (
     <div className="bg-light" style={{ width: '15%' }}>
       <div className='container' style={{ height: 590 }}>
-        <h6 className=' text-center my-2 mb-4' style={{ color: 'orange' }}>Kho dự án</h6>
+        <h6 className=' text-center my-2 mb-4' style={{ color: 'red' }}>TIMESHARE</h6>
         <div className='mt-2'>
           <h5 style={{ color: 'pink' }}>Công cụ</h5>
           <ul style={{ listStyle: 'none' }} className='p-2'>
@@ -46,7 +47,7 @@ const SideBar = () => {
             </li>
             <li>
               <Link to="/group" className='nav-link'>
-                <FaMoneyCheckAlt  className='mx-2' />
+                <FaMoneyCheckAlt className='mx-2' />
                 Giao dịch
               </Link>
             </li>

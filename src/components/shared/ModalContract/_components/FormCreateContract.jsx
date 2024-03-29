@@ -20,7 +20,7 @@ const FormCreateContract = (props) => {
         finalPriceError, setFinalPriceError
     } = props
 
-    // console.log("transactionSelected", transactionSelected)
+    console.log("transactionSelected", transactionSelected)
 
     //xử lý phases
 
@@ -388,7 +388,7 @@ const FormCreateContract = (props) => {
                         {fileRejectionsImagesContract.length > 0 && (
                             <div className="form-group mb-0" >
                                 <div className="photo-uploaded">
-                                    <h4>File bị từ chối</h4>
+                                    <h4 className='text-danger'>File bị từ chối</h4>
 
                                     <ul className="list-photo">
                                         {fileRejectionsImagesContract.map((file, index) => (
@@ -457,7 +457,7 @@ const FormCreateContract = (props) => {
 
                         {fileRejectionsFileContract.length > 0 && (
                             <div className="photo-uploaded">
-                                <h4>File bị từ chối</h4>
+                                <h4 className='text-danger'>File bị từ chối</h4>
                                 <ul className="list-photo">
                                     {fileRejectionsFileContract.map((file, index) => (
                                         <li key={index}>

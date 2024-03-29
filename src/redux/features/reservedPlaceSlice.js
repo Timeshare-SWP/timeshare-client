@@ -96,7 +96,6 @@ export const checkReservingTimeshare = createAsyncThunk(
 
       return response.data;
     } catch (error) {
-      console.log('api', error)
       return thunkAPI.rejectWithValue(error?.response?.data);
     }
   }
