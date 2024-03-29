@@ -65,6 +65,7 @@ const DrawerFilter = (props) => {
                             </div>
                         </Accordion.Body>
                     </Accordion.Item>
+                    
                     <Accordion.Item eventKey="1">
                         <Accordion.Header>Tình trạng thanh toán</Accordion.Header>
                         <Accordion.Body>
@@ -108,7 +109,7 @@ const DrawerFilter = (props) => {
                     style={{ position: 'fixed', bottom: '20px' }}
                     onClick={handleClearFilters}
                 >
-                    Clear
+                    Xoá bộ lọc
                 </div>
             </Offcanvas.Body>
 

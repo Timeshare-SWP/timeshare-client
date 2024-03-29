@@ -10,6 +10,7 @@ import DrawerFilter from '../../../components/shared/DrawerFilter';
 const ReservedPlaceManagement = () => {
 
   const [reservedPlaceList, setReservedPlaceList] = useState([]);
+  const [initialReservedPlaceList, setInitialReservedPlaceList] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const { loadingReservedPlace } = useSelector((state) => state.reservedPlace)
   const [openDrawerFilter, setOpenDrawerFilter] = useState(false);
@@ -27,8 +28,8 @@ const ReservedPlaceManagement = () => {
       });
 
       const filteredReservedPlaceList = sortedReservedPlaceList.filter(item => item.transaction_status !== "Unreserve");
-
       setReservedPlaceList(filteredReservedPlaceList);
+      setInitialReservedPlaceList(filteredReservedPlaceList);
     });
   }, []);
 
@@ -38,9 +39,10 @@ const ReservedPlaceManagement = () => {
 
   const handleClearFilters = () => {
     setFilterOptions({
-      sellTimeshareStatus: '',
-      isReservationPaid: '',
+      sellTimeshareStatus: null,
+      isReservationPaid: null,
     });
+    setReservedPlaceList(initialReservedPlaceList);
   };
 
   const filteredReservedPlaceList = reservedPlaceList.filter((item) => {
@@ -109,6 +111,8 @@ const ReservedPlaceManagement = () => {
             handleClearFilters={handleClearFilters}
           />
         }
+
+        
       </div>
     </GeneralManagementLayout>
   )

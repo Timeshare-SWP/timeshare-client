@@ -99,7 +99,7 @@ const App = () => {
                         cancelText="Không"
                         onCancel={() => handleBeforeOpenModalRejected(record)}
                     >
-                        <Button type="primary" style={{ backgroundColor: "#41C9E2", color: "white" }}>Xác nhận</Button>
+                        <Button type="primary" style={{ backgroundColor: "#41C9E2", color: "white" }}>Phê duyệt</Button>
                     </Popconfirm>
                 )
             ),
