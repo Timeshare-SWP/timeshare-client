@@ -28,7 +28,7 @@ const ManagementTransaction = () => {
 
                 const sortedTransactionList = [];
                 Object.values(groupedTransactions).forEach(group => {
-                    const sortedGroup = group.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    const sortedGroup = group.sort((a, b) => new Date(b?.createdAt) - new Date(a?.createdAt));
                     sortedTransactionList.push(...sortedGroup);
                 });
 
