@@ -7,15 +7,10 @@ import { GoProjectRoadmap } from "react-icons/go";
 import { IoIosHelpCircleOutline, IoIosNotificationsOutline, IoIosLogOut } from "react-icons/io";
 import { Badge } from 'antd';
 import "./index.css"
-import { AuthContext } from '../../../contexts/authContext';
+import {AuthContext} from "../../../contexts/authContext"
 
-
-const App = () => {
+const SideBar = () => {
   const { logout } = useContext(AuthContext);
-
-  const handleLogout = () => {
-    logout()
-  }
 
   return (
     <div className="bg-light" style={{ width: '15%' }}>
@@ -30,14 +25,14 @@ const App = () => {
                 Thống kê
               </Link>
             </li>
-            <li>
-              {/* <Link to="/notification" className='nav-link'>
+            {/* <li>
+              <Link to="/notification" className='nav-link'>
                 <FaRegBell className='mx-2' />
                 <Badge count={6} offset={[10, 0]}>
                   Thông báo
                 </Badge>
-              </Link> */}
-            </li>
+              </Link>
+            </li> */}
           </ul>
         </div>
         <div >
@@ -71,12 +66,10 @@ const App = () => {
         </div>
       </div>
       <div className="btn-logout bg-light text-center" style={{ width: '100%' }}>
-        <Button variant="secondary" className='my-4 px-4 mx-1' onClick={handleLogout}>
-          <IoIosLogOut className='mx-2' />Đăng xuất
-        </Button>
+        <Button onClick={() => logout()} variant="secondary" className='my-4 px-4 mx-1'><IoIosLogOut className='mx-2' />Đăng xuất</Button>
       </div>
     </div>
   )
 }
 
-export default App
+export default SideBar
