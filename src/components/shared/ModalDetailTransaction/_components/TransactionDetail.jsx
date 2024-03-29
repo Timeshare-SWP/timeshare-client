@@ -16,8 +16,12 @@ const TransactionDetail = (props) => {
           <h4 className="mb-4">Thông tin căn hộ lựa chọn:</h4>
 
           <div className="info-wrapper">
-            <div className="apartment-image">
-              <img src={"https://laptop88.vn/media/news/2412_tmkimbnghnhnh.jpg"} alt="img" />
+            <div className="apartment-image" >
+              {transaction?.apartment_id?.apartment_image.map((image, index) => (
+                <div key={index} style={{ width: '300px', height: '200px', objectFit: 'cover' }}>
+                  <img key={index} src={image} alt={`image ${index}`} style={{ width: "100%", height: "100%" }} />
+                </div>
+              ))}
             </div>
             <div className="info-details">
               <div className="info-row">

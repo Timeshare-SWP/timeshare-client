@@ -302,15 +302,18 @@
 }
 
 .apartment-container-info {
-
   .info-wrapper {
     display: flex;
     align-items: center;
     gap: 2rem;
 
     .apartment-image {
+      width: 700px;
       margin-right: 20px;
-
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2px;
+      
       img {
         max-width: 450px;
         height: auto;
