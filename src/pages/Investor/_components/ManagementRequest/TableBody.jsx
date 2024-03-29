@@ -261,6 +261,7 @@ const TableBody = ({ transactionList, setTransactionList }) => {
                                             >
                                                 {item?.timeshare_id?.timeshare_name}
                                             </td>
+
                                             <td className="cell100 column2">{item?.customers.map((person, index) => (
                                                 <p key={index}>
                                                     {person?.fullName}
@@ -298,12 +299,14 @@ const TableBody = ({ transactionList, setTransactionList }) => {
                                                     </span>
                                                 )}
                                             </td>
-                                            <td className='cell100 column7' >
+
+                                            <td className='cell100 column7'
+                                                rowSpan={transactionList.filter(transaction => transaction.timeshare_id.timeshare_name === item.timeshare_id.timeshare_name).length}>
                                                 {item?.timeshare_id?.sell_number ? item?.timeshare_id?.sell_number : '1'}
                                             </td>
+
                                             <td className='cell100 column8'
                                             >
-
                                                 <MoreAction
                                                     item={item}
                                                     transactionList={transactionList}
@@ -358,19 +361,17 @@ const TableBody = ({ transactionList, setTransactionList }) => {
                                                     </span>
                                                 )}
                                             </td>
-                                            <td className='cell100 column7' >
-                                                {item?.timeshare_id?.sell_number ? item?.timeshare_id?.sell_number : '1'}
-                                            </td>
+
+
+
                                             <td className='cell100 column8'
-                                            >
-                                                {item?.transaction_status === "Selected"
-                                                    &&
-                                                    <MoreAction
-                                                        item={item}
-                                                        transactionList={transactionList}
-                                                        setTransactionList={setTransactionList}
-                                                        userDecode={userDecode} />
-                                                }
+                                            >                             
+                                                <MoreAction
+                                                    item={item}
+                                                    transactionList={transactionList}
+                                                    setTransactionList={setTransactionList}
+                                                    userDecode={userDecode} />
+
                                             </td>
                                         </tr>
                                     </>

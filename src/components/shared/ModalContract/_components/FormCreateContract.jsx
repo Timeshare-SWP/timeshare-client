@@ -20,7 +20,7 @@ const FormCreateContract = (props) => {
         finalPriceError, setFinalPriceError
     } = props
 
-    // console.log("transactionSelected", transactionSelected)
+    console.log("transactionSelected", transactionSelected)
 
     //xử lý phases
 

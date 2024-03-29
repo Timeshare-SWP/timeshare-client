@@ -41,16 +41,24 @@ const ModalDetailTransaction = (props) => {
             </Modal.Header>
             <Modal.Body>
                 <div className='container mb-4'>
-                    {path === '/personal-projects' ?
+                    {path === '/personal-projects'
+                        ?
                         <TimeshareDetail timeshare={dataTimeshare}
                             setTimeShareList={setTimeShareList}
                             timeshareList={timeshareList}
                             handleClose={handleClose}
-                        /> :
+                        />
+                        :
                         <>
-                            <TimeshareDetail timeshare={dataTransaction?.timeshare_id} />
-                            <BuyerDetail customer={dataTransaction?.customers[0]} />
-                            <TransactionDetail transaction={dataTransaction} />
+                            {activeItem === 0 && (
+                                <TimeshareDetail timeshare={dataTransaction?.timeshare_id} />
+                            )}
+                            {activeItem === 1 && (
+                                <BuyerDetail customer={dataTransaction?.customers[0]} />
+                            )}
+                            {activeItem === 2 && (
+                                <TransactionDetail transaction={dataTransaction} />
+                            )}
                         </>
                     }
                 </div>

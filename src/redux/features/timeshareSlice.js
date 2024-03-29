@@ -157,7 +157,7 @@ export const updateTimeshare = createAsyncThunk(
 
       const instance = getInstanceWithToken();
       const response = await instance.put(`/api/timeshares/${timeshare_id}`, {
-        dataBody,
+        ...dataBody,
       });
 
       return response.data;

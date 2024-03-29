@@ -10,6 +10,7 @@ import phaseReducer from "./features/phaseSlice";
 import feedbackReducer from "./features/feedbackSlice";
 import supportReducer from "./features/supportSlice";
 import apartmentReducer from "./features/apartmentSlice";
+import staffReducer from "./features/staffSlice";
 
 export const store = configureStore({
   reducer: {
@@ -23,6 +24,7 @@ export const store = configureStore({
     phase: phaseReducer,
     feedback: feedbackReducer,
     support: supportReducer,
-    apartment: apartmentReducer
+    apartment: apartmentReducer,
+    staff: staffReducer
   },
 });

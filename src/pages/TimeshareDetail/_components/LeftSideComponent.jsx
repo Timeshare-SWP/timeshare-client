@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { convertToNumberFormat, truncateString } from '../../../utils/handleFunction';
+import { convertRangePriceToVNDFormat, convertToNumberFormat, generateFallbackAvatar, truncateString } from '../../../utils/handleFunction';
 import { UTILITIES_LIST } from '../../../constants/utilities';
 import GoogleMapLocation from './GoogleMapLocation';
 import toast from 'react-hot-toast';
@@ -7,9 +7,11 @@ import JSZip from 'jszip';
 import { useDispatch } from 'react-redux';
 import { countQuantifyOfBuyer } from '../../../redux/features/transactionSlice';
 import EditTimeshareMode from './EditTimeshareMode';
+import { getAllApartmentOfTimeshare } from '../../../redux/features/apartmentSlice';
 
 export const LeftSideComponent = (props) => {
     const { item, isEditMode, handleEditModeChange, setTimeShareList, timeshareList, handleClose } = props
+    console.log(item)
     const avatar_tmp = "https://cdn.popsww.com/blog/sites/2/2021/03/doraemon-tap-97.jpg"
 
     const dispatch = useDispatch();
@@ -35,7 +37,18 @@ export const LeftSideComponent = (props) => {
     };
 
     const handleDownloadAllFiles = async () => {
-        toast.error('Chưa hỗ trợ')
+        if (item?.timeshare_related_link && item.timeshare_related_link.length > 0) {
+            const fileUrl = item.timeshare_related_link[0];
+            const link = document.createElement('a');
+            link.href = fileUrl;
+            link.setAttribute('download', '');
+            link.setAttribute('target', '_blank');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } else {
+            toast.error('Hiện tại chưa được cập nhập nên không thể tải!');
+        }
     };
 
     // count số lượng đã bán của timeshare
@@ -52,6 +65,20 @@ export const LeftSideComponent = (props) => {
         })
 
     }, []);
+
+    // xử lý nếu timeshare là chung cư thì sẽ lấy apartment của timeshare đó
+    const [apartmentData, setApartmentData] = useState([]);
+
+    useEffect(() => {
+        if (item?.timeshare_type === "Chung cư") {
+            dispatch(getAllApartmentOfTimeshare(item?._id)).then((resGetApart) => {
+                console.log("resGetApart", resGetApart.payload)
+                if (getAllApartmentOfTimeshare.fulfilled.match(resGetApart)) {
+                    setApartmentData(resGetApart.payload.reverse());
+                }
+            })
+        }
+    }, [item?.timeshare_type])
 
 
     return (
@@ -73,10 +100,19 @@ export const LeftSideComponent = (props) => {
                             {renderStatus(item?.timeshare_status, ["Sắp triển khai", "Đang triển khai", "Đã triển khai"])}
                             <div style={{ margin: '0px 10px' }}>|</div>
 
-                            <div className={`btn text-warning fw-bold`} >{item?.confirm_status === "Pending" && "Đang chờ xác nhận"}</div>
-                            <div className={`btn text-success fw-bold`} >{item?.confirm_status === "Accepted" && "Đã được phê duyệt"}</div>
-                            <div className={`btn text-danger fw-bold`} >{item?.confirm_status === "Rejected" && "Đã bị từ chối"}</div>
+                            <div className={`fw-bold`} style={{ fontSize: '15px', color: item?.confirm_status === "Pending" ? 'orange' : (item?.confirm_status === "Accepted" ? 'green' : 'red') }}>
+                                {item?.confirm_status === "Pending" && "Đang chờ xác nhận"}
+                                {item?.confirm_status === "Accepted" && "Đã được phê duyệt"}
+                                {item?.confirm_status === "Rejected" && "Đã bị từ chối"}
+                            </div>
 
+                            {item?.reason_rejected && item?.confirm_status === "Rejected"
+                                &&
+                                <>
+                                    <div style={{ margin: '0px 10px' }}>|</div>
+                                    <p>Lý do từ chối: {item?.reason_rejected}</p>
+                                </>
+                            }
                         </div>
 
                         <div className='d-flex flex-row align-items-center mb-3 mt-2'>
@@ -163,7 +199,7 @@ export const LeftSideComponent = (props) => {
 
                                         <div className="info-item">
                                             <div className="info-label">Khoảng giá:</div>
-                                            <div className="info-value">{convertToNumberFormat(item?.price)} VNĐ/m2</div>
+                                            <div className="info-value">{convertRangePriceToVNDFormat(item?.price, item?.max_price)} VNĐ/m&#178;</div>
                                         </div>
 
                                         <div className="info-item">
@@ -252,11 +288,88 @@ export const LeftSideComponent = (props) => {
 
                         </div>
 
-                        <hr></hr>
+                        {item?.timeshare_type === "Chung cư" && <>
+                            <hr></hr>
+                            <div className='section-investor' id="investor">
+                                <h3 className='mb-3'>Thông tin của các căn hộ sẵn có</h3>
 
-                        <GoogleMapLocation timeshare_location={item?.timeshare_address} />
 
-                        <hr></hr>
+                                <div >
+                                    <div>
+                                        <h5 className='mb-2 fw-bold'>Hình ảnh chung</h5>
+
+                                        <div className='list-img-apartment'>
+                                            {apartmentData[0]?.apartment_image?.map((obj, index) => (
+                                                <div className='img-container'>
+                                                    <img src={obj} alt={index} key={index} />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className='mt-4'>
+                                        <h5 className='mb-2 fw-bold'>Thông tin riêng từng căn hộ </h5>
+                                        <div className='apartment-info'>
+                                            {apartmentData.map((obj, index) => (
+                                                <>
+                                                    <p className='fw-bold mt-2' style={{ fontSize: '18px' }}>Căn hộ số {index + 1}</p>
+
+                                                    <div className='row'>
+                                                        <div className='col-6'>
+                                                            <div className="info-container">
+                                                                <div className="info-item">
+                                                                    <div className="info-label">Tên căn hộ:</div>
+                                                                    <div className="info-value">{obj?.apartment_number}</div>
+                                                                </div>
+
+                                                                <div className="info-item">
+                                                                    <div className="info-label">Toà:</div>
+                                                                    <div className="info-value">{obj?.floor_number}</div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+
+                                                        <div className='col-6'>
+                                                            <div className="info-container">
+                                                                <div className="info-item">
+                                                                    <div className="info-label">Diện tích:</div>
+                                                                    <div className="info-value">{convertToNumberFormat(obj?.area)} m&#178;</div>
+                                                                </div>
+
+                                                                <div className="info-item">
+                                                                    <div className="info-label">Tình trạng giữ chỗ:</div>
+                                                                    <div className="info-value">{obj?.is_selected ? 'Đã có người đặt' : 'Còn slot'}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div>
+                                                        <div className="info-item" style={{ padding: "13px 0px", borderBottom: '1px solid #cccccc' }}>
+                                                            <div className="info-label">Tình trạng:</div>
+                                                            <div className="info-value" style={{ fontSize: '15px' }}>{obj?.condition}</div>
+                                                        </div>
+
+                                                        <div className="info-item" style={{ padding: "13px 0px", borderBottom: '1px solid #cccccc' }}>
+                                                            <div className="info-label">Nội thất:</div>
+                                                            <div className="info-value">{obj?.interior}</div>
+                                                        </div>
+
+                                                        <div className="info-item" style={{ padding: "13px 0px", borderBottom: '1px solid #cccccc' }}>
+                                                            <div className="info-label">Phòng ấp:</div>
+                                                            <div className="info-value">{obj?.number_of_rooms}</div>
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </>}
 
                         <div className='section-investor' id="investor">
                             <h3 className='mb-3'>Chủ đầu tư</h3>
@@ -268,7 +381,7 @@ export const LeftSideComponent = (props) => {
                                     <div className='col-4 d-flex justify-content-center align-items-center'>
                                         <img src={`${item?.investor_id?.avatar_url
                                             ? item?.investor_id?.avatar_url
-                                            : avatar_tmp}`} className='img-fluid rounded-start'
+                                            : generateFallbackAvatar(item?.investor_id?.fullName)}`} className='img-fluid rounded-start'
                                             alt="timeshare" />
                                     </div>
 

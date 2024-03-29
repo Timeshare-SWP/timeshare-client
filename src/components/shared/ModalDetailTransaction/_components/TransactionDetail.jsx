@@ -5,17 +5,8 @@ import { convertToNumberFormat, convertToVietnameseTime } from '../../../../util
 
 const TransactionDetail = (props) => {
   const { transaction } = props
-  const [apartmentData, setApartmentData] = useState('');
+  console.log("transaction", transaction)
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (transaction?.apartment_id) {
-      dispatch(getApartmentById(transaction?.apartment_id)).then((resGetApartment) => {
-        console.log("resGetApartment", resGetApartment)
-        setApartmentData(resGetApartment.payload)
-      })
-    }
-  }, [])
 
   return (
     <div className=''>
@@ -31,31 +22,31 @@ const TransactionDetail = (props) => {
             <div className="info-details">
               <div className="info-row">
                 <div className="info-label">Số căn hộ:</div>
-                <div className="info-value">{apartmentData?.apartment_number}</div>
+                <div className="info-value">{transaction?.apartment_id?.apartment_number}</div>
               </div>
               <div className="info-row">
                 <div className="info-label">Tên toà:</div>
-                <div className="info-value">{apartmentData?.floor_number}</div>
+                <div className="info-value">{transaction?.apartment_id?.floor_number}</div>
               </div>
               <div className="info-row">
                 <div className="info-label">Diện tích:</div>
-                <div className="info-value">{apartmentData?.area}</div>
+                <div className="info-value">{transaction?.apartment_id?.area}</div>
               </div>
               <div className="info-row">
                 <div className="info-label">Các phòng:</div>
-                <div className="info-value">{apartmentData?.number_of_rooms}</div>
+                <div className="info-value">{transaction?.apartment_id?.number_of_rooms}</div>
               </div>
               <div className="info-row">
                 <div className="info-label">Tình trạng căn hộ:</div>
-                <div className="info-value">{apartmentData?.condition}</div>
+                <div className="info-value">{transaction?.apartment_id?.condition}</div>
               </div>
               <div className="info-row">
                 <div className="info-label">Nội thất:</div>
-                <div className="info-value">{apartmentData?.interior}</div>
+                <div className="info-value">{transaction?.apartment_id?.interior}</div>
               </div>
               <div className="info-row">
                 <div className="info-label">Chú thích:</div>
-                <div className="info-value">{apartmentData?.note}</div>
+                <div className="info-value">{transaction?.apartment_id?.note}</div>
               </div>
             </div>
           </div>
@@ -72,25 +63,33 @@ const TransactionDetail = (props) => {
             <p className='label text-uppercase'>GIỮ CHÂN</p>
             <p className='value'>{transaction?.reservation_price ? 'Có giữ chân' : 'Không giữ chân'}</p>
           </div>
+
+          {transaction?.reservation_price && (
+            <>
+              <div className=''>
+                <p className='label text-uppercase'>THỜI GIAN GIỮ CHÂN</p>
+                <p className='value'>{convertToVietnameseTime(transaction?.createdAt)}</p>
+              </div>
+              <div className=''>
+                <p className='label text-uppercase'>THANH TOÁN TIỀN CỌC</p>
+                <p className={`value ${transaction?.is_reservation_paid ? 'text-success' : 'text-danger'}`}>
+                  {transaction?.is_reservation_paid ? 'Đã thanh toán' : 'Chưa thanh toán'}
+                </p>
+              </div>
+              <div className=''>
+                <p className='label text-uppercase'>SỐ TIỀN GIỮ CHÂN</p>
+                <p className='value'>{convertToNumberFormat(transaction?.reservation_price)}</p>
+              </div>
+              <div className=''>
+                <p className='label text-uppercase'>THỜI GIAN THANH TOÁN</p>
+                <p className='value'>{convertToVietnameseTime(transaction?.reservation_time)}</p>
+              </div>
+            </>
+          )}
+
           <div className=''>
-            <p className='label text-uppercase'>THỜI GIAN GIỮ CHÂN</p>
-            <p className='value'>{convertToVietnameseTime(transaction?.createdAt)}</p>
-          </div>
-          <div className=''>
-            <p className='label text-uppercase'>TÌNH TRẠNG THANH TOÁN</p>
-            <p className='value'>{transaction?.is_reservation_paid ? 'Đã thanh toán' : 'Chưa thanh toán'}</p>
-          </div>
-          <div className=''>
-            <p className='label text-uppercase'>SỐ TIỀN GIỮ CHÂN</p>
-            <p className='value'>{convertToNumberFormat(transaction?.reservation_price)}</p>
-          </div>
-          <div className=''>
-            <p className='label text-uppercase'>THỜI GIAN THANH TOÁN</p>
-            <p className='value'>{convertToVietnameseTime(transaction?.reservation_time)}</p>
-          </div>
-          <div className=''>
-            <p className='label text-uppercase'>TRẠNG THÁI GIAO DỊCH</p>
-            <p className='value'>{transaction?.transaction_status === 'Waiting' ? 'Đang chờ phản hồi' : ''}</p>
+            <p className='label text-uppercase'>TRẠNG THÁI XÁC NHẬN GIAO DỊCH</p>
+            <p className='value text-warning'>{transaction?.transaction_status === 'Waiting' ? 'Đang chờ phản hồi' : ''}</p>
           </div>
         </div>
       </div>

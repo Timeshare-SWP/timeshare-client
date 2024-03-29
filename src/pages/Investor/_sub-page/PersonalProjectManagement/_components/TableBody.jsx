@@ -118,7 +118,7 @@ const TableBody = (props) => {
                 toast.success("Thay đổi trạng thái thành công!")
                 const updatedTimeshare = result.payload;
 
-                const updatedList = timeshareList.map((timeshare) =>
+                const updatedList = timeshareList?.map((timeshare) =>
                     timeshare._id === item._id ? updatedTimeshare : timeshare
                 );
 
@@ -164,7 +164,7 @@ const TableBody = (props) => {
                 toast.success("Thay đổi trạng thái thành công!")
                 const updatedTimeshare = result.payload;
 
-                const updatedList = timeshareList.map((timeshare) =>
+                const updatedList = timeshareList?.map((timeshare) =>
                     timeshare._id === item._id ? updatedTimeshare : timeshare
                 );
 

@@ -92,6 +92,7 @@ const OutstandingProject = () => {
                                         <div className='bottom-content'>
                                             <h5 className='fw-semibold'>{item.timeshare_name}</h5>
                                             <p className='address'>{item.timeshare_address}</p>
+                                            <p className='type'>Loại hình: {item.timeshare_type}</p>
                                             <p className='fw-semibold'>Giá: {convertRangePriceToVNDFormat(item.price, item.max_price)}/m&#178;</p>
                                         </div>
                                     </div>
@@ -139,6 +140,7 @@ const OutstandingProject = () => {
                                         <div className='bottom-content'>
                                             <h5 className='fw-semibold'>{item.timeshare_name}</h5>
                                             <p className='address'>{item.timeshare_address}</p>
+                                            <p className='type'>Loại hình: {item.timeshare_type}</p>
                                             <p className='fw-semibold'>Giá: {convertRangePriceToVNDFormat(item?.price, item?.max_price)}/m&#178;</p>
                                         </div>
                                     </div>

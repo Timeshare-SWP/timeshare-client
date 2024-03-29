@@ -13,6 +13,7 @@ import ModalConfirm from '../../../components/shared/ModalConfirm';
 import SpinnerLoading from "../../../components/shared/SpinnerLoading"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from '../../../utils/configFirebase';
+import { getAllApartmentOfTimeshare } from '../../../redux/features/apartmentSlice';
 
 const EditTimeshareMode = (props) => {
     const { item, handleEditModeChange, setTimeShareList, timeshareList, handleClose } = props
@@ -116,6 +117,22 @@ const EditTimeshareMode = (props) => {
         setSelectedJuridicalFiles((prevFiles) => prevFiles.filter((file) => file.path !== path));
     };
 
+    // apartment
+    // xử lý nếu timeshare là chung cư thì sẽ lấy apartment của timeshare đó
+    const [apartmentData, setApartmentData] = useState([]);
+
+    useEffect(() => {
+        if (item?.timeshare_type === "Chung cư") {
+            dispatch(getAllApartmentOfTimeshare(item?._id)).then((resGetApart) => {
+                if (getAllApartmentOfTimeshare.fulfilled.match(resGetApart)) {
+                    setApartmentData(resGetApart.payload.reverse());
+                }
+            })
+        }
+    }, [item?.timeshare_type])
+
+
+    //  
 
     const [openModalConfirm, setOpenModalConfirm] = useState(false);
 
@@ -124,7 +141,6 @@ const EditTimeshareMode = (props) => {
     const handleCallApiUpdate = async () => {
         // xử lý đăng lên firebase trước
         setIsLoading(true)
-        toast('Quá trình diễn ra sẽ hơi lâu, vui lòng chờ trong giây lát!', { icon: '⚠' })
 
         const uploadPromises = [];
         const uploadedFiles = [];
@@ -143,7 +159,8 @@ const EditTimeshareMode = (props) => {
         const juridicalFilesURLs = await Promise.all(juridicalFilesDownload);
 
         const final_data = {
-            ...originData, timeshare_related_link: juridicalFilesURLs,
+            ...originData,
+            timeshare_related_link: juridicalFilesURLs,
         }
 
         console.log("final_data", final_data)
@@ -155,10 +172,10 @@ const EditTimeshareMode = (props) => {
         console.log("data", data)
 
         dispatch(updateTimeshare(data)).then((resUpdate) => {
-            console.log("resUpdate",resUpdate)
+            console.log("resUpdate", resUpdate)
             if (updateTimeshare.fulfilled.match(resUpdate)) {
                 toast.success('Cập nhập thành công')
-
+                setOpenModalConfirm(false)
                 if (timeshareList) {
                     const indexToUpdate = timeshareList.findIndex(item => item._id === resUpdate.payload._id);
 
@@ -445,7 +462,6 @@ const EditTimeshareMode = (props) => {
                         )}
                     </div>
 
-
                     <hr></hr>
 
                     <div className='section-utilities' id="utilities">
@@ -465,7 +481,87 @@ const EditTimeshareMode = (props) => {
 
                     </div>
 
-                    <hr></hr>
+                    {item?.timeshare_type === "Chung cư" && <>
+                        <hr></hr>
+                        <div className='section-investor' id="investor">
+                            <h3 className='mb-3'>Thông tin của các căn hộ sẵn có</h3>
+
+
+                            <div >
+                                <div>
+                                    <h5 className='mb-2 fw-bold'>Hình ảnh chung</h5>
+
+                                    <div className='list-img-apartment'>
+                                        {apartmentData[0]?.apartment_image?.map((obj, index) => (
+                                            <div className='img-container'>
+                                                <img src={obj} alt={index} key={index} />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className='mt-4'>
+                                    <h5 className='mb-2 fw-bold'>Thông tin riêng từng căn hộ </h5>
+                                    <div className='apartment-info'>
+                                        {apartmentData.map((obj, index) => (
+                                            <>
+                                                <p className='fw-bold mt-2' style={{ fontSize: '18px' }}>Căn hộ số {index + 1}</p>
+
+                                                <div className='row'>
+                                                    <div className='col-6'>
+                                                        <div className="info-container">
+                                                            <div className="info-item">
+                                                                <div className="info-label">Tên căn hộ:</div>
+                                                                <div className="info-value">{obj?.apartment_number}</div>
+                                                            </div>
+
+                                                            <div className="info-item">
+                                                                <div className="info-label">Toà:</div>
+                                                                <div className="info-value">{obj?.floor_number}</div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div className='col-6'>
+                                                        <div className="info-container">
+                                                            <div className="info-item">
+                                                                <div className="info-label">Diện tích:</div>
+                                                                <div className="info-value">{convertToNumberFormat(obj?.area)} m&#178;</div>
+                                                            </div>
+
+                                                            <div className="info-item">
+                                                                <div className="info-label">Tình trạng giữ chỗ:</div>
+                                                                <div className="info-value">{obj?.is_selected ? 'Đã có người đặt' : 'Còn slot'}</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <div className="info-item" style={{ padding: "13px 0px", borderBottom: '1px solid #cccccc' }}>
+                                                        <div className="info-label">Tình trạng:</div>
+                                                        <div className="info-value" style={{ fontSize: '15px' }}>{obj?.condition}</div>
+                                                    </div>
+
+                                                    <div className="info-item" style={{ padding: "13px 0px", borderBottom: '1px solid #cccccc' }}>
+                                                        <div className="info-label">Nội thất:</div>
+                                                        <div className="info-value">{obj?.interior}</div>
+                                                    </div>
+
+                                                    <div className="info-item" style={{ padding: "13px 0px", borderBottom: '1px solid #cccccc' }}>
+                                                        <div className="info-label">Phòng ấp:</div>
+                                                        <div className="info-value">{obj?.number_of_rooms}</div>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </>}
 
                     <div className='section-investor' id="investor">
                         <h3 className='mb-3'>Chủ đầu tư</h3>

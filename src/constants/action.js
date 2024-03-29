@@ -6,7 +6,6 @@ import { CiCircleCheck } from "react-icons/ci";
 import { IoNewspaperOutline } from "react-icons/io5";
 import { MdOutlinePayment } from "react-icons/md";
 
-
 export const RESERVED_PLACE_LIST_ACTION = [
   {
     id: 1,
@@ -19,12 +18,12 @@ export const RESERVED_PLACE_LIST_ACTION = [
 ];
 
 export const TRANSACTION_LIST_ACTION_INVESTOR = [
-  { id: 1, name: "Hợp đồng", icon: <IoNewspaperOutline   /> },
-  { id: 2, name: "Tiến độ thanh toán", icon: <MdOutlinePayment   /> },
+  { id: 1, name: "Hợp đồng", icon: <IoNewspaperOutline /> },
+  { id: 2, name: "Tiến độ thanh toán", icon: <MdOutlinePayment /> },
 ];
 
 export const REQUEST_LIST_ACTION_INVESTOR = [
-  { id: 1, name: "Xem thông tin chi tiết", icon: <IoNewspaperOutline   /> },
+  { id: 1, name: "Xem thông tin chi tiết", icon: <IoNewspaperOutline /> },
 ];
 
 export const TRANSACTION_LIST_ACTION_CUSTOMER = [
@@ -33,6 +32,14 @@ export const TRANSACTION_LIST_ACTION_CUSTOMER = [
     name: "Xem thông tin chi tiết",
     icon: <IoMdInformationCircleOutline />,
   },
-  { id: 2, name: "Hợp đồng", icon: <IoNewspaperOutline   /> },
-  { id: 3, name: "Thanh toán", icon: <MdOutlinePayment    /> },
+  { id: 2, name: "Hợp đồng", icon: <IoNewspaperOutline /> },
+  { id: 3, name: "Thanh toán", icon: <MdOutlinePayment /> },
+];
+
+export const TRANSACTION_REJECTED_LIST_ACTION_CUSTOMER = [
+  {
+    id: 1,
+    name: "Lý do từ chối",
+    icon: <IoMdInformationCircleOutline />,
+  },
 ];
