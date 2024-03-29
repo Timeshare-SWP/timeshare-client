@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Button } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { FaRegUserCircle, FaMoneyCheckAlt , FaChartBar } from "react-icons/fa";
@@ -7,9 +7,11 @@ import { GoProjectRoadmap } from "react-icons/go";
 import { IoIosHelpCircleOutline, IoIosNotificationsOutline, IoIosLogOut } from "react-icons/io";
 import { Badge } from 'antd';
 import "./index.css"
+import {AuthContext} from "../../../contexts/authContext"
 
+const SideBar = () => {
+  const { logout } = useContext(AuthContext);
 
-const index = () => {
   return (
     <div className="bg-light" style={{ width: '15%' }}>
       <div className='container' style={{ height: 590 }}>
@@ -64,10 +66,10 @@ const index = () => {
         </div>
       </div>
       <div className="btn-logout bg-light text-center" style={{ width: '100%' }}>
-        <Button variant="secondary" className='my-4 px-4 mx-1'><IoIosLogOut className='mx-2' />Đăng xuất</Button>
+        <Button onClick={() => logout()} variant="secondary" className='my-4 px-4 mx-1'><IoIosLogOut className='mx-2' />Đăng xuất</Button>
       </div>
     </div>
   )
 }
 
-export default index
+export default SideBar
