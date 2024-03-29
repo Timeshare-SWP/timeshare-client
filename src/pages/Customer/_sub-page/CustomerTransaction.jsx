@@ -32,7 +32,7 @@ const CustomerTransaction = () => {
     return (
       <GeneralManagementLayout>
         <div className='reserved-place-container'>
-          <div style={{ height: '50vh' }} className='d-flex justify-content-center align-items-center'>
+          <div style={{ height: '80vh' }} className='d-flex justify-content-center align-items-center'>
             <SimpleLoading />
           </div>
         </div>

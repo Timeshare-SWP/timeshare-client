@@ -9,8 +9,8 @@ const Stage_2 = (props) => {
     setSelectedJuridicalFiles, juridicalFilesOrigin,
     setJuridicalFilesOrigin, errorStage2, setErrorStage2 } = props
 
-  console.log("selectedTimeshareStatus", selectedTimeshareStatus)
-  console.log("errorStage2", errorStage2)
+  // console.log("selectedTimeshareStatus", selectedTimeshareStatus)
+  // console.log("errorStage2", errorStage2)
 
   const handleOnDrop = (acceptedFiles) => {
     setErrorStage2('')
@@ -52,8 +52,6 @@ const Stage_2 = (props) => {
   const removeImage = (path) => {
     setSelectedJuridicalFiles((prevFiles) => prevFiles.filter((file) => file.path !== path));
   };
-
-
 
   return (
     <div className='stage-container d-flex flex-column justify-content-center align-items-center'>

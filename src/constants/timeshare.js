@@ -39,3 +39,15 @@ export const PRIORITY_LEVEL = [
     note: "Chưa hỗ trợ",
   },
 ];
+
+export const APARTMENT_ERRORS = {
+  apartment_number: 'Vui lòng nhập số căn hộ!',
+  floor_number: 'Vui lòng nhập tên tòa!',
+  area: 'Vui lòng nhập diện tích căn hộ!',
+  apartment_image: 'Vui lòng đăng tối thiểu ít nhất 1 ảnh căn hộ!',
+  note: 'Vui lòng nhập chú thích!',
+  number_of_rooms: 'Vui lòng mô tả các phòng!',
+  condition: 'Vui lòng mô tả tình trạng căn hộ!',
+  interior: 'Vui lòng mô tả tình trạng nội thất!'
+};
+

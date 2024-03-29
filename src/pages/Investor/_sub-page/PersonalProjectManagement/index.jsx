@@ -50,7 +50,7 @@ const PersonalProjectManagement = () => {
     if (loadingTimeshare) {
         return (
             <GeneralInvestorLayout>
-                <div style={{ height: '50vh' }} className='d-flex justify-content-center align-items-center'>
+                <div style={{ height: '80vh' }} className='d-flex justify-content-center align-items-center'>
                     <SimpleLoading />
                 </div>
             </GeneralInvestorLayout>

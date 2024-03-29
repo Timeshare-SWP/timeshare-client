@@ -35,13 +35,30 @@ const OutstandingProject = () => {
     }, [])
 
     const [sortedData, setSortedData] = useState([]);
+
     useEffect(() => {
-        const sortedList = [...dataTimeshareList].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        setSortedData(sortedList);
+        if (dataTimeshareList && Array.isArray(dataTimeshareList)) {
+            const filteredList = dataTimeshareList.filter(
+                timeshare => timeshare.confirm_status === "Accepted" && timeshare.sell_timeshare_status !== "Đã bán"
+            );
+            const sortedList = [...filteredList].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            setSortedData(sortedList);
+        }
     }, [dataTimeshareList]);
 
     if (loadingTimeshare) {
         return (<LoadingProject />)
+    }
+
+    if (Array.isArray(sortedData) && sortedData.length === 0) {
+        return (
+            <div className='outstanding-project-section py-5'>
+                <h4>Dự án mới nổi bật</h4>
+                <div className="text-center py-4">
+                    Chưa có dự án nào được đăng!
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -75,6 +92,7 @@ const OutstandingProject = () => {
                                         <div className='bottom-content'>
                                             <h5 className='fw-semibold'>{item.timeshare_name}</h5>
                                             <p className='address'>{item.timeshare_address}</p>
+                                            <p className='type'>Loại hình: {item.timeshare_type}</p>
                                             <p className='fw-semibold'>Giá: {convertRangePriceToVNDFormat(item.price, item.max_price)}/m&#178;</p>
                                         </div>
                                     </div>
@@ -122,6 +140,7 @@ const OutstandingProject = () => {
                                         <div className='bottom-content'>
                                             <h5 className='fw-semibold'>{item.timeshare_name}</h5>
                                             <p className='address'>{item.timeshare_address}</p>
+                                            <p className='type'>Loại hình: {item.timeshare_type}</p>
                                             <p className='fw-semibold'>Giá: {convertRangePriceToVNDFormat(item?.price, item?.max_price)}/m&#178;</p>
                                         </div>
                                     </div>

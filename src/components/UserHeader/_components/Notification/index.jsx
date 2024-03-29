@@ -50,9 +50,13 @@ const Notification = () => {
             case "NOTI_RESERVER_PLACE_TO_INVESTOR":
             case "NOTI_PAYMENT_BY_PHASE_TO_INVESTOR":
             case "NOTI_PAYMENT_BY_RESERVING_TO_INVESTOR":
+            case "ADMIN_ACCEPT_TIMESHARE_TO_CUSTOMER":
+            case "ADMIN_REJECT_TIMESHARE_TO_CUSTOMER":
                 navigate("/personal-projects");
                 break;
             case "REQUEST_CONFIRM_BUY_TIMESHARE_TO_INVESTOR":
+                navigate("/management-request");
+                break;
             case "ACCEPT_CONTRACT_TO_INVESTOR":
                 navigate("/management-transaction")
                 break;

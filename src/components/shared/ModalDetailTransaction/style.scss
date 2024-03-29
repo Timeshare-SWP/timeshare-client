@@ -1,0 +1,366 @@
+.profile-container {
+}
+
+.user-profile p {
+  margin-bottom: 0px;
+}
+
+.profile-container .title {
+  font-weight: 550;
+  font-size: 30px;
+}
+
+.profile-container .user-profile {
+}
+
+.profile-container .user-profile .left {
+  width: 25%;
+}
+
+.profile-container .user-profile .left .avatar-user {
+  position: relative;
+  width: 100%;
+  height: auto;
+}
+
+.profile-container .user-profile .left .avatar-user img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-container .avatar-user .camera-wrapper {
+  position: absolute;
+  bottom: -7px;
+  right: -7px;
+  width: 20px;
+  height: 20px;
+  background-color: gray;
+  cursor: pointer;
+  transition: opacity 0.3s;
+  padding: 20px;
+  border-radius: 50px;
+}
+
+.profile-container .avatar-user .camera-wrapper i {
+  color: white;
+  transition: opacity 0.3s;
+  font-size: 25px;
+}
+
+.profile-container .avatar-user .camera-wrapper:hover {
+  opacity: 0.7;
+}
+
+.profile-container .avatar-user .camera-wrapper:hover i {
+  opacity: 0.7;
+}
+
+.cancel-modal-update-avatar {
+  z-index: 9999;
+  background-color: rgba(136, 136, 136, 0.5);
+}
+
+/* -- */
+
+.profile-container .user-profile .left .another-info {
+}
+
+.profile-container .user-profile .left .another-info .driving-license {
+}
+
+.profile-container .user-profile .left .another-info .driving-license .header,
+.citizen-identification .header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.driving-license .header .text,
+.citizen-identification .header .text {
+  color: #808080;
+}
+
+.driving-license .header .line,
+.citizen-identification .header .line {
+  width: 80%;
+  border-bottom: 2px solid #808080;
+  transform: translateY(-10px);
+}
+
+.profile-container .user-profile .right {
+  width: 75%;
+}
+
+.profile-container .user-profile .right p {
+  margin-bottom: 0px;
+}
+
+.profile-container .user-profile .right .header {
+}
+
+.profile-container .user-profile .right .header .top-header {
+  width: 100%;
+}
+
+.profile-container .user-profile .right .header .top-header .edit-profile {
+  color: rgb(161, 159, 159);
+  cursor: pointer;
+}
+
+.profile-container
+  .user-profile
+  .right
+  .header
+  .top-header
+  .left-top-header
+  .user-name {
+  font-size: 35px;
+  color: #000d6b;
+}
+
+.profile-container
+  .user-profile
+  .right
+  .header
+  .top-header
+  .left-top-header
+  .user-location {
+  color: gray;
+}
+
+.profile-container .user-profile .right .header .role-name {
+  color: #2437c5;
+  font-weight: bold;
+}
+
+.profile-container .user-profile .right .header .rate-section {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.profile-container .user-profile .right .header .rate-section .title-rate {
+  color: gray;
+}
+
+.profile-container .user-profile .right .header .rate-section .rate-data {
+  font-size: 25px;
+}
+
+.profile-container
+  .user-profile
+  .right
+  .header
+  .rate-section
+  .rate-data
+  .score {
+  font-weight: bold;
+}
+
+.profile-container .user-profile .right .header .rate-section .rate-data .star {
+  margin-left: 20px;
+}
+
+.profile-container .user-profile .right .header .separation-vertical-line {
+  border-left: 1px solid gray;
+  width: 1px;
+  height: 70%;
+}
+
+.star .ri-star-fill {
+  color: #2437c5;
+}
+
+.star .ri-star-line {
+  color: #2437c5;
+}
+
+.profile-container .user-profile .right .main .main-top {
+  border-bottom: 3px solid #d9d0d0;
+  position: relative;
+}
+
+.profile-container .user-profile .right .main .main-top a {
+  text-decoration: none;
+  color: gray;
+}
+
+.profile-container .user-profile .right .main .main-top a:hover {
+  color: black;
+}
+
+.profile-container .user-profile .right .main .main-top .active {
+  color: black;
+  border-bottom: 3px solid #3498db;
+}
+
+.profile-container .user-profile .right .main .main-top .about {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.profile-container .user-profile .right .main .main-top .timeline {
+  position: relative;
+  z-index: 1;
+  left: 115px;
+}
+
+/* .profile-container .user-profile .right .main .main-info {
+  height: 250px;
+} */
+
+.profile-container .user-profile .right .main .main-info .contact-info,
+.profile-container .user-profile .right .main .main-info .basic-info {
+  margin-top: 25px;
+}
+
+.profile-container
+  .user-profile
+  .right
+  .main
+  .main-info
+  .contact-info
+  .text-header,
+.profile-container
+  .user-profile
+  .right
+  .main
+  .main-info
+  .basic-info
+  .text-header {
+  margin-bottom: 15px;
+  color: gray;
+  text-transform: uppercase;
+  font-size: 15px;
+}
+
+.profile-container .user-profile .right .main .main-info .contact-info .content,
+.profile-container .user-profile .right .main .main-info .basic-info .content {
+  width: 100%;
+}
+
+.profile-container
+  .user-profile
+  .right
+  .main
+  .main-info
+  .contact-info
+  .content
+  .label-info,
+.profile-container
+  .user-profile
+  .right
+  .main
+  .main-info
+  .basic-info
+  .content
+  .label-info {
+  width: 30%;
+}
+
+.profile-container
+  .user-profile
+  .right
+  .main
+  .main-info
+  .contact-info
+  .content
+  .label-info
+  p,
+.profile-container
+  .user-profile
+  .right
+  .main
+  .main-info
+  .basic-info
+  .content
+  .label-info
+  p {
+  margin-top: 10px;
+}
+
+.profile-container
+  .user-profile
+  .right
+  .main
+  .main-info
+  .contact-info
+  .content
+  .input-info
+  p,
+.profile-container
+  .user-profile
+  .right
+  .main
+  .main-info
+  .basic-info
+  .content
+  .input-info
+  p {
+  margin-top: 10px;
+}
+
+.apartment-container-info {
+
+  .info-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+
+    .apartment-image {
+      margin-right: 20px;
+
+      img {
+        max-width: 450px;
+        height: auto;
+      }
+    }
+
+    .info-details {
+      display: flex;
+      flex-direction: column;
+
+      .info-row {
+        display: flex;
+        margin-bottom: 10px;
+        align-items: center;
+        justify-content: space-between;
+
+        .info-label {
+          width: 150px;
+          font-weight: bold;
+          text-transform: uppercase;
+          color: rgba(136, 136, 136, 1);
+          font-size: 12px;
+        }
+
+        .info-value {
+          flex-grow: 1;
+          font-size: 20px;
+        }
+      }
+    }
+  }
+
+  .mb-4 {
+    margin-bottom: 16px;
+  }
+}
+
+.transaction-container-info .row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.transaction-container-info .label {
+  font-weight: bold;
+  text-transform: uppercase;
+  color: rgba(136, 136, 136, 1);
+  font-size: 12px;
+}
+
+.transaction-container-info .value {
+  font-size: 20px;
+}

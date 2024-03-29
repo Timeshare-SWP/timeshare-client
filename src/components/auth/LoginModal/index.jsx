@@ -11,7 +11,7 @@ import { signInWithPopup } from 'firebase/auth';
 
 const LoginModal = (props) => {
 
-    const { loginAction, loginGoogleAction, swapToRegisterState, closeModalAction, actionSwapToRegister } = props
+    const { loginAction, loginGoogleAction, swapToRegisterState, closeModalAction, actionSwapToRegister, actionSwapToLogin } = props
 
     const [formData, setFormData] = useState({ email: '', password: '' })
 
@@ -50,12 +50,12 @@ const LoginModal = (props) => {
             return;
         }
 
+        actionSwapToLogin()
         loginAction(formData);
         closeModalAction()
     };
 
     const handleLoginWithGoogle = async () => {
-        console.log('swapToRegisterState', swapToRegisterState)
         try {
             closeModalAction()
 
@@ -76,7 +76,6 @@ const LoginModal = (props) => {
                     navigate('/register', { state: { dataRegister: dataGoogle, isLoginGoogle: true } });
                 }
             })
-            console.log()
         } catch (error) {
             console.error("An error occurred during Google login:", error);
         }

@@ -12,9 +12,12 @@ const ModalConfirm = (props) => {
             </Modal.Header>
             <Modal.Body>{body}</Modal.Body>
             <Modal.Footer>
-                <button className="btn btn-secondary" onClick={handleClose}>
-                    {nameBtnCLose ? nameBtnCLose : 'Hủy'}
-                </button>
+                {handleClose
+                    &&
+                    <button className="btn btn-secondary" onClick={handleClose}>
+                        {nameBtnCLose ? nameBtnCLose : 'Hủy'}
+                    </button>
+                }
                 <button className="btn btn-primary" onClick={handleAccept}>
                     Xác nhận
                 </button>

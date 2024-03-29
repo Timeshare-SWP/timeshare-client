@@ -45,13 +45,21 @@ const BannerSection = () => {
 
     useEffect(() => {
         dispatch(getTimeshareForGuest()).then((resGetTimeshare) => {
-            console.log('resGetTimeshare', resGetTimeshare.payload);
-            const timesharesCopy = [...resGetTimeshare.payload];
-            timesharesCopy.sort((a, b) => {
-                return new Date(b.createdAt) - new Date(a.createdAt);
-            });
-            const top3Timeshares = timesharesCopy.slice(0, 3);
-            setTop3NewestTimeshare(top3Timeshares);
+            if (getTimeshareForGuest.fulfilled.match(resGetTimeshare)) {
+                const filteredList = resGetTimeshare.payload.filter(
+                    timeshare => timeshare.is_confirm === true
+                        && timeshare.sell_timeshare_status !== "Đã bán"
+                );
+
+                const timesharesCopy = [...filteredList];
+
+                timesharesCopy.sort((a, b) => {
+                    return new Date(b.createdAt) - new Date(a.createdAt);
+                });
+                
+                const top3Timeshares = timesharesCopy.slice(0, 3);
+                setTop3NewestTimeshare(top3Timeshares);
+            }
         });
     }, []);
 

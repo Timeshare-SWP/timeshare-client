@@ -104,6 +104,8 @@ const TableBody = ({ transactionList, setTransactionList }) => {
                         }
                     }
                 } else if (actionType === "Selected") {
+                    const acceptedUserIds = new Set();
+
                     for (const user of resConfirm?.payload?.customers) {
                         try {
                             const dataBodyNoti = {
@@ -117,6 +119,8 @@ const TableBody = ({ transactionList, setTransactionList }) => {
                                 console.log("resCreateNoti", resCreateNoti.payload);
                             });
 
+                            acceptedUserIds.add(user._id);
+
                         } catch (error) {
                             toast.error(`${error}`);
                         }
@@ -126,16 +130,18 @@ const TableBody = ({ transactionList, setTransactionList }) => {
                     updatedTransactionList?.forEach(obj => {
                         obj?.customers?.forEach(user => {
                             try {
-                                const dataBodyNoti = {
-                                    user_id: user._id,
-                                    notification_content: `${userDecode?.fullName} đã từ chối bán dự án ${resConfirm?.payload?.timeshare_id.timeshare_name} cho bạn`,
-                                    notification_title: "REJECT_BUY_TIMESHARE_TO_CUSTOMER",
-                                    notification_type: "REJECT_BUY_TIMESHARE_TO_CUSTOMER",
-                                };
+                                if (!acceptedUserIds.has(user._id)) {
+                                    const dataBodyNoti = {
+                                        user_id: user._id,
+                                        notification_content: `${userDecode?.fullName} đã từ chối bán dự án ${resConfirm?.payload?.timeshare_id.timeshare_name} cho bạn`,
+                                        notification_title: "REJECT_BUY_TIMESHARE_TO_CUSTOMER",
+                                        notification_type: "REJECT_BUY_TIMESHARE_TO_CUSTOMER",
+                                    };
 
-                                dispatch(createNotification(dataBodyNoti)).then((resCreateNoti) => {
-                                    console.log("resCreateNoti", resCreateNoti.payload);
-                                });
+                                    dispatch(createNotification(dataBodyNoti)).then((resCreateNoti) => {
+                                        console.log("resCreateNoti", resCreateNoti.payload);
+                                    });
+                                }
 
                             } catch (error) {
                                 toast.error(`${error}`);

@@ -18,6 +18,7 @@ import { MdGroups } from "react-icons/md";
 import ModalReservedPlaceList from './ModalReservedPlaceList';
 import { AuthContext } from '../../../../../contexts/authContext';
 import { viewAllCustomerWhoReservePlaceByTimeshareId } from '../../../../../redux/features/reservedPlaceSlice';
+import ModalDetailTransaction from '../../../../../components/shared/ModalDetailTransaction';
 
 
 const TableBody = (props) => {
@@ -28,12 +29,21 @@ const TableBody = (props) => {
     const { loadingUpdate } = useSelector((state) => state.timeshare)
 
     const [selectedItem, setSelectedItem] = useState(null);
+
     const [showModal, setShowModal] = useState(false);
     const [modalInfo, setModalInfo] = useState({
         title: '',
         body: '',
         handleAccept: () => { }
     });
+
+    const [openModalDetailTimeshare, setOpenModalDetailTimeshare] = useState(false);
+
+    const handleOpenModalDetail = (item) => {
+        // console.log("item", item);
+        setSelectedItem(item);
+        setOpenModalDetailTimeshare(true)
+    }
 
     const [openModalReservedPlaceList, setOpenModalReservedPlaceList] = useState(false);
     const [openModalDelete, setOpenModalDelete] = useState(false);
@@ -57,10 +67,6 @@ const TableBody = (props) => {
         if (sell_timeshare_status === "Chưa được bán") return "Mở bán timeshare";
         else if (sell_timeshare_status === "Đang mở bán") return "Xác nhận đã bán timeshare";
         else return "Unknown";
-    }
-
-    const handleOpenModalViewDetail = () => {
-
     }
 
     const buildModalBodyChangeTimeshareStatus = (timeshare_status) => {
@@ -112,7 +118,7 @@ const TableBody = (props) => {
                 toast.success("Thay đổi trạng thái thành công!")
                 const updatedTimeshare = result.payload;
 
-                const updatedList = timeshareList.map((timeshare) =>
+                const updatedList = timeshareList?.map((timeshare) =>
                     timeshare._id === item._id ? updatedTimeshare : timeshare
                 );
 
@@ -158,7 +164,7 @@ const TableBody = (props) => {
                 toast.success("Thay đổi trạng thái thành công!")
                 const updatedTimeshare = result.payload;
 
-                const updatedList = timeshareList.map((timeshare) =>
+                const updatedList = timeshareList?.map((timeshare) =>
                     timeshare._id === item._id ? updatedTimeshare : timeshare
                 );
 
@@ -326,6 +332,13 @@ const TableBody = (props) => {
                             <td>
                                 {renderStatus(item.sell_timeshare_status, ["Chưa được bán", "Đang mở bán", "Đã bán"])}
                             </td>
+                            <td>
+                                <div className={`fw-bold`} style={{ fontSize: '12px', color: item?.confirm_status === "Pending" ? 'orange' : (item?.confirm_status === "Accepted" ? 'green' : 'red') }}>
+                                    {item?.confirm_status === "Pending" && "Đang chờ xác nhận"}
+                                    {item?.confirm_status === "Accepted" && "Đã được phê duyệt"}
+                                    {item?.confirm_status === "Rejected" && "Đã bị từ chối"}
+                                </div>
+                            </td>
                             <td>{convertToVnTime(item?.createdAt)}</td>
                             <td style={{ cursor: 'pointer' }}>
                                 <Dropdown>
@@ -334,7 +347,9 @@ const TableBody = (props) => {
                                     </Dropdown.Toggle>
 
                                     <Dropdown.Menu>
-                                        <Dropdown.Item ><div className='d-flex gap-2 align-items-center'><BiDetail /> Xem chi tiết dự án</div></Dropdown.Item>
+                                        <Dropdown.Item onClick={() => handleOpenModalDetail(item)}><div className='d-flex gap-2 align-items-center'>
+                                            <BiDetail /> Xem chi tiết dự án</div>
+                                        </Dropdown.Item>
 
                                         <Dropdown.Item onClick={() => handleOpenListReservedPlace(item)}>
                                             <div className='d-flex gap-2 align-items-center'>
@@ -407,6 +422,17 @@ const TableBody = (props) => {
                     }
                 </>
             )
+            }
+
+            {openModalDetailTimeshare
+                && <ModalDetailTransaction
+                    show={openModalDetailTimeshare}
+                    handleClose={() => setOpenModalDetailTimeshare(false)}
+                    handleAccept={() => setOpenModalDetailTimeshare(false)}
+                    dataTimeshare={selectedItem}
+                    setTimeShareList={setTimeShareList}
+                    timeshareList={timeshareList}
+                />
             }
 
             {loadingUpdate && <SpinnerLoading />}

@@ -10,7 +10,7 @@ export const validateEmail = (email) => {
 
 export const convertToSlug = (str) => {
   str = str.toLowerCase();
-  str = str.replace(/\s+/g, "-");
+  str = str?.replace(/\s+/g, "-");
   return str;
 };
 
@@ -139,7 +139,7 @@ export const generateRandomString = () => {
 };
 
 export const removeCommas = (str) => {
-  return str.replace(/,/g, "");
+  return str?.replace(/,/g, "");
 };
 
 export const getDateTimeDifference = (utcTimeString) => {

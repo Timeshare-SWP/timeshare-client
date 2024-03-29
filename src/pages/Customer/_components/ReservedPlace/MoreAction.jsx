@@ -114,7 +114,10 @@ const MoreAction = ({ transactionSelected, setReservedPlaceList, userDecode }) =
 
     const [isLoadingBuy, setIsLoadingBuy] = useState(false)
 
+
+    // xử lý api để buy sau khi đặt giữ chân
     const handleCallApiToBuyTimeshare = () => {
+        console.log(transactionSelected)
         setIsLoadingBuy(true)
         dispatch(viewAllReservedPlace()).then((resViewAll) => {
             if (viewAllReservedPlace.fulfilled.match(resViewAll)) {
@@ -137,7 +140,8 @@ const MoreAction = ({ transactionSelected, setReservedPlaceList, userDecode }) =
                 const data = {
                     timeshare_id: transactionSelected.timeshare_id._id,
                     is_reserve: is_reserve_state,
-                    transaction_id: transaction_id
+                    transaction_id: transaction_id,
+                    apartment_id: transactionSelected?.apartment_id?._id ? transactionSelected.apartment_id?._id : ""
                 }
 
                 dispatch(buyTimeshare(data)).then((resBuy) => {
