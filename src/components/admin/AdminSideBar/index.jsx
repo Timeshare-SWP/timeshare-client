@@ -1,5 +1,4 @@
 import React, { useContext } from 'react'
-import React, { useContext } from 'react'
 import { Button } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { FaRegUserCircle, FaMoneyCheckAlt, FaChartBar } from "react-icons/fa";
